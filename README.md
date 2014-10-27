@@ -1,4 +1,4 @@
-escape-from-ecma-labs
+Escape From Ecma Labs
 =====================
 
 A roguelike game for the browser written in js using [js-roguelike-skeleton](https://github.com/unstoppablecarl/js-roguelike-skeleton)
