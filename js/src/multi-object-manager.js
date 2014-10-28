@@ -265,7 +265,31 @@
          */
         makeNewObjectFromType: function(type){
             return new this.ObjectConstructor(this.game, type);
-        }
+        },
+
+        /**
+        * Calls the `object.update()` method on all objects. Removes `object.dead == true` objects.
+        * Typically called after a player has resolved their actions.
+        * Not all object managers need to upade the objects they manage.
+        * @param {Object} [excludeObject] - excludeObject will be skipped if found in `this.objects`.
+        * @method update
+        */
+        update: function(excludeObject) {
+            // count down for performance and so we can remove things as we go
+            for (var i = this.objects.length - 1; i >= 0; i--) {
+                var obj = this.objects[i];
+                if(excludeObject === obj){
+                    continue;
+                }
+                if (obj.dead) {
+                    this.remove(obj);
+                    continue;
+                }
+                if(obj.update){
+                    obj.update();
+                }
+            }
+        },
     };
 
     root.RL.MultiObjectManager = MultiObjectManager;

@@ -59,7 +59,6 @@
             this.el.appendChild(messageEl);
 
         },
-
     };
 
     root.RL.Console = Console;

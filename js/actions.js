@@ -1,7 +1,9 @@
 (function(root) {
     'use strict';
 
-    // add core performable action functions
+    /**
+     * Surface api functions added to an object
+     */
     var performableActionMixin = {
         getTargetsForAction: function(action, settings){
             var handler = this.performableActions[action];
@@ -121,6 +123,9 @@
         },
     };
 
+    /**
+     * Surface api functions added to an object
+     */
     var resolvableActionMixin = {
         /**
          * Checks if a target can resolve an action with given source and settings.

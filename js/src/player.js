@@ -24,8 +24,8 @@
             }
         };
 
-        if(this.initialize){
-            this.initialize();
+        if(this.init){
+            this.init();
         }
     };
 
@@ -191,6 +191,7 @@
                 var targetTileEnt = this.game.entityManager.get(x, y);
                 // if already occupied
                 if(targetTileEnt){
+                    this.game.console.log('Excuse me <strong>Mr.' + targetTileEnt.name + '</strong>, you appear to be in the way.');
                     return targetTileEnt.bump(this);
                 } else {
                     // targeted tile (attempting to move into)
@@ -209,7 +210,9 @@
             this.game.console.log('You wait for a moment.');
         },
 
-
+        getTileDrawData: function(){
+            return RL.Util.getTileDrawData(this);
+        },
 
     };
 

@@ -222,11 +222,11 @@
             if (minY < 0) {
                 minY = 0;
             }
-            if (maxX > this.width) {
-                maxX = this.width;
+            if (maxX > this.width - 1) {
+                maxX = this.width - 1;
             }
-            if (maxY > this.height) {
-                maxY = this.height;
+            if (maxY > this.height - 1) {
+                maxY = this.height - 1;
             }
             for (x = minX; x <= maxX; x++) {
                 for (y = minY; y <= maxY; y++) {
@@ -323,7 +323,7 @@
 
             var maxRadius   = settings.maxRadius    || 1,
                 filter      = settings.filter       || false,
-                withCoords  = settigs.withCoords    || false;
+                withCoords  = settings.withCoords    || false;
 
             var currentDistance = 1,
                 results = [],

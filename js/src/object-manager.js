@@ -97,7 +97,7 @@
         * @param {Obj} object - The objectity to be removed.
         */
         move: function(x, y, object) {
-            var existing = this.get(x, y);
+            var existing = this.get(object.x, object.y);
             if(existing !== object || this.objects.indexOf(object) === -1){
                 throw new Error({error: 'Attempting to move object not in Object manager', x: x, y: y, object: object});
             }
@@ -188,7 +188,31 @@
          */
         makeNewObjectFromType: function(type){
             return new this.ObjectConstructor(this.game, type);
-        }
+        },
+
+        /**
+        * Calls the `object.update()` method on all objects. Removes `object.dead == true` objects.
+        * Typically called after a player has resolved their actions.
+        * Not all object managers need to upade the objects they manage.
+        * @param {Object} [excludeObject] - excludeObject will be skipped if found in `this.objects`.
+        * @method update
+        */
+        update: function(excludeObject) {
+            // count down for performance and so we can remove things as we go
+            for (var i = this.objects.length - 1; i >= 0; i--) {
+                var obj = this.objects[i];
+                if(excludeObject === obj){
+                    continue;
+                }
+                if (obj.dead) {
+                    this.remove(obj);
+                    continue;
+                }
+                if(obj.update){
+                    obj.update();
+                }
+            }
+        },
     };
 
     root.RL.ObjectManager = ObjectManager;

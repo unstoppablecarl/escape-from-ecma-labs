@@ -5,7 +5,6 @@
 
     var NewGame = function Game(){
         proto.constructor.call(this);
-        this.items = new RL.Array2d();
         this.furnitureManager = new RL.MultiObjectManager(this, RL.Furniture);
         this.itemManager = new RL.ObjectManager(this, RL.Item);
         this.smashLayer = new RL.Array2d();
@@ -19,7 +18,9 @@
 
         furnitureManager: null,
 
-        queueRender: false,
+        smashLayer: null,
+
+        damageLayer: null,
 
         /**
         * Handles user input actions.
@@ -47,7 +48,7 @@
                 } else if(this.queueDraw){
                     this.renderer.draw();
                 }
-                this.removeDeadFurniture();
+                this.furnitureManager.update();
             }
             this.queueDraw = false;
         },
@@ -93,10 +94,12 @@
             return true;
         },
         entityMoveTo: function(entity, x, y){
-            var hpRatio = entity.hp / entity.hpMax;
-            var bleedChance = ( 1 - hpRatio) * 0.5;
-            if(hpRatio < 1 && Math.random() < bleedChance){
-                this.map.get(entity.x, entity.y).blood += bleedChance * 0.5;
+            if(entity.bleeds){
+                var hpRatio = entity.hp / entity.hpMax;
+                var bleedChance = ( 1 - hpRatio) * 0.5;
+                if(hpRatio < 1 && Math.random() < bleedChance){
+                    this.map.get(entity.x, entity.y).blood += bleedChance * 0.5;
+                }
             }
             proto.entityMoveTo.call(this, entity, x, y);
             var item = this.itemManager.get(x, y);
@@ -155,18 +158,15 @@
 
             if(this.player.actionTargets && this.player.actionTargets.targets.length){
                 var objects = this.getObjectsAtPostion(coords.x, coords.y);
-
                 for(var i = objects.length - 1; i >= 0; i--){
                     var obj = objects[i];
-                    var index = this.player.actionTargets.indexOf(obj);
-                    if(index !== -1){
-                        this.player.actionTargets.setCurrent(this.player.actionTargets.targets[index]);
-                         console.log('z', obj);
+                    var target = this.player.actionTargets.map.getFirst(tile.x, tile.y);
+                    if(target){
+                        this.player.actionTargets.setCurrent(target);
                         this.renderer.draw();
                         return;
                     }
                 }
-
             }
 
             this.console.logTileInspect(tile, this.getObjectsAtPostion(tile.x, tile.y));
@@ -185,15 +185,6 @@
                 a.blood += Math.random() * amount;
             }
         },
-
-        removeDeadFurniture: function(){
-            for(var i = this.furnitureManager.objects.length - 1; i >= 0; i--){
-                var obj = this.furnitureManager.objects[i];
-                if(obj.dead){
-                    this.furnitureManager.remove(obj);
-                }
-            }
-        }
     };
 
     RL.Util.merge(NewGame.prototype, proto);

@@ -12,7 +12,6 @@
     */
     var Renderer = function Renderer(game, width, height, canvasClassName) {
         this.layers = [];
-        this.uiLayers = [];
         this.game = game;
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
@@ -38,8 +37,6 @@
          * @type {Array}
          */
         layers: null,
-
-        uiLayers: null,
 
         /**
         * Canvas element this renderer draws to.
@@ -347,8 +344,8 @@
                 }
 
             }
+
             if(tileData.after !== void 0){
-                console.log('z');
                 this.drawTileToCanvas(originalX, originalY, tileData.after, ctx);
             }
 

@@ -155,7 +155,7 @@
          */
         getValidTargetsAtPosition: function(x, y){
             var objects = this.game.getObjectsAtPostion(x, y);
-            var range = RL.Util.getTileDistance(this.entity.x, this.entity.y, x, y, true);
+            var range = RL.Util.getDistance(this.entity.x, this.entity.y, x, y);
             var _this = this;
             var filtered =  objects.filter(function(target){
                 return _this.checkValidTarget(target);
@@ -190,7 +190,7 @@
         prepareTargetObject: function(target, x, y, range){
             x = x || target.x;
             y = y || target.y;
-            range = range || RL.Util.getTileDistance(this.entity.x, this.entity.y, x, y, true);
+            range = range || RL.Util.getDistance(this.entity.x, this.entity.y, x, y);
             return {
                 x: x,
                 y: y,

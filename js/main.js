@@ -108,6 +108,8 @@ var playerStartY = 7;
 var rendererWidth = 40;
 var rendererHeight = 22;
 
+RL.ValidTargets.prototype.typeSortPriority = [RL.Entity, RL.Furniture, RL.Item];
+
 // create the game instance
 var game = new RL.Game();
 
@@ -115,13 +117,14 @@ game.map.loadTilesFromArrayString(mapData, mapCharToType, 'floor');
 
 game.setMapSize(game.map.width, game.map.height);
 
-
-// game.entityManager.loadEntitiesFromArrayString(mapData, entityCharToType);
+game.entityManager.loadFromArrayString(mapData, entityCharToType);
 game.itemManager.loadFromArrayString(mapData, itemsCharToType);
 game.furnitureManager.loadFromArrayString(mapData, furnitureCharToType);
 
 // add input keybindings
 game.input.addBindings(keyBindings);
+
+
 
 // set player starting position
 game.player.x = playerStartX;

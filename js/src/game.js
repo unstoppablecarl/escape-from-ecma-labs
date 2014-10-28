@@ -12,7 +12,7 @@
 
         // un-populated instance of Array2d
         this.map = new RL.Map(this);
-        this.entityManager = new RL.EntityManager(this);
+        this.entityManager = new RL.ObjectManager(this, RL.Entity);
         this.renderer = new RL.Renderer(this);
         this.console = new RL.Console(this);
         this.lighting = new RL.LightingROT(this);
@@ -98,6 +98,12 @@
         */
         gameOver: false,
 
+        /**
+         * If true the map will be drawn even if `this.player.update(action)` returns false.
+         * `this.queueDraw` is set to false after every update.
+         * @property queueDraw
+         * @type {Boolean}
+         */
         queueDraw: false,
 
         /**
@@ -119,7 +125,7 @@
         */
         start: function() {
             // set player position (player is not added to the enitity manager)
-            this.entityManager.move(this.player.x, this.player.y, this.player);
+            this.entityManager.add(this.player.x, this.player.y, this.player);
             this.player.updateFov();
             this.lighting.update();
             this.renderer.setCenter(this.player.x, this.player.y);
@@ -136,18 +142,13 @@
                 var result = this.player.update(action);
                 if(result){
 
-                    this.entityManager.update();
+                    this.entityManager.update(this.player);
                     this.player.updateFov();
 
                     this.lighting.update();
                     this.renderer.setCenter(this.player.x, this.player.y);
                     this.renderer.draw();
 
-                    this.smashLayer.reset();
-                    this.damageLayer.reset();
-                    if(this.player.dead){
-                        console.log('game over');
-                    }
                 } else if(this.queueDraw){
                     this.renderer.draw();
                 }

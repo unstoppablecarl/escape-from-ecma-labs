@@ -45,6 +45,7 @@
         bleeds: true,
 
         update: function(action) {
+
             this.renderHtml();
             if(action === 'cancel'){
                 this.clearPendingAction();
@@ -204,7 +205,7 @@
             // if(targets.length === 1){
             //     return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
             // }
-            this.actionTargets = new RL.ValidTargets(targets);
+            this.actionTargets = new RL.ValidTargets(this.game, targets);
             this.game.queueDraw = true;
             this.pendingAction = this.actionTargetSelect;
             this.game.console.directionsSelectActionTarget(this.pendingActionName);
@@ -221,11 +222,11 @@
                 return false;
             }
 
-            // uncomment this to auto perform an action when there is only one target
+            // auto perform an action when there is only one target
             // if(targets.length === 1){
             //     return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
             // }
-            this.actionTargets = new RL.ValidTargets(targets);
+            this.actionTargets = new RL.ValidTargets(this.game, targets);
             this.actionTargets.ignoreCurrent = true;
             this.game.queueDraw = true;
 
@@ -281,7 +282,7 @@
                 return this.performAction(pendingActionName, objects[0].value);
             }
             this.clearPendingAction();
-            this.actionTargets = new RL.ValidTargets(objects);
+            this.actionTargets = new RL.ValidTargets(this.game, objects);
             this.pendingAction = this.actionTargetSelect;
             this.game.console.directionsSelectActionTarget(this.pendingActionName);
             this.game.console.logSelectActionTarget(pendingActionName, this.actionTargets.getCurrent().value);
@@ -329,9 +330,7 @@
                 return;
             }
             this.hp -= amount;
-            var killed = this.hp <= 0;
-
-            if (killed) {
+            if (this.hp <= 0) {
                 this.color = 'red';
                 this.game.gameOver = true;
                 this.game.console.logDied(this);
