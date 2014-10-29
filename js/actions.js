@@ -523,6 +523,8 @@
 
                 if(obj.performableActions[name].init){
                     obj.performableActions[name].init.call(obj);
+                obj.performableActions[name] = Object.create(source);
+                // RL.Util.merge(obj.performableActions[name], source);
                 }
             }
         },
@@ -536,6 +538,8 @@
 
                 var source = implementation || resolvableActions[name];
                 RL.Util.merge(obj.resolvableActions[name], source);
+                obj.resolvableActions[name] = Object.create(source);
+                // RL.Util.merge(obj.resolvableActions[name], source);
 
                 if(obj.resolvableActions[name].init){
                     obj.resolvableActions[name].init.call(obj);
