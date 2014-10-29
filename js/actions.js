@@ -309,7 +309,7 @@
             }
         },
         horde_push_bonus: {
-            init: function(){
+            initialize: function(){
                 this.hordePushBonus = 0;
             },
             canPerformAction: true,
@@ -345,7 +345,7 @@
             resolveAction: true,
         },
         open: {
-            init: function(){
+            initialize: function(){
                 this.open = false;
             },
             canResolveAction: function(source, settings){
@@ -360,7 +360,7 @@
             },
         },
         close: {
-            init: function(){
+            initialize: function(){
                 this.open = false;
             },
             canResolveAction: function(source, settings){
@@ -488,7 +488,7 @@
             },
         },
         horde_push_bonus: {
-            init: function(){
+            initialize: function(){
                 this.hordePushBonus = 0;
             },
             canResolveAction: true,
@@ -519,12 +519,12 @@
                 obj.performableActions[name].actionName = obj.performableActions[name].actionName   || name;
 
                 var source = implementation || performableActions[name];
-                RL.Util.merge(obj.performableActions[name], source);
 
-                if(obj.performableActions[name].init){
-                    obj.performableActions[name].init.call(obj);
                 obj.performableActions[name] = Object.create(source);
                 // RL.Util.merge(obj.performableActions[name], source);
+
+                if(obj.performableActions[name].initialize){
+                    obj.performableActions[name].initialize.call(obj);
                 }
             }
         },
@@ -537,12 +537,11 @@
                 obj.resolvableActions[name].actionName  = obj.resolvableActions[name].actionName    || name;
 
                 var source = implementation || resolvableActions[name];
-                RL.Util.merge(obj.resolvableActions[name], source);
                 obj.resolvableActions[name] = Object.create(source);
                 // RL.Util.merge(obj.resolvableActions[name], source);
 
-                if(obj.resolvableActions[name].init){
-                    obj.resolvableActions[name].init.call(obj);
+                if(obj.resolvableActions[name].initialize){
+                    obj.resolvableActions[name].initialize.call(obj);
                 }
             }
         }
