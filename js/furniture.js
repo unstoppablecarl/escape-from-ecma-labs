@@ -122,9 +122,6 @@
                 color: this.consoleColor
             };
         },
-        getTileDrawData: function(){
-            return RL.Util.getTileDrawData(this);
-        },
 
         /**
         * Checks if this entity can move to the specified map tile
@@ -177,6 +174,9 @@
         //     }
         // },
     };
+
+    RL.Util.merge(Furniture.prototype, RL.Mixins.TileDraw);
+
 
 
     /**

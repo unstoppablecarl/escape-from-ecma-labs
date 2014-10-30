@@ -108,9 +108,6 @@
                 color: this.consoleColor
             };
         },
-        getTileDrawData: function(){
-            return RL.Util.getTileDrawData(this);
-        }
     };
 
 
@@ -185,6 +182,9 @@
             }
         }
     };
+
+    RL.Util.merge(Item.prototype, RL.Mixins.TileDraw);
+
 
     var makeHealingItem = function(obj){
         return RL.Util.merge(obj, Defaults.healing);

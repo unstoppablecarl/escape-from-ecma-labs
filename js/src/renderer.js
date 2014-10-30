@@ -271,8 +271,6 @@
         */
         drawTileToCanvas: function(x, y, tileData, ctx) {
             ctx = ctx || this.bufferCtx;
-            x = tileData.x || x;
-            y = tileData.y || y;
 
             var originalX = x,
                 originalY = y;
@@ -430,9 +428,109 @@
             // draw from buffer canvas to canvas in DOM only once all buffer draws are complete
             this.ctx.drawImage(this.buffer, 0, 0, this.canvas.width, this.canvas.height);
         },
-
     };
 
     root.RL.Renderer = Renderer;
+
+    /*
+        The following describes an object litteral used by Renderer for the benefit of api doc generation.
+     */
+
+    /**
+     * An object litteral containing data used by 'Renderer' to draw a map tile.
+     * Only one `TileDrawData` object is used per tile when rendering.
+     * The final `TileDrawData` object used to draw may have been created by merging multiple `TileDrawData` objects from multiple sources.
+     * @class TileDrawData
+     * @static
+     */
+
+    /**
+     * The character to be drawn.
+     * @property char
+     * @type {String|false}
+     */
+
+    /**
+     * Character color.
+     * @property color
+     * @type {css color|false}
+     */
+
+    /**
+     * Background color.
+     * @property bgColor
+     * @type {css color|false}
+     */
+
+    /**
+     * Border color.
+     * If false no border will be drawn.
+     * @property borderColor
+     * @type {css color|false}
+     */
+
+    /**
+     * Border width.
+     * If `this.borderColor` is set `this.borderWidth` will default to 1 if not set.
+     * @property borderWidth
+     * @type {Number|false}
+     */
+
+    /**
+     * Character stroke color.
+     * @property charStrokeColor
+     * @type {css color|false}
+     */
+
+    /**
+     * Character stroke color.
+     * @property charStrokeColor
+     * @type {css color|false}
+     */
+
+    /**
+     * Character stroke width.
+     * If `this.charStrokeColor` is set `this.charStrokeWidth` will default to 1 if not set.
+     * @property charStrokeWidth
+     * @type {Number|false}
+     */
+
+    /**
+     * Font to be used when drawing character.
+     * If not set `Renderer.font` is used.
+     * @property font
+     * @type {String|false}
+     */
+
+    /**
+     * Font size to be used when drawing character.
+     * If not set `Renderer.fontSize` is used.
+     * @property fontSize
+     * @type {Number|false}
+     */
+
+    /**
+     * Text alignment of character. Valid values: 'left', 'right', 'center', 'start', 'end'.
+     * @property textAlign
+     * @type {String|false}
+     */
+
+    /**
+     * Text baseling of character. Valid values: 'alphabetic', 'top', 'hanging', 'middle', 'ideographic', 'bottom'.
+     * @property textBaseline
+     * @type {String|false}
+     */
+
+    /**
+     * Pixel offset of character.
+     * @property offsetX
+     * @type {Number|false}
+     */
+
+    /**
+     * Pixel offset of character.
+     * @property offsetY
+     * @type {Number|false}
+     */
 
 }(this));

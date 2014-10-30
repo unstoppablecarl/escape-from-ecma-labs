@@ -7,6 +7,7 @@
     * Handles functionality triggered by keyboard and mouse Input
     * @class Player
     * @constructor
+    * @uses TileDraw
     * @param {Game} game - game instance this obj is attached to
     */
     var Player = function Player(game) {
@@ -160,7 +161,7 @@
         */
         update: function(action) {
             // if the action is a direction
-            if(RL.Util.DIRECTIONS.indexOf(action) !== -1){
+            if(RL.Util.DIRECTIONS_4.indexOf(action) !== -1){
                 var offsetCoord = RL.Util.getOffsetCoordsFromDirection(action),
                     moveToX = this.x + offsetCoord.x,
                     moveToY = this.y + offsetCoord.y;
@@ -210,11 +211,10 @@
             this.game.console.log('You wait for a moment.');
         },
 
-        getTileDrawData: function(){
-            return RL.Util.getTileDrawData(this);
-        },
-
     };
+
+    RL.Util.merge(Player.prototype, RL.Mixins.TileDraw);
+
 
     root.RL.Player = Player;
 

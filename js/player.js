@@ -55,7 +55,7 @@
                 return this.pendingAction(action);
             }
 
-            var isMoveDirection = RL.Util.DIRECTIONS.indexOf(action) !== -1;
+            var isMoveDirection = RL.Util.DIRECTIONS_4.indexOf(action) !== -1;
             if(isMoveDirection){
                 return this.move(action);
             }
@@ -248,7 +248,7 @@
                 return false;
             }
 
-            var isMoveDirection = RL.Util.DIRECTIONS.indexOf(action) !== -1;
+            var isMoveDirection = RL.Util.DIRECTIONS_4.indexOf(action) !== -1;
             if(!isMoveDirection){
                 this.clearPendingAction();
                 return false;
@@ -374,11 +374,6 @@
                 color: this.consoleColor
             };
         },
-
-        getTileDrawData: function(){
-            return RL.Util.getTileDrawData(this);
-        },
-
     };
 
     RL.Util.merge(NewPlayer.prototype, proto);

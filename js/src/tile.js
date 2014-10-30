@@ -5,6 +5,7 @@
     * Represents a tile in the game map.
     * @class Tile
     * @constructor
+    * @uses TileDraw
     * @param {Object} game - Game instance this obj is attached to.
     * @param {String} type - Type of tile. When created this object is merged with the value of Tile.Types[type].
     * @param {Number} x - The map tile coordinate position of this tile on the x axis.
@@ -61,7 +62,7 @@
 
         /**
         * If this tile blocks line of sight.
-        * @property passable
+        * @property blocksLos
         * @type {Bool}
         */
         blocksLos: false,
@@ -117,7 +118,7 @@
         /**
         * Handles entity entering a new tile.
         * Called after chaning the entities position
-        * @method onEntityEnterTile
+        * @method onEntityEnter
         * @param {Entity} entity - The entity entering the tile
         * @param {Number} x - Map tile coord.
         * @param {Number} y - Map tile coord.
@@ -126,10 +127,9 @@
             // add behavior here
         },
 
-        getTileDrawData: function(){
-            return RL.Util.getTileDrawData(this);
-        },
     };
+
+    RL.Util.merge(Tile.prototype, RL.Mixins.TileDraw);
 
     /**
     * Describes different types of tiles. Used by the Tile constructor 'type' param.
