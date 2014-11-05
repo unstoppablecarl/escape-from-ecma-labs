@@ -14,7 +14,7 @@
 
                 var tile = this.game.map.get(x, y);
 
-                if(!tile || !tile.explored){
+                if(!tile || (!tile.explored && !this.game.disableFov)){
                     return false;
                 }
 
@@ -199,6 +199,9 @@
             },
             getTileData: function(x, y, prevTileData){
                 if(!this.game){
+                    return false;
+                }
+                if(this.game.disableFov){
                     return false;
                 }
                 if(

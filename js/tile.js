@@ -16,6 +16,7 @@
     };
 
     var getTileDrawData = RL.Tile.prototype.getTileDrawData;
+
     var extendedTile = {
 
         blood: 0,
@@ -83,6 +84,45 @@
 
     RL.Util.merge(root.RL.Tile.prototype, extendedTile);
 
+    root.RL.Tile.Types.wall_alt = {
+        name: 'Wall Alt',
+        char: 'X',
+        color: RL.Util.COLORS.red,
+        consoleColor: RL.Util.COLORS.red_alt,
+        charStrokeColor: '#000',
+        charStrokeWidth: 2,
+        passable: false,
+        blocksLos: false,
+    };
+
+    RL.Tile.Types.door_placeholder = {
+        name: 'Door Placeholder',
+        char: 'D',
+         color: 'orange',
+         bgColor: 'red',
+         passable: true,
+    };
+
+    RL.Tile.Types.door_floor_placeholder = {
+        name: 'Door Floor Placeholder',
+        char: '.',
+         color: 'orange',
+         bgColor: 'red',
+         passable: true,
+    };
+
+    RL.Tile.Types.room_placeholder = {
+        name: 'Room Placeholder',
+        char: '-',
+        color: 'orange',
+        passable: true,
+    };
+
+    RL.Tile.Types.room_placeholder_origin = {
+        name: 'Room Placeholder Origin',
+        char: 'R',
+        passable: true,
+    };
 
     root.RL.Tile.Types.exit = {
             name: 'Exit',

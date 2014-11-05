@@ -26,12 +26,13 @@
 
             initialize: function() {
                 this.meleeWeapon = new RL.Item(this.game, 'claws');
-                RL.Actions.Resolvable.add(this, 'ranged_attack');
-                RL.Actions.Resolvable.add(this, 'melee_attack');
-                RL.Actions.Resolvable.add(this, 'horde_push_bonus');
 
-                RL.Actions.Performable.add(this, 'melee_attack');
-                RL.Actions.Performable.add(this, 'horde_push_bonus');
+                this.setPerformableAction('melee_attack');
+                this.setPerformableAction('horde_push_bonus');
+
+                this.setResolvableAction('melee_attack');
+                this.setResolvableAction('ranged_attack');
+                this.setResolvableAction('horde_push_bonus');
             },
 
             takeDamage: function(amount) {

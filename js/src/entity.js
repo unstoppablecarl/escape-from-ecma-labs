@@ -192,6 +192,9 @@
         },
     };
 
+    RL.Util.merge(Entity.prototype, RL.Mixins.PerformableActionInterface);
+    RL.Util.merge(Entity.prototype, RL.Mixins.ResolvableActionInterface);
+
     root.RL.Entity = Entity;
 
 }(this));

@@ -88,8 +88,6 @@
 
         consoleColor: false,
 
-        pushable: false,
-
         /**
         * If entities can move through this tile.
         * @property passable
@@ -208,10 +206,10 @@
             charStrokeWidth: 2,
             passable: false,
             init: function(){
-                RL.Actions.Resolvable.add(this, 'grab');
-                RL.Actions.Resolvable.add(this, 'push');
-                RL.Actions.Resolvable.add(this, 'melee_attack');
-                // RL.Actions.Resolvable.add(this, 'ranged_attack');
+                this.setResolvableAction('grab');
+                this.setResolvableAction('push');
+                this.setResolvableAction('melee_attack');
+                // this.setResolvableAction('ranged_attack');
             }
         },
         trashcan: {
@@ -224,8 +222,8 @@
             charStrokeWidth: 2,
             passable: false,
             init: function(){
-                RL.Actions.Resolvable.add(this, 'grab');
-                RL.Actions.Resolvable.add(this, 'push');
+                this.setResolvableAction('grab');
+                this.setResolvableAction('push');
             }
         },
         shelves: {
@@ -238,10 +236,10 @@
             charStrokeWidth: 2,
             passable: false,
             init: function(){
-                RL.Actions.Resolvable.add(this, 'grab');
-                RL.Actions.Resolvable.add(this, 'push');
-                RL.Actions.Resolvable.add(this, 'melee_attack');
-                RL.Actions.Resolvable.add(this, 'ranged_attack');
+                this.setResolvableAction('grab');
+                this.setResolvableAction('push');
+                this.setResolvableAction('melee_attack');
+                this.setResolvableAction('ranged_attack');
             }
         },
         table: {
@@ -253,8 +251,21 @@
             charStrokeWidth: 2,
             passable: false,
             init: function(){
-                RL.Actions.Resolvable.add(this, 'melee_attack');
-                // RL.Actions.Resolvable.add(this, 'ranged_attack');
+                this.setResolvableAction('melee_attack');
+                // this.setResolvableAction('ranged_attack');
+            }
+        },
+        table_alt: {
+            name: 'Table Alt',
+            char: 'T',
+            color: 'red',
+            consoleColor: 'red',
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            passable: false,
+            init: function(){
+                this.setResolvableAction('melee_attack');
+                // this.setResolvableAction('ranged_attack');
             }
         },
         box: {
@@ -267,10 +278,10 @@
             charStrokeWidth: 2,
             passable: false,
             init: function(){
-                RL.Actions.Resolvable.add(this, 'grab');
-                RL.Actions.Resolvable.add(this, 'push');
-                RL.Actions.Resolvable.add(this, 'melee_attack');
-                // RL.Actions.Resolvable.add(this, 'ranged_attack');
+                this.setResolvableAction('grab');
+                this.setResolvableAction('push');
+                this.setResolvableAction('melee_attack');
+                // this.setResolvableAction('ranged_attack');
             }
         },
         door: {
@@ -285,11 +296,11 @@
             blocksLos: true,
             mixins: ['door'],
             init: function(){
-                RL.Actions.Resolvable.add(this, 'open');
-                RL.Actions.Resolvable.add(this, 'close');
+                this.setResolvableAction('open');
+                this.setResolvableAction('close');
 
-                RL.Actions.Resolvable.add(this, 'melee_attack');
-                // RL.Actions.Resolvable.add(this, 'ranged_attack');
+                this.setResolvableAction('melee_attack');
+                // this.setResolvableAction('ranged_attack');
             }
         },
         chest: {
@@ -300,12 +311,11 @@
             consoleColor: 'yellow',
             charStrokeColor: '#000',
             charStrokeWidth: 2,
-            pushable: false,
             passable: true,
             blocksLos: false,
             init: function(){
-                RL.Actions.Resolvable.add(this, 'open');
-                RL.Actions.Resolvable.add(this, 'close');
+                this.setResolvableAction('open');
+                this.setResolvableAction('close');
             }
         },
         crate: {
@@ -316,15 +326,48 @@
             consoleColor: 'yellow',
             charStrokeColor: '#000',
             charStrokeWidth: 2,
-            pushable: false,
             passable: true,
             blocksLos: false,
             init: function(){
-                RL.Actions.Resolvable.add(this, 'open');
-                RL.Actions.Resolvable.add(this, 'close');
+
+                this.setResolvableAction('open');
+                this.setResolvableAction('close');
+            }
+        },
+
+        whiteboard: {
+            name: 'Whiteboard',
+            char: '-',
+            color: '#fff',
+        },
+        cabnet: {
+            name: 'Cabnet',
+            char: '[',
+            color: 'tan',
+        },
+        window: {
+            name: 'Window',
+            char: '&',
+            color: 'teal',
+        },
+        cubicle_wall: {
+            name: 'Cubicle Wall',
+            hp: 5,
+            char: '+',
+            color: '#808080',
+            // consoleColor: 'yellow',
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            passable: false,
+            blocksLos: false,
+            init: function(){
+
+                this.setResolvableAction('melee_attack');
             }
         }
     };
+
+    RL.Util.merge(Furniture.prototype, RL.Mixins.ResolvableActionInterface);
 
     root.RL.Furniture = Furniture;
 

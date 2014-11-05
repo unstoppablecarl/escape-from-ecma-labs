@@ -1,4 +1,5 @@
 
+var testMode = true;
 
 var keyBindings = {
     up: ['UP_ARROW', 'K', 'W'],
@@ -35,96 +36,113 @@ for(var action in keyBindings){
 
     controlsEL.innerHTML = controlsHtml;
 
-var mapData = [
-    '############################',
-    '#h................#........#',
-    '#.......2.........+......#5#',
-    '#.................#+########',
-    '#.................+z...SSSU#',
-    '#.................#z.......#',
-    '#...hh............+..TTTT..#',
-    '#..hTTh...........#z.Tha...#',
-    '#...hh......h.....##########',
-    '#.................#.......4#',
-    '#...hh............#........#',
-    '#..hTTh...........+...hh...#',
-    '#...hh.........h..#...TT...#',
-    '#.b...............#..hTTh..#',
-    '#...hh.....------.#...TT...#',
-    '#..hTTh....------.#..hTTh..#',
-    '#...hh............#...TT...#',
-    '#..........------.#..hTTh..#',
-    '#..........------.#...TTm..#',
-    '#.................+...hh...#',
-    '#.................#........#',
-    '#.................#.TTTTTTT#',
-    '###+##########+#############',
-    '#...zzzzzzz......3#........#',
-    '#..z..............#........#',
-    '#...z......zzzzzz.#........#',
-    '#.................#........#',
-    '#...zzzzzzz.......#........#',
-    '##############+#############',
-    '#...........#...#.#........#',
-    '#...........#...#.#........#',
-    '#...........##x##.#........#',
-    '#.................#........#',
-    '#.................#........#',
-    '############################',
-];
+// var mapData = [
+//     '############################',
+//     '#h................#........#',
+//     '#.......2.........+......#5#',
+//     '#.................#+########',
+//     '#.................+z...SSSU#',
+//     '#.................#z.......#',
+//     '#...hh............+..TTTT..#',
+//     '#..hTTh...........#z.Tha...#',
+//     '#...hh......h.....##########',
+//     '#.................#.......4#',
+//     '#...hh............#........#',
+//     '#..hTTh...........+...hh...#',
+//     '#...hh.........h..#...TT...#',
+//     '#.b...............#..hTTh..#',
+//     '#...hh.....------.#...TT...#',
+//     '#..hTTh....------.#..hTTh..#',
+//     '#...hh............#...TT...#',
+//     '#..........------.#..hTTh..#',
+//     '#..........------.#...TTm..#',
+//     '#.................+...hh...#',
+//     '#.................#........#',
+//     '#.................#.TTTTTTT#',
+//     '###+##########+#############',
+//     '#...zzzzzzz......3#........#',
+//     '#..z..............#........#',
+//     '#...z......zzzzzz.#........#',
+//     '#.................#........#',
+//     '#...zzzzzzz.......#........#',
+//     '##############+#############',
+//     '#...........#...#.#........#',
+//     '#...........#...#.#........#',
+//     '#...........##x##.#........#',
+//     '#.................#........#',
+//     '#.................#........#',
+//     '############################',
+// ];
 
-var mapCharToType = {
-    '#': 'wall',
-    '.': 'floor',
-    // '+': 'door',
-    'x': 'exit'
-};
+// var mapCharToType = {
+//     '#': 'wall',
+//     '.': 'floor',
+//     // '+': 'door',
+//     'x': 'exit'
+// };
 
-var entityCharToType = {
-    z: 'zombie'
-};
+// var entityCharToType = {
+//     z: 'zombie'
+// };
 
-var furnitureCharToType = {
-    h: 'chair',
-    T: 'table',
-    S: 'shelves',
-    U: 'trashcan',
-    '-': 'box',
-    '+': 'door'
-};
+// var furnitureCharToType = {
+//     h: 'chair',
+//     T: 'table',
+//     S: 'shelves',
+//     U: 'trashcan',
+//     '-': 'box',
+//     '+': 'door'
+// };
 
-var itemsCharToType = {
-    '2': 'umbrella',
-    '3': 'folding_chair',
-    '4': 'meat_tenderizer',
-    '5': 'pointy_stick',
-    m: 'medkit',
-    b: 'bandage',
-    a: 'asprin',
-};
+// var itemsCharToType = {
+//     '2': 'umbrella',
+//     '3': 'folding_chair',
+//     '4': 'meat_tenderizer',
+//     '5': 'pointy_stick',
+//     m: 'medkit',
+//     b: 'bandage',
+//     a: 'asprin',
+// };
 
-var playerStartX = 24;
-var playerStartY = 7;
+var playerStartX = 2;
+var playerStartY = 2;
+
 var rendererWidth = 40;
-var rendererHeight = 22;
+var rendererHeight = 40;
 
 RL.ValidTargets.prototype.typeSortPriority = [RL.Entity, RL.Furniture, RL.Item];
 
 // create the game instance
 var game = new RL.Game();
 
-game.map.loadTilesFromArrayString(mapData, mapCharToType, 'floor');
 
-game.setMapSize(game.map.width, game.map.height);
+if(testMode){
+    game.disableFov = true;
+    game.renderer.tileSize = 10;
+    rendererWidth = 60;
+    rendererHeight = 60;
+    playerStartX = 20;
+    playerStartY = 20;
+}
 
-game.entityManager.loadFromArrayString(mapData, entityCharToType);
-game.itemManager.loadFromArrayString(mapData, itemsCharToType);
-game.furnitureManager.loadFromArrayString(mapData, furnitureCharToType);
+var template = RL.MapGen.Template.Floor.office.basic;
+var floor = new RL.MapGen.Floor(game, template);
+floor.loadToMap();
+floor.placeRooms();
+
+
+// game.map.loadTilesFromArrayString(mapData, template.layers[0].mapData, 'floor');
+// game.setMapSize(floor.width, floor.height);
+
+
+// game.entityManager.loadFromArrayString(mapData, entityCharToType);
+// game.itemManager.loadFromArrayString(mapData, itemsCharToType);
+// game.furnitureManager.loadFromArrayString(mapData, furnitureCharToType);
+
+
 
 // add input keybindings
 game.input.addBindings(keyBindings);
-
-
 
 // set player starting position
 game.player.x = playerStartX;
@@ -160,17 +178,20 @@ RL.Util.merge(game.player, statElements);
 
 game.player.renderHtml();
 
-game.furnitureManager.add(25, 7, 'chest');
-game.furnitureManager.add(25, 7, 'crate');
+// game.furnitureManager.add(25, 7, 'chest');
+// game.furnitureManager.add(25, 7, 'crate');
 
-game.map.each(function(val, x, y){
-    if((x+1) % 5 === 0 && (y+1) % 5 === 0){
-        var tile = game.map.get(x, y);
-        if(tile.type !== 'wall'){
-            game.lighting.set(x, y, 100, 100, 100);
-        }
-    }
-});
+// game.map.each(function(val, x, y){
+//     if((x+1) % 5 === 0 && (y+1) % 5 === 0){
+//         var tile = game.map.get(x, y);
+//         if(tile.type !== 'wall'){
+//             game.lighting.set(x, y, 100, 100, 100);
+//         }
+//     }
+// });
+//
+
+
 
 
 game.start();

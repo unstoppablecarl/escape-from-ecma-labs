@@ -9,15 +9,14 @@
         this.meleeWeapon = new RL.Item(this.game, 'fists');
         this.rangedWeapon = new RL.Item(this.game, 'pistol');
 
-        RL.Actions.Performable.add(this, 'open');
-        RL.Actions.Performable.add(this, 'close');
-        RL.Actions.Performable.add(this, 'grab');
-        RL.Actions.Performable.add(this, 'push');
-        RL.Actions.Performable.add(this, 'melee_attack');
-        RL.Actions.Performable.add(this, 'ranged_attack');
+        this.setPerformableAction('open');
+        this.setPerformableAction('close');
+        this.setPerformableAction('grab');
+        this.setPerformableAction('push');
+        this.setPerformableAction('melee_attack');
+        this.setPerformableAction('ranged_attack');
 
-        RL.Actions.Resolvable.add(this, 'melee_attack');
-
+        this.setResolvableAction('melee_attack');
     };
 
     var newPlayerPrototype = {

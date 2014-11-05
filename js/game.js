@@ -110,6 +110,9 @@
         },
 
         entityCanSeeThrough: function(entity, x, y){
+            if(this.disableFov){
+                return true;
+            }
             var tile = this.map.get(x, y);
             if(!tile || tile.blocksLos){
                 return false;

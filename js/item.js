@@ -185,7 +185,6 @@
 
     RL.Util.merge(Item.prototype, RL.Mixins.TileDraw);
 
-
     var makeHealingItem = function(obj){
         return RL.Util.merge(obj, Defaults.healing);
     };
@@ -378,9 +377,9 @@
             range: 5,
         }),
 
-
-
     };
+
+
 
 
     root.RL.Item = Item;

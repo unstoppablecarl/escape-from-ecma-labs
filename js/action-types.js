@@ -1,180 +1,14 @@
 (function(root) {
     'use strict';
 
-    /**
-     * Surface api functions added to an object
-     */
-    var performableActionMixin = {
-        getTargetsForAction: function(action, settings){
-            var handler = this.performableActions[action];
-            if(!handler){
-                return false;
-            }
+    var merge = RL.Util.merge;
 
-            if(!handler.getTargetsForAction){
-                return false;
-            }
-
-            settings = settings || {};
-            if(!settings.skipCanPerformAction && !this.canPerformAction(action, settings)){
-                return false;
-            }
-
-            return handler.getTargetsForAction.call(this, settings);
-        },
-
-        /**
-         * Checks if source can perform an action with given settings.
-         * Functionality seperated to avoid checking multiple targets when source cannot perform action regardless of target.
-         * @method canPerformAction
-         * @param {string} action
-         * @param {Object} settings
-         * @return {Boolean}
-         */
-        canPerformAction: function(action, settings){
-            var handler = this.performableActions[action];
-            if(!handler){
-                return false;
-            }
-            if(handler.canPerformAction === false){
-                return false;
-            }
-
-            if(!(handler.canPerformAction === true || handler.canPerformAction.call(this, settings))){
-                return false;
-            }
-            return true;
-        },
-
-        /**
-         * Checks if source can perform an action on target with given settings.
-         * @method canPerformActionOnTarget
-         * @param {string} action
-         * @param {Object} target
-         * @param {Object} settings
-         * @return {Boolean}
-         */
-        canPerformActionOnTarget: function(action, target, settings){
-            var handler = this.performableActions[action];
-            if(!handler){
-                return false;
-            }
-            // target cannot resolve any actions
-            if(!target.canResolveAction){
-                return false;
-            }
-
-            settings = settings || {};
-            if(!settings.skipCanPerformAction && !this.canPerformAction(action, settings)){
-                return false;
-            }
-
-            if(!(handler.canPerformActionOnTarget === true || handler.canPerformActionOnTarget.call(this, target, settings))){
-                return false;
-            }
-            return target.canResolveAction(action, this, settings);
-        },
-
-        /**
-         * Performs an action on target and with given settings.
-         * @method performAction
-         * @param {String} action
-         * @param {Object} target
-         * @param {Object} settings
-         * @return {Boolean} true if the action has been successfully completed.
-         */
-        performAction: function(action, target, settings){
-            var handler = this.performableActions[action];
-            if(!handler){
-                return false;
-            }
-
-            settings = settings || {};
-            if(!settings.skipCanPerformActionOnTarget && !this.canPerformActionOnTarget(action, target, settings)){
-                return false;
-            } else if(!settings.skipCanPerformAction && !this.canPerformAction(action, settings)){
-                return false;
-            }
-
-            var result;
-            if(handler.performAction === true){
-                result = {};
-            } else {
-                result = handler.performAction.call(this, target, settings);
-            }
-
-            if(result === false){
-                return false;
-            }
-            settings.result = result;
-            var outcome = target.resolveAction(action, this, settings);
-            if(outcome && handler.afterPerformActionSuccess){
-                handler.afterPerformActionSuccess.call(this, target, settings);
-            } else if(!outcome && handler.afterPerformActionFailure){
-                handler.afterPerformActionFailure.call(this, target, settings);
-            }
-            this.lastAction = {
-                action: action,
-                source: this,
-                target: target,
-                settings: settings,
-            };
-            return outcome;
-        },
+    var makePerformableAction = function(obj){
+        return merge({}, RL.PerformableAction, obj);
     };
 
-    /**
-     * Surface api functions added to an object
-     */
-    var resolvableActionMixin = {
-        /**
-         * Checks if a target can resolve an action with given source and settings.
-         * @method canResolveAction
-         * @param {String} action
-         * @param {Object} source
-         * @param {Object} settings
-         * @return {Boolean} true if action was successfully resolved
-         */
-        canResolveAction: function(action, source, settings){
-            var handler = this.resolvableActions[action];
-            if(!handler){
-                return false;
-            }
-            if(handler.canResolveAction === false){
-                return false;
-            }
-            if(handler.canResolveAction === true){
-                return true;
-            }
-            return handler.canResolveAction.call(this, source, settings);
-        },
-
-        /**
-         * Resolves an action on target from source with given settings.
-         * @method performAction
-         * @param {String} action
-         * @param {Object} source
-         * @param {Object} settings
-         * @return {Boolean} true if the action was successfully completed.
-         */
-        resolveAction: function(action, source, settings){
-            var handler = this.resolvableActions[action];
-            if(!handler){
-                return false;
-            }
-            settings = settings || {};
-            if(!settings.skipCanResolveAction && !this.canResolveAction(action, source, settings)){
-                return false;
-            }
-
-            if(handler.resolveAction === false){
-                return false;
-            }
-            if(handler.resolveAction === true){
-                return true;
-            }
-            return handler.resolveAction.call(this, source, settings);
-        },
+    var makeResolvableleAction = function(obj){
+        return merge({}, RL.ResolvableAction, obj);
     };
 
     var makeAdjacentTargetsFinder = function(action){
@@ -193,9 +27,9 @@
         };
     };
 
-    var performableActions = {
+    var PerformableActionTypes = {
 
-        open: {
+        open: makePerformableAction({
             canPerformAction: true,
             canPerformActionOnTarget: true,
             performAction: function(target){
@@ -203,8 +37,9 @@
                 return true;
             },
             getTargetsForAction: makeAdjacentTargetsFinder('open')
-        },
-        close: {
+        }),
+
+        close: makePerformableAction({
             canPerformAction: true,
             canPerformActionOnTarget: true,
             performAction: function(target){
@@ -212,15 +47,16 @@
                 return true;
             },
             getTargetsForAction: makeAdjacentTargetsFinder('close')
-        },
-        push: {
+        }),
+
+        push: makePerformableAction({
             canPerformAction: true,
             canPerformActionOnTarget: true,
             performAction: true,
             getTargetsForAction: makeAdjacentTargetsFinder('push')
-        },
+        }),
 
-        grab: {
+        grab: makePerformableAction({
             canPerformAction: true,
             canPerformActionOnTarget: true,
             performAction: function(target, settings){
@@ -254,10 +90,10 @@
                 var result = validTargetsFinder.getValidTargets();
                 return result;
             }
-        },
+        }),
 
-        melee_attack: {
-            canPerformAction: function(target, settings){
+        melee_attack: makePerformableAction({
+            canPerformAction: function(settings){
                 if(!this.meleeWeapon){
                     this.game.console.log('you do not have a melee weapon');
                     return false;
@@ -272,10 +108,10 @@
                 };
             },
             getTargetsForAction: makeAdjacentTargetsFinder('melee_attack')
-        },
+        }),
 
-        ranged_attack: {
-            canPerformAction: function(target, settings){
+        ranged_attack: makePerformableAction({
+            canPerformAction: function(settings){
                 if(!this.rangedWeapon){
                     this.game.console.log('you do not have a ranged weapon');
                     return false;
@@ -307,8 +143,9 @@
                 var validTargetsFinder = new RL.ValidTargetsFinder(this.game, this, validTargetsSettings);
                 return validTargetsFinder.getValidTargets();
             }
-        },
-        horde_push_bonus: {
+        }),
+
+        horde_push_bonus: makePerformableAction({
             initialize: function(){
                 this.hordePushBonus = 0;
             },
@@ -318,12 +155,13 @@
                 settings.hordePushBonus = this.meleeWeapon.damage + this.hordePushBonus;
                 return true;
             }
-        }
+        }),
     };
 
-    performableActions.zombie_melee_attack = RL.Util.merge({}, performableActions.melee_attack);
-
-    RL.Util.merge(performableActions.zombie_melee_attack, {
+    PerformableActionTypes.zombie_melee_attack = merge(
+        {},
+        PerformableActionTypes.melee_attack,
+        {
             performAction: function(target, settings){
                 var damage = this.meleeWeapon.damage;
                 var targetIsFurniture = target instanceof RL.Furniture;
@@ -339,15 +177,14 @@
         }
     );
 
-    var resolvableActions = {
-        grab: {
+    var ResolvableActionTypes = {
+
+        grab: makeResolvableleAction({
             canResolveAction: true,
             resolveAction: true,
-        },
-        open: {
-            initialize: function(){
-                this.open = false;
-            },
+        }),
+
+        open: makeResolvableleAction({
             canResolveAction: function(source, settings){
                 return !this.open;
             },
@@ -358,11 +195,9 @@
                 this.char = "'";
                 return true;
             },
-        },
-        close: {
-            initialize: function(){
-                this.open = false;
-            },
+        }),
+
+        close: makeResolvableleAction({
             canResolveAction: function(source, settings){
                 if(!this.open){
                     return false;
@@ -374,6 +209,7 @@
                     return false;
                 }
                 return true;
+
             },
             resolveAction: function(source, settings){
                 this.passable = false;
@@ -382,8 +218,9 @@
                 this.char = "+";
                 return true;
             },
-        },
-        push: {
+        }),
+
+        push: makeResolvableleAction({
             canResolveAction: function(source, settings){
                 var pusherX = source.x,
                     pusherY = source.y,
@@ -412,9 +249,9 @@
                 }
                 return true;
             }
-        },
+        }),
 
-        melee_attack: {
+        melee_attack: makeResolvableleAction({
             canResolveAction: true,
             resolveAction: function(source, settings){
                 var result = settings.result;
@@ -438,9 +275,6 @@
                 };
                 this.game.smashLayer.set(source.x, source.y, smash);
 
-
-
-
                 if(this.bleeds){
                     var splatter = result.damage / 10;
                     if(this.dead){
@@ -450,8 +284,9 @@
                 }
                 return true;
             },
-        },
-        ranged_attack: {
+        }),
+
+        ranged_attack: makeResolvableleAction({
             canResolveAction: true,
             resolveAction: function(source, settings){
                 var result = settings.result;
@@ -486,8 +321,9 @@
                 }
                 return true;
             },
-        },
-        horde_push_bonus: {
+        }),
+
+        horde_push_bonus: makeResolvableleAction({
             initialize: function(){
                 this.hordePushBonus = 0;
             },
@@ -496,56 +332,10 @@
                 this.hordePushBonus += settings.hordePushBonus;
                 return true;
             }
-        }
+        })
     };
 
+    root.RL.PerformableAction.Types = PerformableActionTypes;
+    root.RL.ResolvableAction.Types = ResolvableActionTypes;
 
-    var mixIfNotFound =function(object, mixin){
-        for(var key in mixin){
-            if(!object[key]){
-                object[key] = mixin[key];
-            }
-        }
-        return object;
-    };
-
-    var Actions = {
-        Performable: {
-            add: function(obj, name, implementation){
-                mixIfNotFound(obj, performableActionMixin);
-
-                obj.performableActions                  = obj.performableActions                    || {};
-                obj.performableActions[name]            = obj.performableActions[name]              || {};
-                obj.performableActions[name].actionName = obj.performableActions[name].actionName   || name;
-
-                var source = implementation || performableActions[name];
-
-                obj.performableActions[name] = Object.create(source);
-                // RL.Util.merge(obj.performableActions[name], source);
-
-                if(obj.performableActions[name].initialize){
-                    obj.performableActions[name].initialize.call(obj);
-                }
-            }
-        },
-        Resolvable: {
-            add: function(obj, name, implementation){
-                mixIfNotFound(obj, resolvableActionMixin);
-
-                obj.resolvableActions                   = obj.resolvableActions                     || {};
-                obj.resolvableActions[name]             = obj.resolvableActions[name]               || {};
-                obj.resolvableActions[name].actionName  = obj.resolvableActions[name].actionName    || name;
-
-                var source = implementation || resolvableActions[name];
-                obj.resolvableActions[name] = Object.create(source);
-                // RL.Util.merge(obj.resolvableActions[name], source);
-
-                if(obj.resolvableActions[name].initialize){
-                    obj.resolvableActions[name].initialize.call(obj);
-                }
-            }
-        }
-    };
-
-    root.RL.Actions = Actions;
 }(this));
