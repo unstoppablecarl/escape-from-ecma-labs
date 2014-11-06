@@ -163,12 +163,6 @@
                         };
                     }
 
-
-
-                    if(entity.hordePushBonus){
-                        tileData.char = entity.hordePushBonus;
-                    }
-
                     return tileData;
                 }
                 return false;
