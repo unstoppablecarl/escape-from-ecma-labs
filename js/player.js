@@ -128,7 +128,7 @@
         movePush: function(x, y){
             var _this = this;
             var furniture = this.game.furnitureManager.getFirst(x, y, function(furniture){
-                return _this.canPerformAction('push', furniture);
+                return _this.canPerformActionOnTarget('push', furniture);
             });
 
             if(!furniture){
@@ -148,7 +148,7 @@
         moveOpen: function(x, y){
             var _this = this;
             var furniture = this.game.furnitureManager.getFirst(x, y, function(furniture){
-                return _this.canPerformAction('open', furniture);
+                return _this.canPerformActionOnTarget('open', furniture);
             });
 
             if(!furniture){
