@@ -217,7 +217,7 @@
     RL.Util.merge(Player.prototype, RL.Mixins.PerformableActionInterface);
     RL.Util.merge(Player.prototype, RL.Mixins.ResolvableActionInterface);
 
-    console.dir(Player.prototype);
+
     root.RL.Player = Player;
 
 }(this));

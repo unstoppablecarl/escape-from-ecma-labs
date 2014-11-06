@@ -355,11 +355,10 @@
             hp: 5,
             char: '+',
             color: '#808080',
-            // consoleColor: 'yellow',
             charStrokeColor: '#000',
             charStrokeWidth: 2,
             passable: false,
-            blocksLos: false,
+            blocksLos: true,
             init: function(){
 
                 this.setResolvableAction('melee_attack');

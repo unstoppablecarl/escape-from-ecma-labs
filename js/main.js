@@ -1,5 +1,5 @@
 
-var testMode = true;
+var testMode = false;
 
 var keyBindings = {
     up: ['UP_ARROW', 'K', 'W'],
