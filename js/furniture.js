@@ -21,6 +21,9 @@
 
         this.actions = {};
 
+        // all furniture must be destroyable!
+        this.setResolvableAction('melee_attack');
+
         if(this.init){
             this.init();
         }
@@ -208,7 +211,7 @@
             init: function(){
                 this.setResolvableAction('grab');
                 this.setResolvableAction('push');
-                this.setResolvableAction('melee_attack');
+
                 // this.setResolvableAction('ranged_attack');
             }
         },
@@ -238,7 +241,7 @@
             init: function(){
                 this.setResolvableAction('grab');
                 this.setResolvableAction('push');
-                this.setResolvableAction('melee_attack');
+
                 this.setResolvableAction('ranged_attack');
             }
         },
@@ -251,21 +254,34 @@
             charStrokeWidth: 2,
             passable: false,
             init: function(){
-                this.setResolvableAction('melee_attack');
+
                 // this.setResolvableAction('ranged_attack');
             }
         },
-        table_alt: {
-            name: 'Table Alt',
+        desk: {
+            name: 'Desk',
             char: 'T',
-            color: 'red',
-            consoleColor: 'red',
+            color: 'brown',
+            consoleColor: 'brown',
             charStrokeColor: '#000',
             charStrokeWidth: 2,
+            hp: 4,
             passable: false,
             init: function(){
-                this.setResolvableAction('melee_attack');
-                // this.setResolvableAction('ranged_attack');
+
+            }
+        },
+        computer: {
+            name: 'Computer',
+            char: 'c',
+            color: RL.Util.COLORS.blue,
+            consoleColor: RL.Util.COLORS.blue,
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            hp: 1,
+            passable: true,
+            init: function(){
+                //
             }
         },
         box: {
@@ -280,7 +296,7 @@
             init: function(){
                 this.setResolvableAction('grab');
                 this.setResolvableAction('push');
-                this.setResolvableAction('melee_attack');
+
                 // this.setResolvableAction('ranged_attack');
             }
         },
@@ -299,7 +315,7 @@
                 this.setResolvableAction('open');
                 this.setResolvableAction('close');
 
-                this.setResolvableAction('melee_attack');
+
                 // this.setResolvableAction('ranged_attack');
             }
         },
@@ -339,6 +355,10 @@
             name: 'Whiteboard',
             char: '-',
             color: '#fff',
+            bgColor: '#808080',
+            blocksLos: true,
+            hp: 1,
+            passable: false,
         },
         cabnet: {
             name: 'Cabnet',
@@ -347,8 +367,12 @@
         },
         window: {
             name: 'Window',
-            char: '&',
+            char: '/',
             color: 'teal',
+            bgColor: RL.Util.COLORS.slate_alt,
+            passable: false,
+            blocksLos: false,
+            hp: 10
         },
         cubicle_wall: {
             name: 'Cubicle Wall',
@@ -361,7 +385,6 @@
             blocksLos: true,
             init: function(){
 
-                this.setResolvableAction('melee_attack');
             }
         }
     };

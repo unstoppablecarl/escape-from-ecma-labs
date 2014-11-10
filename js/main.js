@@ -1,5 +1,5 @@
 
-var testMode = false;
+var testMode = true;
 
 var keyBindings = {
     up: ['UP_ARROW', 'K', 'W'],
@@ -11,7 +11,8 @@ var keyBindings = {
     prev_target: ['COMMA'],
     next_target: ['PERIOD'],
     select: ['ENTER'],
-    melee_attack: ['E'],
+    melee_attack: ['Q'],
+    pickup: ['E'],
     ranged_attack: ['F'],
     wait: ['SPACE'],
     grab: ['G'],
@@ -36,74 +37,6 @@ for(var action in keyBindings){
 
     controlsEL.innerHTML = controlsHtml;
 
-// var mapData = [
-//     '############################',
-//     '#h................#........#',
-//     '#.......2.........+......#5#',
-//     '#.................#+########',
-//     '#.................+z...SSSU#',
-//     '#.................#z.......#',
-//     '#...hh............+..TTTT..#',
-//     '#..hTTh...........#z.Tha...#',
-//     '#...hh......h.....##########',
-//     '#.................#.......4#',
-//     '#...hh............#........#',
-//     '#..hTTh...........+...hh...#',
-//     '#...hh.........h..#...TT...#',
-//     '#.b...............#..hTTh..#',
-//     '#...hh.....------.#...TT...#',
-//     '#..hTTh....------.#..hTTh..#',
-//     '#...hh............#...TT...#',
-//     '#..........------.#..hTTh..#',
-//     '#..........------.#...TTm..#',
-//     '#.................+...hh...#',
-//     '#.................#........#',
-//     '#.................#.TTTTTTT#',
-//     '###+##########+#############',
-//     '#...zzzzzzz......3#........#',
-//     '#..z..............#........#',
-//     '#...z......zzzzzz.#........#',
-//     '#.................#........#',
-//     '#...zzzzzzz.......#........#',
-//     '##############+#############',
-//     '#...........#...#.#........#',
-//     '#...........#...#.#........#',
-//     '#...........##x##.#........#',
-//     '#.................#........#',
-//     '#.................#........#',
-//     '############################',
-// ];
-
-// var mapCharToType = {
-//     '#': 'wall',
-//     '.': 'floor',
-//     // '+': 'door',
-//     'x': 'exit'
-// };
-
-// var entityCharToType = {
-//     z: 'zombie'
-// };
-
-// var furnitureCharToType = {
-//     h: 'chair',
-//     T: 'table',
-//     S: 'shelves',
-//     U: 'trashcan',
-//     '-': 'box',
-//     '+': 'door'
-// };
-
-// var itemsCharToType = {
-//     '2': 'umbrella',
-//     '3': 'folding_chair',
-//     '4': 'meat_tenderizer',
-//     '5': 'pointy_stick',
-//     m: 'medkit',
-//     b: 'bandage',
-//     a: 'asprin',
-// };
-
 var playerStartX = 2;
 var playerStartY = 2;
 
@@ -121,8 +54,10 @@ if(testMode){
     game.renderer.tileSize = 10;
     rendererWidth = 60;
     rendererHeight = 60;
-    playerStartX = 20;
-    playerStartY = 20;
+    playerStartX = 2;
+    playerStartY = 2;
+    game.player.hp = 2000;
+    game.player.hpMax = 2000;
 }
 
 var template = RL.MapGen.Template.Floor.office.basic;

@@ -134,8 +134,10 @@
             passable: true,
             blocksLos: false,
             onEntityEnter: function(entity){
-                this.game.console.logExit(entity);
-                this.game.gameOver = true;
+                if(entity === this.game.player){
+                    this.game.console.logExit(entity);
+                    this.game.gameOver = true;
+                }
             }
         };
 

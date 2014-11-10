@@ -33,6 +33,7 @@
                 this.setResolvableAction('melee_attack');
                 this.setResolvableAction('ranged_attack');
                 this.setResolvableAction('horde_push_bonus');
+                this.log = [];
             },
 
             takeDamage: function(amount) {
@@ -65,27 +66,45 @@
                 if(this.isAdjacent(this.game.player.x, this.game.player.y)) {
                     return this.performAction('melee_attack', this.game.player);
                 }
-
+                if(this.log.length > 20){
+                    this.log = this.log.slice(-20);
+                }
+                this.log.push('-- new turn');
                 var destination;
                 if(this.playerLastSeen) {
                     destination = this.getNextPathTile(this.playerLastSeen.x, this.playerLastSeen.y);
-
+                    this.log.push('player last seen');
+                    if(destination && !this.canMoveTo(destination.x, destination.y)){
+                        destination = false;
+                    }
                     if(!destination) {
+                        this.log.push('cannot move to next player last seen path tile');
                         // get next path tile ignoring furniture and entities
                         destination = this.getNextPathTile(this.playerLastSeen.x, this.playerLastSeen.y, true);
+
                         if(destination) {
-                            var _this = this;
+                            this.log.push('found next path tile ignoring furniture and entities');
                             var furniture = this.game.furnitureManager.getFirst(destination.x, destination.y, function(furniture) {
-                                return !furniture.passable && _this.canPerformActionOnTarget('melee_attack', furniture);
+                                return !furniture.passable;
                             });
-
-                            if(furniture && this.performAction('melee_attack', furniture)) {
-                                return true;
-                            }
-
-                            var entity = this.game.entityManager.get(destination.x, destination.y);
-                            if(entity && this.performAction('horde_push_bonus', entity)) {
-                                return true;
+                            if(furniture) {
+                                this.log.push('furniture in the way');
+                                if(this.canPerformActionOnTarget('melee_attack', furniture)){
+                                    this.log.push('cann attack furniture');
+                                }
+                                return this.performAction('melee_attack', furniture);
+                            } else {
+                                var entity = this.game.entityManager.get(destination.x, destination.y);
+                                if(entity){
+                                    this.log.push('entity in the way');
+                                    if(this.performAction('horde_push_bonus', entity)) {
+                                        this.log.push('performed horde_push_bonus');
+                                        return true;
+                                    } else{
+                                        this.log.push('cannot perform horde push bonus set destination to false');
+                                        destination = false;
+                                    }
+                                }
                             }
                         }
                     }
@@ -93,12 +112,20 @@
 
                 if(!destination) {
                     destination = this.getRandomAdjacentTile();
+                    this.log.push('get random adjacent: ' + destination.x + ',' + destination.y);
                 }
 
                 if(destination) {
+                    this.log.push('moving to: ' + destination.x + ',' + destination.y);
+
+                    if(!this.canMoveTo(destination.x, destination.y)){
+                        var x = 1;
+                    }
                     this.moveTo(destination.x, destination.y);
                     return true;
                 }
+                this.log.push('no move');
+
             },
 
             updatePlayerLastSeen: function() {
@@ -135,8 +162,8 @@
                     }
                 }
 
-                if(adjacent && adjacent.length) {
-                    return adjacent[Math.floor(Math.random() * adjacent.length)];
+                if(adjacent.length) {
+                    return RL.Random.arrayItem(adjacent);
                 }
                 return false;
             },
@@ -172,7 +199,8 @@
                         if(_this.x === x && _this.y === y) {
                             return true;
                         }
-                        return _this.canMoveTo(x, y, ignoreExtra);
+                        var result = _this.canMoveTo(x, y, ignoreExtra);
+                        return result;
                     },
                     // prepare path to given coords
                     aStar = new ROT.Path.AStar(x, y, passableCallback, {

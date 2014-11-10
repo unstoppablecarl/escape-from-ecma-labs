@@ -13,6 +13,8 @@
         this.setPerformableAction('close');
         this.setPerformableAction('grab');
         this.setPerformableAction('push');
+        this.setPerformableAction('pickup');
+
         this.setPerformableAction('melee_attack');
         this.setPerformableAction('ranged_attack');
 
@@ -73,6 +75,10 @@
 
             if(action === 'open'){
                 return this.open();
+            }
+
+            if(action === 'pickup'){
+                return this.pickup();
             }
 
             if(action === 'melee_attack'){
@@ -213,6 +219,12 @@
             return false;
         },
 
+        //action
+        pickup: function(){
+            this.pendingActionName = 'pickup';
+            return this.actionAdjacentTargetSelect('pickup');
+        },
+
         actionAdjacentTargetSelect: function(action){
             var targets = this.getTargetsForAction(this.pendingActionName);
             if(!targets.length){
@@ -283,6 +295,7 @@
             this.clearPendingAction();
             this.actionTargets = new RL.ValidTargets(this.game, objects);
             this.pendingAction = this.actionTargetSelect;
+            this.pendingActionName = pendingActionName;
             this.game.console.directionsSelectActionTarget(this.pendingActionName);
             this.game.console.logSelectActionTarget(pendingActionName, this.actionTargets.getCurrent().value);
             return false;
@@ -290,6 +303,8 @@
 
         // pending action
         actionTargetSelect: function(action){
+            console.log('action', action);
+            console.log('pendingActionName', this.pendingActionName);
             this.actionTargets.ignoreCurrent = false;
             if(
                 action === 'prev_target' ||

@@ -81,9 +81,12 @@
                 if(!this.game){
                     return false;
                 }
-                var item = this.game.itemManager.get(x, y);
-                if(item){
-                    return item.getTileDrawData();
+                var items = this.game.itemManager.get(x, y);
+                if(items && items.length){
+                    return {
+                        bgColor: 'blue',
+                    };
+                    // return item.getTileDrawData();
                 }
                 return false;
             }
@@ -108,6 +111,7 @@
                 }
 
                 if(
+                    !this.game.disableFov &&
                     this.game.player &&
                     this.game.player.fov &&
                     !this.game.player.fov.get(x, y)

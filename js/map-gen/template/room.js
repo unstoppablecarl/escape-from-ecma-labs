@@ -93,12 +93,7 @@
                     u: 'trashcan',
                     y: 'medkit',
                     h: 'chair',
-                    T: {
-                        randomWeighted: [
-                            {weight: 1, value: 'table_alt'},
-                            {weight: 3, value: 'table'},
-                        ]
-                    }
+                    T: 'table'
                 },
 
                 layers: [{
@@ -155,67 +150,7 @@
                 }]
             },
 
-            // test: {
-            //     name: 'test',
-            //     author: 'unstoppableCarl',
-            //     area: 'office',
 
-            //     sides: {
-            //         up: {
-            //             randomlyPlaceDoor: true,
-            //             doorFurnitureType: 'door',
-            //             offset: 3,
-            //         },
-            //         down: {
-            //             randomlyPlaceDoor: true,
-            //             doorFurnitureType: 'door',
-            //             offset: 3,
-            //         },
-            //         left: {
-            //             randomlyPlaceDoor: true,
-            //             doorFurnitureType: 'door',
-            //             offset: 3,
-            //         },
-            //         right: {
-            //             randomlyPlaceDoor: true,
-            //             doorFurnitureType: 'door',
-            //             offset: 3,
-            //         },
-            //     },
-
-            //     // can be extended/overridden by
-            //     characterToTileType: {
-            //         '.': 'floor',
-            //         '#': 'wall_alt',
-            //     },
-            //     characterToType: {
-            //         h: 'chair',
-            //     },
-            //     layers: [{
-            //         mapData: [
-            //             '####################',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#..................#',
-            //             '#........hhhhhhhh..#',
-            //             '#..................#',
-            //             '####################',
-            //         ],
-            //     }]
-            // },
 
             executives: {
                 name: 'executives',
@@ -249,30 +184,66 @@
                 },
                 layers: [{
                     mapData: [
-                        '....................',
-                        '....................',
-                        '..........z.........',
-                        '##+#####....#####+##',
-                        '#......#....#......#',
-                        '#......#....#......#',
-                        '#......#....#......#',
-                        '#......+....+......#',
-                        '#......#....#......#',
-                        '#......#....#......#',
-                        '##+#####..z.#####+##',
-                        '#......#....#......#',
-                        '#......#....#......#',
-                        '#......+....+......#',
-                        '#......#....#......#',
-                        '#......#....#......#',
-                        '########....########',
-                        '....................',
-                        '.........z..........',
-                        '....................',
+                        '.z.........#########',
+                        '.z.........#SSSSSSS#',
+                        '....hzhzh..+......z#',
+                        '##+######..#.S.S.S.#',
+                        '#z.....U#..#.S.S.Sz#',
+                        '#...D..S#..#.S.S.S.#',
+                        '#...ch.C#..#.SzSzS.#',
+                        '#...DDDD#..#.S.S.S.#',
+                        '#.......+..#......z#',
+                        '#..hThTz#..#########',
+                        '##+######..#......[#',
+                        '#..CCCSS#..#..h.h.[#',
+                        '#.......#..#.hTTT.[#',
+                        '#.......+..+..h.hz[#',
+                        '#.DcDD..#..#....zz[#',
+                        '#.Dhz..U#..#[[[[[[[#',
+                        '#########..#########',
+                        '#..h#h..#..zz.....z.',
+                        '#...#...#.....z.....',
+                        '###+#+###...........',
                     ],
                     defaultTileType: 'floor',
                     characterToType: {
+                        'C': ['cabnet', {
+                            repeat: 2,
+                            randomWeighted: [
+                                {weight: 1, value: 'bandage'},
+                                {weight: 2, value: 'disinfectant'},
+                                {weight: 3, value: 'bandaid'},
+                                {weight: 3, value: 'umbrella'},
+                                {weight: 1, value: 'meat_tenderizer'},
+                                {weight: 10, value: false}
+                            ]
+                        }],
+                        'U': 'trashcan',
+                        'S': ['shelves', {
 
+                            randomWeighted: [
+                                {weight: 10, value: 'coffee_maker'},
+                                {weight: 2, value: 'folding_chair'},
+                                {weight: 4, value: 'bandaid'},
+                                {weight: 2, value: 'meat_tenderizer'},
+                                {weight: 3, value: 'umbrella'},
+                                {weight: 1, value: 'pointy_stick'},
+
+                                {weight: 10, value: false}
+                            ]
+                        }],
+                        'D': 'desk',
+                        'T': 'table',
+                        'h': 'chair',
+                        '[': ['cabnet', {
+                            repeat: 2,
+                            randomWeighted: [
+                                {weight: 1, value: 'coffee_maker'},
+                                {weight: 3, value: 'bandaid'},
+                                {weight: 10, value: false}
+                            ]
+                        }],
+                        'c': ['desk', 'computer'],
                         'z': { randomNormal: ['zombie', 'floor'] }
                     },
                 }]
@@ -316,7 +287,19 @@
                     'h': 'chair',
                     '+': 'door',
                     'T': 'table',
-                    'C': 'cabnet',
+                    'C': ['cabnet', {
+                            repeat: 2,
+                            randomWeighted: [
+                                {weight: 1, value: 'icy_hot'},
+                                {weight: 2, value: 'bandage'},
+                                {weight: 3, value: 'disinfectant'},
+                                {weight: 4, value: 'bandaid'},
+                                {weight: 3, value: 'pointy_stick'},
+                                {weight: 1, value: 'meat_tenderizer'},
+                                {weight: 1, value: 'crowbar'},
+                                {weight: 14, value: false}
+                            ]
+                        }],
                     'W': 'whiteboard',
                     'U': 'trashcan',
                     'S': 'shelf',

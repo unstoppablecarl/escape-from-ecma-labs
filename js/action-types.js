@@ -23,7 +23,8 @@
                 }
             };
             var validTargetsFinder = new RL.ValidTargetsFinder(this.game, this, validTargetsSettings);
-            return validTargetsFinder.getValidTargets();
+            var result = validTargetsFinder.getValidTargets();
+            return result;
         };
     };
 
@@ -52,7 +53,17 @@
         push: makePerformableAction({
             canPerformAction: true,
             canPerformActionOnTarget: true,
-            performAction: true,
+            performAction: function(target){
+
+                // if grabbing an object already
+                // and pushing another object
+                // let go of the grabbed object
+                if(this.grabTarget && this.grabTarget !== target){
+                    this.game.console.logGrabLetGo(this, this.grabTarget);
+                    this.grabTarget = false;
+                }
+                return true;
+            },
             getTargetsForAction: makeAdjacentTargetsFinder('push')
         }),
 
@@ -90,6 +101,15 @@
                 var result = validTargetsFinder.getValidTargets();
                 return result;
             }
+        }),
+
+        pickup: makePerformableAction({
+            canPerformAction: true,
+            canPerformActionOnTarget: true,
+            performAction: function(target, settings){
+                return {};
+            },
+            getTargetsForAction: makeAdjacentTargetsFinder('pickup')
         }),
 
         melee_attack: makePerformableAction({
@@ -332,7 +352,18 @@
                 this.hordePushBonus += settings.hordePushBonus;
                 return true;
             }
-        })
+        }),
+
+        pickup: makeResolvableleAction({
+            canResolveAction: function(source, settings){
+                return this.canAttachTo(source);
+            },
+            resolveAction: function(source, settings){
+                this.attachTo(source);
+                this.game.itemManager.remove(this);
+                return true;
+            },
+        }),
     };
 
     root.RL.PerformableAction.Types = PerformableActionTypes;

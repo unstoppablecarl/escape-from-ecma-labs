@@ -16,7 +16,6 @@
 
         roomOriginChar: 'r',
         roomPlaceholderChar: 'x',
-
         loadToMap: function(){
 
             this.game.setMapSize(this.width, this.height);
@@ -34,11 +33,7 @@
                     _this.rooms.push(room);
                 }
             });
-
-
-
-            console.log(this.rooms);
-
+            // console.log(this.rooms);
         },
 
         placeRooms: function(){
@@ -60,7 +55,6 @@
             };
 
             var ranges = this.getRandomDoorRanges();
-            console.log('ranges', ranges);
             for(var key in ranges){
                 var range = ranges[key];
                 room = RL.Random.arrayItem(range.rooms);

@@ -6,7 +6,7 @@
     var NewGame = function Game(){
         proto.constructor.call(this);
         this.furnitureManager = new RL.MultiObjectManager(this, RL.Furniture);
-        this.itemManager = new RL.ObjectManager(this, RL.Item);
+        this.itemManager = new RL.MultiObjectManager(this, RL.Item);
         this.smashLayer = new RL.Array2d();
         this.damageLayer = new RL.Array2d();
     };
@@ -45,6 +45,14 @@
                         console.log('game over');
                     }
 
+                    for (var i = 0; i < this.entityManager.objects.length; i++) {
+                        var ent = this.entityManager.objects[i];
+                        var existing = this.entityManager.get(ent.x, ent.y);
+
+                        if(ent !== existing ){
+                            var x = 1;
+                        }
+                    }
                 } else if(this.queueDraw){
                     this.renderer.draw();
                 }
@@ -102,10 +110,15 @@
                 }
             }
             proto.entityMoveTo.call(this, entity, x, y);
-            var item = this.itemManager.get(x, y);
-            if(item && item.canAttachTo(entity)){
-                item.attachTo(entity);
-                this.itemManager.remove(item);
+
+            if(entity === this.player){
+                var items = this.itemManager.get(x, y);
+                if(items && items.length){
+                    for(var i = items.length - 1; i >= 0; i--){
+                        var item = items[i];
+                        entity.performAction('pickup', item);
+                    }
+                }
             }
         },
 
@@ -140,7 +153,7 @@
             }
             var item = this.itemManager.get(x, y);
             if(item){
-                result.push(item);
+                result = result.concat(item);
             }
             return result;
         },

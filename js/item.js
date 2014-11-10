@@ -18,6 +18,9 @@
 
         var typeData = Item.Types[type];
         RL.Util.merge(this, typeData);
+
+        this.setResolvableAction('pickup');
+
     };
 
     Item.prototype = {
@@ -379,8 +382,7 @@
 
     };
 
-
-
+    RL.Util.merge(Item.prototype, RL.Mixins.ResolvableActionInterface);
 
     root.RL.Item = Item;
 

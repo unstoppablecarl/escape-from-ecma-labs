@@ -23,18 +23,17 @@
         sideConfig: null,
 
         tileAssign: function(x, y, value){
-            if(value === 'door_placeholder'){
-                this.furnitureAssign(x, y, this.doorFurnitureType);
-                value = this.doorTileType || 'floor';
-            }
             // clear impassible furniture around door
-            if(value === 'door_floor_placeholder'){
+            if(value === 'door_floor_placeholder' || value === 'door_placeholder'){
                 var _this = this;
                 this.game.furnitureManager.get(x, y, function(furniture){
                     if(!furniture.passable){
                         _this.game.furnitureManager.remove(furniture);
                     }
                 });
+                if(value === 'door_placeholder'){
+                    this.furnitureAssign(x, y, this.doorFurnitureType);
+                }
                 value = this.doorTileType || 'floor';
             }
 
