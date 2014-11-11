@@ -19,8 +19,6 @@
         var typeData = Furniture.Types[type];
         RL.Util.merge(this, typeData);
 
-        this.actions = {};
-
         // all furniture must be destroyable!
         this.setResolvableAction('melee_attack');
 
@@ -109,8 +107,6 @@
 
         dead: false,
 
-        actions: null,
-
         takeDamage: function(amount){
             this.hp -= amount;
             if (this.hp <= 0) {
@@ -145,40 +141,9 @@
         moveTo: function(x, y) {
             return this.game.furnitureManager.move(x, y, this);
         },
-
-        // /**
-        //  * Checks if this object is a valid target for given action.
-        //  * @method canResolveAction
-        //  * @param {String} action
-        //  * @param {Object} source
-        //  * @param {Object} settings
-        //  * @return {Boolean}
-        //  */
-        // canResolveAction: function(action, source, settings){
-        //     if(!this.actions[action]){
-        //         return false;
-        //     }
-        //     return this.actions[action].canResolve.call(this, source, settings);
-        // },
-
-        // /**
-        //  * Resolves an action
-        //  * @method resolveAction
-        //  * @param {String} action
-        //  * @param {Object} source
-        //  * @param {Object} settings
-        //  * @return {Boolean}
-        //  */
-        // resolveAction: function(action, source, settings){
-        //     if(this.canResolveAction(action, source, settings)){
-        //         return this.actions[action].resolve.call(this, source, settings);
-        //     }
-        // },
     };
 
     RL.Util.merge(Furniture.prototype, RL.Mixins.TileDraw);
-
-
 
     /**
     * Describes different types of tiles. Used by the Furniture constructor 'type' param.
@@ -310,12 +275,27 @@
             charStrokeWidth: 2,
             passable: false,
             blocksLos: true,
-            mixins: ['door'],
             init: function(){
                 this.setResolvableAction('open');
                 this.setResolvableAction('close');
 
 
+                // this.setResolvableAction('ranged_attack');
+            }
+        },
+        door_glass: {
+            name: 'Glass Door',
+            hp: 3,
+            char: '+',
+            color: 'teal',
+            consoleColor: 'teal',
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            passable: false,
+            blocksLos: false,
+            init: function(){
+                this.setResolvableAction('open');
+                this.setResolvableAction('close');
                 // this.setResolvableAction('ranged_attack');
             }
         },
@@ -365,8 +345,16 @@
             char: '[',
             color: 'tan',
         },
+        printer: {
+            name: 'Printer',
+            char: '⎙',
+            color: '#808080',
+        },
+
+        // walls
         window: {
             name: 'Window',
+            isWall: true,
             char: '/',
             color: 'teal',
             bgColor: RL.Util.COLORS.slate_alt,
@@ -376,6 +364,8 @@
         },
         cubicle_wall: {
             name: 'Cubicle Wall',
+            isWall: true,
+
             hp: 5,
             char: '+',
             color: '#808080',
@@ -383,10 +373,20 @@
             charStrokeWidth: 2,
             passable: false,
             blocksLos: true,
+
             init: function(){
 
             }
-        }
+        },
+
+        placeholder: {
+            name: 'Placeholder',
+            placeholderType: null,
+            bg: false,
+            color: false,
+            char: false,
+            passable: true
+        },
     };
 
     RL.Util.merge(Furniture.prototype, RL.Mixins.ResolvableActionInterface);

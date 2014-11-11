@@ -57,14 +57,14 @@
                     return false;
                 }
 
-                var furniture = this.game.furnitureManager.get(x, y);
+                var furniture = this.game.furnitureManager.getLast(x, y, function(furniture){
+                    return furniture.type !== 'placeholder';
+                });
 
-                if(furniture.length){
+                if(furniture){
+                    var tileData = furniture.getTileDrawData();
 
-                    var f = furniture[furniture.length - 1];
-                    var tileData = f.getTileDrawData();
-
-                    if(f && f.dead){
+                    if(furniture && furniture.dead){
                         tileData.color = 'red';
                         tileData.charStrokeColor = '#280000';
                     }

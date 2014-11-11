@@ -59,7 +59,10 @@
         */
         get: function(x, y, filter) {
             if(filter){
-                return this.map.get(x, y).filter(filter);
+                var result = this.map.get(x, y);
+                if(result){
+                    return result.filter(filter);
+                }
             }
             return this.map.get(x, y);
         },

@@ -66,19 +66,15 @@
                 sides: {
                     up: {
                         randomlyPlaceDoor: true,
-                        doorFurnitureType: 'door',
                     },
                     down: {
                         randomlyPlaceDoor: true,
-                        doorFurnitureType: 'door',
                     },
                     left: {
                         randomlyPlaceDoor: true,
-                        doorFurnitureType: 'door',
                     },
                     right: {
                         randomlyPlaceDoor: true,
-                        doorFurnitureType: 'door',
                     },
                 },
 
@@ -122,36 +118,32 @@
                     defaultTileType: 'floor',
                 }, {
                     mapData: [
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '                    ',
-                        '         hhhhhhhh   ',
-                        '                    ',
-                        '                    ',
+                        '##XXXXXXXXXXXXXXXX##',
+                        '#                  #',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        '#                  #',
+                        '##XXXXXXXXXXXXXXXX##',
                     ],
-
                     characterToType: {
-                        h: 'trashcan',
-                    },
+                        'X': {placeholder: 'valid_door', value: 'door'}
+                    }
                 }]
             },
-
-
-
             executives: {
                 name: 'executives',
                 author: 'unstoppableCarl',
@@ -184,15 +176,15 @@
                 },
                 layers: [{
                     mapData: [
-                        '.z.........#########',
-                        '.z.........#SSSSSSS#',
-                        '....hzhzh..+......z#',
-                        '##+######..#.S.S.S.#',
-                        '#z.....U#..#.S.S.Sz#',
-                        '#...D..S#..#.S.S.S.#',
-                        '#...ch.C#..#.SzSzS.#',
-                        '#...DDDD#..#.S.S.S.#',
-                        '#.......+..#......z#',
+                        '.xxxxxxxxxx#XXXXXXX#',
+                        '.z.........#SSSSSSSX',
+                        '....hzhzh..+......zX',
+                        '##+######..#.S.S.S.X',
+                        '#z.....U#..#.S.S.SzX',
+                        '#...D..S#..#.S.S.S.X',
+                        '#...ch.C#..#.SzSzS.X',
+                        '#...DDDD#..#.S.S.S.X',
+                        '#.......+..#......zX',
                         '#..hThTz#..#########',
                         '##+######..#......[#',
                         '#..CCCSS#..#..h.h.[#',
@@ -201,9 +193,9 @@
                         '#.DcDD..#..#....zz[#',
                         '#.Dhz..U#..#[[[[[[[#',
                         '#########..#########',
-                        '#..h#h..#..zz.....z.',
-                        '#...#...#.....z.....',
-                        '###+#+###...........',
+                        '#USSzzzz#..zz.....z.',
+                        '#P......+.....z.....',
+                        '##XXXXX##xxxxxxxxxx.',
                     ],
                     defaultTileType: 'floor',
                     characterToType: {
@@ -233,6 +225,7 @@
                             ]
                         }],
                         'D': 'desk',
+                        'P': 'printer',
                         'T': 'table',
                         'h': 'chair',
                         '[': ['cabnet', {
@@ -244,7 +237,9 @@
                             ]
                         }],
                         'c': ['desk', 'computer'],
-                        'z': { randomNormal: ['zombie', 'floor'] }
+                        'z': { randomNormal: ['zombie', 'floor'] },
+                        'X': ['wall', {placeholder: 'valid_door', value: 'door'}],
+                        'x': ['floor', {placeholder: 'valid_door', value: 'door'}]
                     },
                 }]
             },
@@ -257,23 +252,15 @@
                 sides: {
                     up: {
                         randomlyPlaceDoor: true,
-                        doorFurnitureType: 'door',
-
                     },
                     down: {
                         randomlyPlaceDoor: true,
-                        doorFurnitureType: 'door',
-
                     },
                     left: {
                         randomlyPlaceDoor: true,
-                        doorFurnitureType: 'door',
-
                     },
                     right: {
                         randomlyPlaceDoor: true,
-                        doorFurnitureType: 'door',
-
                     },
                 },
 
@@ -330,6 +317,33 @@
                         '####################',
                     ],
                     defaultTileType: 'floor',
+                },{
+                    mapData: [
+                        '  ################  ',
+                        '                    ',
+                        '&                   ',
+                        '&                   ',
+                        '&                   ',
+                        '&                   ',
+                        '&                   ',
+                        '&                   ',
+                        '&                   ',
+                        '&                   ',
+                        '                    ',
+                        '                    ',
+                        '&                   ',
+                        '&                  &',
+                        '&                  &',
+                        '&                  &',
+                        '&                  &',
+                        '&                  &',
+                        '                    ',
+                        '  ################  ',
+                    ],
+                    characterToType: {
+                        '&': {placeholder: 'valid_door', value: 'door_glass'},
+                        '#': {placeholder: 'valid_door', value: 'door'}
+                    }
                 }]
             },
 
@@ -389,6 +403,33 @@
                         '....................',
                     ],
                     defaultTileType: 'floor'
+                },
+                {
+                    mapData: [
+                        'XXXXXXXXXXXXXXXXXXXX',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'XXXXXXXXXXXXXXXXXXXX',
+                    ],
+                    characterToType: {
+                        'X': {placeholder: 'valid_door', value: 'door'}
+                    }
                 }]
             }
         }

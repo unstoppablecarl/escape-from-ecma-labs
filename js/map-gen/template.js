@@ -126,35 +126,75 @@
                     return;
                 }
             }
+            // do not add if there is already an impassable object at this location
+            if(this.hasImpassableFurniture(x, y)){
+                return;
+            }
 
-            this.game.map.set(x, y, value);
+            return this.game.map.set(x, y, value);
         },
 
         furnitureAssign: function(x, y, value){
-            this.game.furnitureManager.add(x, y, value);
+
+            // do not add if
+            // furniture with wall === true or a map tile wall
+            // is already at this location
+            if(RL.Furniture.Types[value].isWall){
+                var furniture = this.game.furnitureManager.getFirst(x, y, function(furniture){
+                    return furniture.isWall;
+                });
+                if(furniture){
+                    return;
+                }
+                if(!this.game.map.get(x, y).passable){
+                    return;
+                }
+            }
+            var furniture = this.game.furnitureManager.add(x, y, value);
+            if(furniture.isWall){
+                this.game.map.set(x, y, 'floor');
+            }
+            return furniture;
         },
 
         itemAssign: function(x, y, value){
-            this.game.itemManager.add(x, y, value);
+            return this.game.itemManager.add(x, y, value);
         },
 
         entityAssign: function(x, y, value){
-            this.game.entityManager.add(x, y, value);
+            return this.game.entityManager.add(x, y, value);
         },
 
         objAssign: function(x, y, value){
+
+            var isPlaceholder = typeof value === 'object' && value.placeholder;
+            if(isPlaceholder){
+                return this.objAssignPlaceholder(x, y, value);
+            }
             if(RL.Tile.Types[value]){
-                this.tileAssign(x, y, value);
+                return this.tileAssign(x, y, value);
             }
             else if(RL.Entity.Types[value]){
-                this.entityAssign(x, y, value);
+                return this.entityAssign(x, y, value);
             }
             else if(RL.Furniture.Types[value]){
-                this.furnitureAssign(x, y, value);
+                return this.furnitureAssign(x, y, value);
             }
             else if(RL.Item.Types[value]){
-                this.itemAssign(x, y, value);
+                return this.itemAssign(x, y, value);
             }
+        },
+
+        objAssignPlaceholder: function(x, y, obj){
+            var result;
+            var name = obj.placeholder;
+            var value = obj.value;
+            result = this.furnitureAssign(x, y, 'placeholder');
+            if(result){
+                result.name = name;
+                result.placeholderType = value;
+            }
+            return result;
         },
 
         initRotatedLayerMapData: function(layer){
@@ -233,6 +273,13 @@
 
             return newMapData;
         },
+
+        hasImpassableFurniture: function(x, y){
+            var furniture = this.game.furnitureManager.getFirst(x, y, function(furniture){
+                return !furniture.passable;
+            });
+            return furniture;
+        }
 
     };
 

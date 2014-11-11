@@ -166,7 +166,7 @@
                 return;
             }
 
-            console.log('click', tile.x, tile.y);
+            console.log('click', tile.x, tile.y, this.getObjectsAtPostion(tile.x, tile.y));
 
             if(!this.player.fov.get(tile.x, tile.y)){
                 return;
@@ -198,7 +198,9 @@
             var adj = this.map.getAdjacent(x, y);
             for(var i = adj.length - 1; i >= 0; i--){
                 var a = adj[i];
-                a.blood += Math.random() * amount;
+                if(a){
+                    a.blood += Math.random() * amount;
+                }
             }
         },
     };

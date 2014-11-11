@@ -54,8 +54,8 @@ if(testMode){
     game.renderer.tileSize = 10;
     rendererWidth = 60;
     rendererHeight = 60;
-    playerStartX = 2;
-    playerStartY = 2;
+    playerStartX = 20;
+    playerStartY = 20;
     game.player.hp = 2000;
     game.player.hpMax = 2000;
 }
