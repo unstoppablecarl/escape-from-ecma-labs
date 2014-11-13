@@ -27,6 +27,7 @@
             alerted: false,
 
             behavior: 'wandering',
+
             sightRange: 30,
 
             initialize: function() {
@@ -63,6 +64,7 @@
                 var stumbleChance = this.turnsSinceStumble / this.maxTurnsWithoutStumble;
                 if(this.turnsSinceStumble && Math.random() < stumbleChance) {
                     this.turnsSinceStumble = 0;
+                    this.behavior = 'stumbling';
                     return true;
                 }
                 this.turnsSinceStumble++;
@@ -70,6 +72,7 @@
                 this.updatePlayerLastSeen();
 
                 if(this.isAdjacent(this.game.player.x, this.game.player.y)) {
+                    this.behavior = 'attacking';
                     return this.performAction('melee_attack', this.game.player);
                 }
                 if(this.log.length > 20){
@@ -80,6 +83,7 @@
                 if(this.playerLastSeen) {
                     destination = this.getNextPathTile(this.playerLastSeen.x, this.playerLastSeen.y);
                     this.log.push('player last seen');
+                    this.behavior = 'investigating';
                     if(destination && !this.canMoveTo(destination.x, destination.y)){
                         destination = false;
                     }
@@ -118,6 +122,7 @@
 
                 if(!destination) {
                     destination = this.getRandomAdjacentTile();
+                    this.behavior = 'wandering';
                     this.log.push('get random adjacent: ' + destination.x + ',' + destination.y);
                 }
 
@@ -178,6 +183,7 @@
             },
 
             isAdjacent: function(x, y) {
+                // non-diagonal
                 return(
                     (x === this.x && (y === this.y - 1 || y === this.y + 1)) ||
                     (y === this.y && (x === this.x - 1 || x === this.x + 1))
@@ -211,6 +217,8 @@
                         });
                     },
                     passableCallback = function(x, y) {
+                        // aStar.compute is much slower without this check
+                        // this check creates a small chance that the first path tile will not actually be valid
                         if(_this.x === x && _this.y === y) {
                             return true;
                         }
@@ -229,6 +237,7 @@
             getConsoleName: function() {
                 return {
                     name: this.name,
+                    behavior: this.behavior,
                     color: this.consoleColor
                 };
             },
@@ -265,11 +274,14 @@
 
             marketing
             developer
+            brogrammer
             project manager
             middle manager
             designer
             IT
             DBA
+
+            sales team
 
             security
             maintenance
