@@ -24,6 +24,9 @@
 
             bleeds: true,
 
+
+            sightRange: 30,
+
             initialize: function() {
                 this.meleeWeapon = new RL.Item(this.game, 'claws');
 
@@ -176,7 +179,13 @@
             },
 
             playerVisible: function() {
-                return this.game.player.fov.get(this.x, this.y);
+                if(this.game.player.fov.get(this.x, this.y)){
+                    var distance = RL.Util.getDistance(this.x, this.y, this.game.player.x, this.game.player.y);
+                    if(distance <= this.sightRange){
+                        return true;
+                    }
+                }
+                return false;
             },
 
             getNextPathTile: function(x, y, ignoreExtra) {
