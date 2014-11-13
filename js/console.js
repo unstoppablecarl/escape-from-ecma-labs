@@ -46,13 +46,16 @@
             if(list.length){
                 var _this = this;
                 list = list.map(function(item){
-                    return _this.wrap(item);
+                    var result = _this.wrap(item);
+                    if(item.behavior){
+                        result += _this.wrapStr(' (' + item.behavior + ')', RL.Util.COLORS.orange_alt);
+                    }
+                    return result;
                 });
                 msg += this.wrap(this.game.player) + ' see: ' + list.join(' and ') + ' on ' + this.wrap(tile);
             } else {
                 msg = this.wrap(this.game.player) + ' see: ' + this.wrap(tile);
             }
-
             this.log(msg);
         },
         logPickUp: function(entity, item){

@@ -24,7 +24,9 @@
 
             bleeds: true,
 
+            alerted: false,
 
+            behavior: 'wandering',
             sightRange: 30,
 
             initialize: function() {
@@ -47,6 +49,7 @@
             },
 
             update: function() {
+                this.alerted = false;
                 var result = this._update();
                 this.hordePushBonus = 0;
                 return result;
@@ -133,6 +136,9 @@
 
             updatePlayerLastSeen: function() {
                 if(this.playerVisible()) {
+                    if(!this.playerLastSeen){
+                        this.alerted = true;
+                    }
                     this.playerLastSeen = {
                         x: this.game.player.x,
                         y: this.game.player.y
@@ -232,8 +238,25 @@
                 } else {
                     return this.game.entityCanMoveTo(this, x, y);
                 }
-
             },
+            getTileDrawData: function(){
+                var result = RL.Entity.prototype.getTileDrawData.call(this);
+                if(this.alerted){
+                    result.color = RL.Util.COLORS.red_alt;
+                    result.after = {
+                        char: '!',
+                        fontSize: '8px',
+                        offsetY: -this.game.renderer.tileSize * 0.5,
+                        offsetX: this.game.renderer.tileSize * 0.5,
+                        textBaseline: 'top',
+                        textAlign: 'right',
+                        color: 'red',
+                        charStrokeColor: '#000',
+                        charStrokeWidth: 3
+                    };
+                }
+                return result;
+            }
         },
     };
 
