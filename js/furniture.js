@@ -183,9 +183,23 @@
         trashcan: {
             name: 'Trashcan',
             hp: 1,
-            char: 'U',
+            char: 'u',
             color: RL.Util.COLORS.green,
             consoleColor: RL.Util.COLORS.green_alt,
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            passable: false,
+            init: function(){
+                this.setResolvableAction('grab');
+                this.setResolvableAction('push');
+            }
+        },
+        biohazard_trash: {
+            name: 'Biohazard Trash',
+            hp: 1,
+            char: 'u',
+            color: RL.Util.COLORS.red,
+            consoleColor: RL.Util.COLORS.red_alt,
             charStrokeColor: '#000',
             charStrokeWidth: 2,
             passable: false,
@@ -209,6 +223,47 @@
 
                 this.setResolvableAction('ranged_attack');
             }
+        },
+
+        refridgerator: {
+            name: 'Refridgerator',
+            hp: 5,
+            char: 'O',
+            color: 'tan',
+            consoleColor: 'tan',
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            passable: false,
+            init: function(){
+                this.setResolvableAction('grab');
+                this.setResolvableAction('push');
+
+                this.setResolvableAction('ranged_attack');
+            }
+        },
+        analyzer: {
+            name: 'Analyzer',
+            hp: 5,
+            char: 'A',
+            color: RL.Util.COLORS.blue,
+            consoleColor: 'tan',
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            passable: false,
+            init: function(){
+                this.setResolvableAction('grab');
+                this.setResolvableAction('push');
+
+                this.setResolvableAction('ranged_attack');
+            }
+        },
+        microscope: {
+            name: 'Microscope',
+            char: 'M',
+            color: '#eee',
+            consoleColor: '#eee',
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
         },
         table: {
             name: 'Table',
@@ -238,7 +293,7 @@
         },
         computer: {
             name: 'Computer',
-            char: 'c',
+            char: 'C',
             color: RL.Util.COLORS.blue,
             consoleColor: RL.Util.COLORS.blue,
             charStrokeColor: '#000',
@@ -386,6 +441,18 @@
             color: false,
             char: false,
             passable: true
+        },
+
+
+        work_bench: {
+            name: 'Work Bench',
+            char: 'T',
+            color: RL.Util.COLORS.purple,
+            consoleColor: RL.Util.COLORS.purple_alt,
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            passable: false,
+
         },
     };
 
