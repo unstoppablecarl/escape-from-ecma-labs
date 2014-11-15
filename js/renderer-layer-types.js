@@ -84,7 +84,8 @@
                 var items = this.game.itemManager.get(x, y);
                 if(items && items.length){
                     return {
-                        bgColor: 'blue',
+                        // bgColor: '#147cc2',
+                        bgColor: 'rgb(20, 84,154)'
                     };
                     // return item.getTileDrawData();
                 }
