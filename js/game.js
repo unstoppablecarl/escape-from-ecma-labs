@@ -5,6 +5,8 @@
 
     var NewGame = function Game(){
         proto.constructor.call(this);
+        this.miniMap = new RL.Renderer(this, null, null, 2, 'mini-map');
+        this.renderer.miniMap = this.miniMap;
         this.furnitureManager = new RL.MultiObjectManager(this, RL.Furniture);
         this.itemManager = new RL.MultiObjectManager(this, RL.Item);
         this.smashLayer = new RL.Array2d();
@@ -21,6 +23,8 @@
         smashLayer: null,
 
         damageLayer: null,
+
+        miniMap: null,
 
         /**
         * Handles user input actions.
@@ -67,6 +71,7 @@
             this.furnitureManager.setSize(width, height);
             this.smashLayer.setSize(width, height);
             this.damageLayer.setSize(width, height);
+            this.miniMap.resize(width, height);
         },
 
         entityCanMoveThrough: function(entity, x, y, ignoreFurniture){

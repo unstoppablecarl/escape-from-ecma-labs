@@ -22,6 +22,8 @@ var controlsEL = document.getElementById('controls');
 var mapContainerEl = document.getElementById('map-container');
 var consoleContainerEl = document.getElementById('console-container');
 var consoleDirectionsEl = document.getElementById('console-directions');
+var miniMapContainerEl = document.getElementById('mini-map-container');
+
 var controlsHtml = '';
  controlsHtml += '<div class="tr"><div class="td">Action</div> <div class="td">Keys</div></div>';
 for(var action in keyBindings){
@@ -65,17 +67,6 @@ var floor = new RL.MapGen.Floor(game, template);
 floor.loadToMap();
 floor.placeRooms();
 
-
-// game.map.loadTilesFromArrayString(mapData, template.layers[0].mapData, 'floor');
-// game.setMapSize(floor.width, floor.height);
-
-
-// game.entityManager.loadFromArrayString(mapData, entityCharToType);
-// game.itemManager.loadFromArrayString(mapData, itemsCharToType);
-// game.furnitureManager.loadFromArrayString(mapData, furnitureCharToType);
-
-
-
 // add input keybindings
 game.input.addBindings(keyBindings);
 
@@ -99,7 +90,8 @@ game.renderer.layers = [
 
 mapContainerEl.appendChild(game.renderer.canvas);
 consoleContainerEl.appendChild(game.console.el);
-game.console.directionsEl = document.getElementById('console-directions');
+game.console.directionsEl = consoleDirectionsEl;
+miniMapContainerEl.appendChild(game.miniMap.canvas);
 
 var statElements = {
     hpEl: document.getElementById('stat-hp'),
@@ -109,6 +101,7 @@ var statElements = {
     rangedWeaponNameEl: document.getElementById('stat-ranged-weapon-name'),
     rangedWeaponStatsEl: document.getElementById('stat-ranged-weapon-stats'),
 };
+
 RL.Util.merge(game.player, statElements);
 
 game.player.renderHtml();
