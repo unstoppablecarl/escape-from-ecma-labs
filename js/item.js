@@ -87,6 +87,18 @@
         consoleColor: RL.Util.COLORS.blue_alt,
 
         /**
+         * Optional callback called when added to an `ObjectManager` or `MultiObjectManager`.
+         * @metod onAdd
+         */
+        onAdd: false,
+
+        /**
+         * Optional callback called when removed from an `ObjectManager` or `MultiObjectManager`.
+         * @metod onRemve
+         */
+        onRemve: false,
+
+        /**
          * Checks if this item can be attached to an entity.
          * @method canAttachTo
          * @param {Entity} entity

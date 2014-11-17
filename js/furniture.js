@@ -107,6 +107,18 @@
 
         dead: false,
 
+        /**
+         * Optional callback called when added to an `ObjectManager` or `MultiObjectManager`.
+         * @metod onAdd
+         */
+        onAdd: false,
+
+        /**
+         * Optional callback called when removed from an `ObjectManager` or `MultiObjectManager`.
+         * @metod onRemve
+         */
+        onRemve: false,
+
         takeDamage: function(amount){
             this.hp -= amount;
             if (this.hp <= 0) {

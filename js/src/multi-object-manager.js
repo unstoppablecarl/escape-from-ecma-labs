@@ -134,6 +134,9 @@
             this.objects.push(obj);
             var arr = this.map.get(x, y);
             arr.push(obj);
+            if(obj.onAdd){
+                obj.onAdd();
+            }
             return obj;
         },
 
@@ -148,6 +151,11 @@
             arr.splice(index, 1);
             index = this.objects.indexOf(obj);
             this.objects.splice(index, 1);
+            if(obj.onRemove){
+                obj.onRemove();
+            }
+        },
+
         },
 
         /**
