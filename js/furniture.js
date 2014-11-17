@@ -466,6 +466,34 @@
             passable: false,
 
         },
+
+        lamp: {
+            name: 'Lamp',
+            char: '*',
+            color: '#fff',
+            consoleColor: '#fff',
+            passable: true,
+            light_r: 100,
+            light_g: 100,
+            light_b: 255,
+            hp: 1,
+            init: function(){
+                this.setResolvableAction('melee_attack');
+                this.setResolvableAction('ranged_attack');
+            },
+            onAdd: function(){
+                // remove light from current position
+                this.onRemove();
+                // add to new position
+                this.game.lighting.set(this.x, this.y, this.light_r, this.light_g, this.light_b);
+            },
+            onRemove: function(){
+                console.log('zxccxz', this.x, this.y, this.game.lighting.get(this.x, this.y));
+                if(this.game.lighting.get(this.x, this.y)){
+                    this.game.lighting.remove(this.x, this.y);
+                }
+            }
+        }
     };
 
     RL.Util.merge(Furniture.prototype, RL.Mixins.ResolvableActionInterface);
