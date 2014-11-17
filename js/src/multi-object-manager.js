@@ -156,6 +156,18 @@
             }
         },
 
+        /**
+         * Remove all objects from given location.
+         * @method removeAt
+         * @param {Number} x - Tile map x coord.
+         * @param {Number} y - Tile map y coord.
+         * @param {Function} [filter] - A function to filter the objects removed `function(object){  return true }`.
+         */
+        removeAt: function(x, y, filter){
+            var arr = this.map.get(x, y, filter);
+            for(var i = arr.length - 1; i >= 0; i--){
+                this.remove(arr[i]);
+            }
         },
 
         /**
@@ -204,9 +216,9 @@
         /**
          * Same as `this.map.getAdjacent`, but merges all results into on flat array.
          * @method getAdjacent
-         * @param {Number} x
-         * @param {Number} y
-         * @param {Object} settings
+         * @param {Number} x - Map tile x coord.
+         * @param {Number} y - Map tile y coord;
+         * @param {Object} [settings]
          * @return {Array}
          */
         getAdjacent: function(x, y, settings){
