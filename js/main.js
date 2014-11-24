@@ -16,7 +16,7 @@ var keyBindings = {
     ranged_attack: ['F'],
     wait: ['SPACE'],
     grab: ['G'],
-    cance: ['ESC']
+    cancel: ['ESC']
 };
 var controlsEL = document.getElementById('controls');
 var mapContainerEl = document.getElementById('map-container');
