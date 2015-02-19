@@ -431,7 +431,113 @@
                         'X': {placeholder: 'valid_door', value: 'door'}
                     }
                 }]
-            }
+            },
+
+            // name
+            lab1: {
+                name: 'lab1',
+                author: 'unstoppableCarl',
+                area: 'lab',
+
+                sides: {
+                    up: {
+                        randomlyPlaceDoor: true,
+                    },
+                    down: {
+                        randomlyPlaceDoor: true,
+                    },
+                    left: {
+                        randomlyPlaceDoor: true,
+                    },
+                    right: {
+                        randomlyPlaceDoor: true,
+                    },
+                },
+
+                // can be extended/overridden by
+                characterToTileType: {
+                    '.': 'floor',
+                    '#': 'wall',
+                },
+
+                // used for all layers
+                characterToType: {
+                    // z: 'zombie',
+                    '+': 'door',
+                    y: 'medkit',
+                    h: 'chair',
+                    T: 'work_bench',
+                    u: 'biohazard_trash',
+                    i: ['biohazard_trash', 'pointy_stick'],
+                    O: 'refridgerator',
+                    A: 'analyzer',
+                    s: 'sink',
+                    // multiple
+                    M: ['work_bench', 'microscope'],
+                    C: ['work_bench', 'computer'],
+                    l: 'lamp',
+                    'z': { randomNormal: ['zombie', 'floor'] }
+                },
+
+                layers: [{
+                    mapData: [
+                        '####################',
+                        '#...........uAAAAAA#',
+                        '#.................A#',
+                        '#A.....l..........A#',
+                        '#A...........T....A#',
+                        '#A..........hC....A#',
+                        '#A....i......T....A#',
+                        '#A....T......u....A#',
+                        '#A....Ch..........A#',
+                        '#A....T............#',
+                        '#A.................#',
+                        '#u.................#',
+                        '#.....zzzz.........#',
+                        '#..................#',
+                        '#............###+###',
+                        '#............#O...O#',
+                        '#............#O...O#',
+                        '#..h....h....#O...O#',
+                        '#TTMCTTTMCT..#O...O#',
+                        '####################',
+                    ],
+                    defaultTileType: 'floor',
+
+                    // applied to only this layer
+                    characterToType: {
+                        C: 'whatever'
+                    }
+                }, {
+                    mapData: [
+                        '#XXXXXXXXXXXXX######',
+                        'X                  #',
+                        'X                  #',
+                        '#                  #',
+                        '#                  #',
+                        '#                  #',
+                        '#                  #',
+                        '#                  #',
+                        '#                  X',
+                        '#                  X',
+                        '#                  X',
+                        '#                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  #',
+                        'X                  #',
+                        'X                  #',
+                        'X                  #',
+                        '#                  #',
+                        '###########XX#######',
+                    ],
+
+                    // applied to only this layer
+                    characterToType: {
+                        'X': {placeholder: 'valid_door', value: 'door'}
+                    }
+                }]
+            },
         }
     };
     root.RL.MapGen.Template.Room = Room;

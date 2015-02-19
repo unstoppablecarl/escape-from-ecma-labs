@@ -162,6 +162,11 @@
                 };
                 var validTargetsFinder = new RL.ValidTargetsFinder(this.game, this, validTargetsSettings);
                 return validTargetsFinder.getValidTargets();
+            },
+            afterPerformActionSuccess: function(target, settings){
+                if(settings.result.weapon.afterSuccess){
+                    settings.result.weapon.afterSuccess(this, target, settings);
+                }
             }
         }),
 

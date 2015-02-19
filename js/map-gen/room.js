@@ -48,19 +48,24 @@
             if(side === 'left' || side === 'up'){
                 ox = this.x;
                 oy = this.y;
-            } else {
+            }
+            // right or down
+            else {
                 ox = this.x + this.width - 1;
                 oy = this.y + this.height - 1;
             }
 
             var dx = ox + offset.x;
             var dy = oy + offset.y;
-            var tile = this.game.map.get(dx, dy);
 
-            if(dx === 0 || dy === 0 || dx === this.game.map.width || dy === this.game.map.height){
+            if((side === 'left' || side === 'right') && (dx <= 0 || dx >= this.game.map.width)){
+                return 'map_edge';
+            }
+            if((side === 'up' || side === 'down') && (dy <= 0 || dy >= this.game.map.height)){
                 return 'map_edge';
             }
 
+            var tile = this.game.map.get(dx, dy);
             if(tile && (tile.type === 'room_placeholder' || tile.type === 'room_placeholder_origin')){
                 return 'room';
             }

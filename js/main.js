@@ -25,7 +25,7 @@ var consoleDirectionsEl = document.getElementById('console-directions');
 var miniMapContainerEl = document.getElementById('mini-map-container');
 
 var controlsHtml = '';
- controlsHtml += '<div class="tr"><div class="td">Action</div> <div class="td">Keys</div></div>';
+ controlsHtml += '<div class="tr"><div class="td">Action</div><div class="td">Keys</div></div>';
 for(var action in keyBindings){
     controlsHtml += '<div class="tr">';
     controlsHtml += '<div class="td">' + action + '</div>';
@@ -36,8 +36,7 @@ for(var action in keyBindings){
     controlsHtml += '</div>';
     controlsHtml += '</div>';
 }
-
-    controlsEL.innerHTML = controlsHtml;
+controlsEL.innerHTML = controlsHtml;
 
 var playerStartX = 2;
 var playerStartY = 2;
@@ -49,7 +48,6 @@ RL.ValidTargets.prototype.typeSortPriority = [RL.Entity, RL.Furniture, RL.Item];
 
 // create the game instance
 var game = new RL.Game();
-
 
 if(testMode){
     game.disableFov = true;

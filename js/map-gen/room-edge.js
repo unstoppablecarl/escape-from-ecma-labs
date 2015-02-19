@@ -113,7 +113,6 @@
         },
 
         getValidDoorTiles: function(){
-            var _this = this;
             var validDoorTiles = [];
 
             var tiles = this.getTileCoords();
@@ -133,10 +132,15 @@
                     return result;
                 });
 
+                // if there are at least 2 placeholders in this tile (2 overlapping room edges that are valid door locations)
                 var isAdjacentRoom = !isHallway && furniture.length > 1;
                 var isAdjacentHallway = isHallway && furniture.length;
 
                 if(isAdjacentRoom || isAdjacentHallway){
+                    if(this.game.showDoorPlacementDebug){
+                        this.game.furnitureManager.add(tile.x, tile.y, {type: 'placeholder', name: 'valid_door_final'});
+                    }
+
                     validDoorTiles.push({x: tile.x, y: tile.y});
                 }
             }

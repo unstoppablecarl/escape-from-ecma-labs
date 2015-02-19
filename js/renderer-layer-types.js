@@ -57,20 +57,41 @@
                     return false;
                 }
 
+                var tileData = {};
+
+
                 var furniture = this.game.furnitureManager.getLast(x, y, function(furniture){
                     return furniture.type !== 'placeholder';
                 });
 
                 if(furniture){
-                    var tileData = furniture.getTileDrawData();
+                    tileData = furniture.getTileDrawData();
 
                     if(furniture && furniture.dead){
                         tileData.color = 'red';
                         tileData.charStrokeColor = '#280000';
                     }
+                }
+                if(this.game.showDoorPlacementDebug){
+                    var placeHolderFurniture = this.game.furnitureManager.getFirst(x, y, function(furniture){
+                        return furniture.type === 'placeholder' && furniture.name === 'valid_door';
+                    });
+
+                    if(placeHolderFurniture){
+                        tileData.color = 'orange';
+                    }
+
+                    var placeHolderFurnitureFinal = this.game.furnitureManager.getFirst(x, y, function(furniture){
+                        return furniture.type === 'placeholder' && furniture.name === 'valid_door_final';
+                    });
+
+                    if(placeHolderFurnitureFinal){
+                        tileData.color = 'red';
+                    }
+                }
+                if(tileData){
                     return tileData;
                 }
-
 
                 return false;
             }

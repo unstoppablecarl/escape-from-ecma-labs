@@ -26,6 +26,8 @@
 
         miniMap: null,
 
+        showDoorPlacementDebug: false,
+
         /**
         * Handles user input actions.
         * @method onKeyAction
