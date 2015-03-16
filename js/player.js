@@ -6,14 +6,21 @@
     var NewPlayer = function Player(game){
         proto.constructor.call(this, game);
 
-        this.meleeWeapon = new RL.Item(this.game, 'fists');
-        this.rangedWeapon = new RL.Item(this.game, 'pistol');
+        var meleeWeapon = new RL.Equipment(this.game, 'fists');
+        var rangedWeapon = new RL.Equipment(this.game, 'pistol');
+
+        this.inventory = new RL.Inventory(this.game);
+        this.equipment = new RL.EquipmentManager(this.game);
+
+        this.equipment.equip(meleeWeapon);
+        this.equipment.equip(rangedWeapon);
 
         this.setPerformableAction('open');
         this.setPerformableAction('close');
         this.setPerformableAction('grab');
         this.setPerformableAction('push');
         this.setPerformableAction('pickup');
+        this.setPerformableAction('use_item');
 
         this.setPerformableAction('melee_attack');
         this.setPerformableAction('ranged_attack');
@@ -303,8 +310,7 @@
 
         // pending action
         actionTargetSelect: function(action){
-            console.log('action', action);
-            console.log('pendingActionName', this.pendingActionName);
+
             this.actionTargets.ignoreCurrent = false;
             if(
                 action === 'prev_target' ||
@@ -371,14 +377,27 @@
             this.hpEl.innerHTML = this.hp;
             this.hpMaxEl.innerHTML = this.hpMax;
             if(this.meleeWeaponNameEl){
-                var meleeWeaponConsoleName = this.meleeWeapon.getConsoleName();
-                this.meleeWeaponNameEl.innerHTML = meleeWeaponConsoleName.name;
-                this.meleeWeaponStatsEl.innerHTML = meleeWeaponConsoleName.stats;
+                var meleeWeapon = this.equipment.slots.weaponMelee;
+                var meleeName = '';
+                var meleeStats = '';
+                if(meleeWeapon){
+                    meleeName = meleeWeapon.name;
+                    meleeStats = meleeWeapon.statDesc;
+                }
+                this.meleeWeaponNameEl.innerHTML = meleeName;
+                this.meleeWeaponStatsEl.innerHTML = meleeStats;
             }
-            if(this.rangedWeapon){
-                var rangedWeaponConsoleName = this.rangedWeapon.getConsoleName();
-                this.rangedWeaponNameEl.innerHTML = rangedWeaponConsoleName.name;
-                this.rangedWeaponStatsEl.innerHTML = rangedWeaponConsoleName.stats;
+            if(this.meleeWeaponNameEl){
+
+                var rangedWeapon = this.equipment.slots.weaponRanged;
+                var rangedName = '';
+                var rangedStats = '';
+                if(rangedWeapon){
+                    rangedName = rangedWeapon.name;
+                    rangedStats = rangedWeapon.statDesc;
+                }
+                this.rangedWeaponNameEl.innerHTML = rangedName;
+                this.rangedWeaponStatsEl.innerHTML = rangedStats;
             }
         },
 

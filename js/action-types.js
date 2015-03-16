@@ -114,7 +114,7 @@
 
         melee_attack: makePerformableAction({
             canPerformAction: function(settings){
-                if(!this.meleeWeapon){
+                if(!this.equipment.slots.weaponMelee){
                     this.game.console.log('you do not have a melee weapon');
                     return false;
                 }
@@ -122,9 +122,10 @@
             },
             canPerformActionOnTarget: true,
             performAction: function(target, settings){
+                var weaponMelee = this.equipment.slots.weaponMelee;
                 return {
-                    damage: this.meleeWeapon.damage,
-                    weapon: this.meleeWeapon
+                    damage: weaponMelee.damage,
+                    weapon: weaponMelee
                 };
             },
             getTargetsForAction: makeAdjacentTargetsFinder('melee_attack')
@@ -132,7 +133,7 @@
 
         ranged_attack: makePerformableAction({
             canPerformAction: function(settings){
-                if(!this.rangedWeapon){
+                if(!this.equipment.slots.weaponRanged){
                     this.game.console.log('you do not have a ranged weapon');
                     return false;
                 }
@@ -146,15 +147,16 @@
                 return true;
             },
             performAction: function(target, settings){
+                var weaponRanged = this.equipment.slots.weaponRanged;
                 return {
-                    damage: this.rangedWeapon.damage,
-                    weapon: this.rangedWeapon
+                    damage: weaponRanged.damage,
+                    weapon: weaponRanged
                 };
             },
             getTargetsForAction: function(settings){
                 var _this = this;
                 var validTargetsSettings = {
-                    range: this.rangedWeapon.range,
+                    range: this.equipment.slots.weaponRanged.range,
                     limitToFov: true,
                     filter: function(target){
                         return _this.canPerformActionOnTarget('ranged_attack', target, settings);
@@ -181,6 +183,8 @@
                 return true;
             }
         }),
+        use_item: makePerformableAction()
+
     };
 
     PerformableActionTypes.zombie_melee_attack = merge(
@@ -360,15 +364,40 @@
         }),
 
         pickup: makeResolvableleAction({
-            canResolveAction: function(source, settings){
-                return this.canAttachTo(source);
-            },
             resolveAction: function(source, settings){
-                this.attachTo(source);
                 this.game.itemManager.remove(this);
+                source.inventory.add(this);
+                this.game.console.logPickUp(source, this);
                 return true;
             },
         }),
+
+        use_item: makeResolvableleAction({
+            resolveAction: function(source, settings){
+                source.inventory.remove(this);
+                this.use(source);
+                this.game.console.logItemUse(source, this);
+                return true;
+            },
+        }),
+
+        use_item_healing: makeResolvableleAction({
+            canResolveAction: function(source, settings){
+                if(source.hp === source.hpMax){
+                    this.game.console.logCanNotUseHealing(source, this);
+                    return false;
+                }
+                return true;
+            },
+            resolveAction: function(source, settings){
+                source.inventory.remove(this);
+                this.use(source);
+                this.game.console.logItemUseHeal(source, this);
+                return true;
+            },
+
+        }),
+
     };
 
     root.RL.PerformableAction.Types = PerformableActionTypes;

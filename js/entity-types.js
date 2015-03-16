@@ -31,7 +31,11 @@
             sightRange: 30,
 
             initialize: function() {
-                this.meleeWeapon = new RL.Item(this.game, 'claws');
+
+
+                this.equipment = new RL.EquipmentManager(this.game);
+                var meleeWeapon = new RL.Equipment(this.game, 'claws');
+                this.equipment.equip(meleeWeapon);
 
                 this.setPerformableAction('melee_attack');
                 this.setPerformableAction('horde_push_bonus');

@@ -24,6 +24,20 @@
             amount = this.wrapStr(amount + ' hp', RL.Util.COLORS.green);
             this.log(target + ' ' + healed + ' ' + amount);
         },
+        strItemUse: function(target, item){
+            target = this.wrap(target);
+            item = this.wrapItem(item);
+            return target + ' used a ' + item;
+        },
+        logItemUse: function(target, item){
+            this.log(this.strItemUse(target, item));
+        },
+        logItemUseHeal: function(target, item){
+            var msg = this.strItemUse(target, item);
+            var healing = this.wrapStr('healing', 'teal');
+            var hp = this.wrapStr(item.healAmount + 'HP', RL.Util.COLORS.green);
+            this.log(msg + ' ' + healing + ' ' + hp);
+        },
         logAttack: function(source, weapon, target){
 
             var weaponName = this.wrapStr(weapon.name);
@@ -60,21 +74,13 @@
         },
         logPickUp: function(entity, item){
             entity = this.wrap(entity);
-            item = this.wrap(item);
+            item = this.wrapItem(item);
             this.log(entity + ' picked up a ' + item);
         },
-        logPickUpHealing: function(entity, item){
-            entity = this.wrap(entity);
-            var consoleData = item.getConsoleName();
-            var name = this.wrapStr(item.name,  consoleData.color);
-            var healing = this.wrapStr('healing', 'teal');
-            var hp = this.wrapStr(item.healAmount + 'HP', RL.Util.COLORS.green);
-            this.log(entity + ' picked up a ' + name + ' ' + healing + ' ' + hp);
-        },
-        logCanNotPickupHealing: function(entity, item){
+        logCanNotUseHealing: function(entity, item){
             entity = this.wrap(entity);
             item = this.wrap(item);
-            this.game.console.log(entity + ' see a ' + item + ' but have no use for it right now.');
+            this.game.console.log(entity + ' can not use healing item when at full health.');
         },
         logCanNotPickupWeapon: function(entity, currentWeapon, item){
             var currentItem = this.wrap(currentWeapon);
@@ -134,12 +140,14 @@
         },
 
         wrap: function(obj){
-            var data = obj.getConsoleName();
-            var str = data.name;
-            if(data.stats){
-                str += ' ' + data.stats;
+            return this.wrapStr(obj.name, obj.consoleColor);
+        },
+        wrapItem: function(item){
+            var name = item.name;
+            if(item.statDesc){
+                name += ' ' + item.statDesc;
             }
-            return this.wrapStr(data.name, data.color);
+            return this.wrapStr(name, item.consoleColor);
         },
         wrapStr: function(str, color){
             var style = '';
