@@ -23,7 +23,7 @@
         /**
          * Optional callback called when equipped.
          * @metod onEquip
-         * @param {EquipmentManager} manager - The manager the equipment is being added to.
+         * @param {Entity} entity - The entity the equipment is being added to.
          * @param {String} slot - The slot being equiped to.
          */
         onEquip: false,
@@ -31,7 +31,7 @@
         /**
          * Optional callback called when un-equipped.
          * @metod onUnEquip
-         * @param {EquipmentManager} manager - The manager the equipment is being removed from.
+         * @param {Entity} entity - The entity the equipment is being removed from.
          * @param {String} slot - The slot being unequiped from.
          */
         onUnEquip: false,
@@ -244,7 +244,7 @@
             splashDamage: 1,
         }),
 
-        'ammo_9mm': makeAmmo({
+        ammo_9mm: makeAmmo({
             name: '9mm',
             ammoType: '9mm',
             color: 'yellow',
@@ -253,7 +253,7 @@
             rangeMod: 1,
         }),
 
-        'ammo_45cal': makeAmmo({
+        ammo_45cal: makeAmmo({
             name: '45cal',
             ammoType: '45cal',
             color: 'yellow',
