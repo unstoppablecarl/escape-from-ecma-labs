@@ -1,300 +1,118 @@
 (function(root) {
     'use strict';
 
-    /**
-     * @class Inventory
-     * @constructor
-     * @param {Game} game - Game instance this obj is attached to.
-     * @param {Entity} entity - Entity this object it attached to.
-     */
-    var Inventory = function Inventory(game) {
-        this.game = game;
-        this.items = [];
-    };
-
-    Inventory.prototype = {
-        constructor: Inventory,
+    var extendedInventory = {
 
         /**
-         * Game instance this obj is attached to.
-         * @property game
-         * @type Game
+         * Cache of view objects by item type.
+         * @type {Object}
          */
-        game: null,
+        viewObjectsByType: null,
 
         /**
-         * List of items.
-         * @property items
+         * Array of view objects to be displayed.
          * @type {Array}
          */
-        items: null,
+        viewObjects: null,
 
         /**
-         * Add an item.
-         * @method add
-         * @param {Item} item - The item to add
-         * @return {Item} The added item.
+         *
+         * @method init
+         * @param {Game} game
          */
-        add: function(item){
-
-            item.game = this.game;
-            item.x = false;
-            item.y = false;
-
-            this.items.push(item);
-            if(item.onAdd){
-                item.onAdd(this);
-            }
-            return item;
+        init: function(game) {
+            this.viewObjects = [];
+            this.viewObjectsByType = {};
         },
 
         /**
-         * Add multiple items to this manager.
-         * @method addMultiple
-         * @param {Array} items - Array of items to remove.
-         * @return {Array} The added items.
+         * Sort view Objects by name
+         * @method sortViewObjects
+         * @return {Number}
          */
-        addMultiple: function(items){
-            for (var i = 0; i < items.length - 1; i++) {
-                this.add(items[i]);
-            }
-            return items;
+        sortViewObjects: function() {
+            this.viewObjects.sort(function(a, b) {
+                if (a.name > b.name) {
+                    return 1;
+                }
+                if (a.name < b.name) {
+                    return -1;
+                }
+                return 0;
+            });
         },
 
         /**
-         * Remove an Item from this manager.
-         * @method remove
-         * @param {String|Item} item
-         * @return {Item} The removed item.
-         */
-        remove: function(item){
-            var index = this.items.indexOf(item);
-            if(index === -1){
-                throw new Error('Attempting to remove item not in Inventory.');
-            }
-            this.items.splice(index, 1);
-            if(item.onRemove){
-                item.onRemove(this);
-            }
-            return item;
-        },
-
-        /**
-         * Remove multiple items from this manager.
-         * @method removeMultiple
-         * @param {Array} items - Array of items to remove.
-         * @return {Array} The removed items.
-         */
-        removeMultiple: function(items){
-            for (var i = 0; i < items.length - 1; i++) {
-                this.remove(items[i]);
-            }
-            return items;
-        },
-
-        /**
-         * Checks if the item is in this manager.
-         * @method contains
+         * Gets a view object from the cache. Creates and addes it, if not found in cache.
+         * @method getViewObject
          * @param {Item} item
-         * @return {Bool}
+         * @return {Object}
          */
-        contains: function(item){
-            return this.items.indexOf(item) !== -1;
+        getViewObject: function(item){
+            var type = item.type;
+            if (!this.viewObjectsByType[type]) {
+                var newViewObject = {
+                    name: item.name,
+                    statDesc: item.statDesc,
+                    type: type,
+                    itemType: item.itemType,
+                    equipableToSlots: item.equipableToSlots,
+                    quantity: 0,
+                    consoleColor: item.consoleColor
+                };
+                this.viewObjectsByType[type] = newViewObject;
+            }
+            return this.viewObjectsByType[type];
         },
 
         /**
-         * Find all items in this manager that matches the `filter` function.
-         * @method get
-         * @param {Function} [filter] - Function to filter by.
-         * @param {Number} [limit] - The limit to be removed. If not set all matches will be returned.
-         * @return {Array} Matching results.
+         * Optional callback called when an item is added.
+         * @metod onAdd
+         * @param {Item} item - The item being added.
          */
-        get: function(filter, limit){
-            var items;
+        onAdd: function(item) {
+            var type = item.type;
 
-            if(filter && limit){
-                items = [];
-                var count = 0;
-                for (var i = 0; i < this.items.length; i++) {
-                    var item = this.items[i];
-                    if(filter(item)){
-                        items.push(item);
-                        count++;
-                    }
-                    if(count === limit){
-                        break;
-                    }
-                }
-            } else if(filter){
-                items = this.items.filter(filter);
-            } else if(limit){
-                items = this.items.slice(0, limit);
-            } else {
-                items = this.items;
+            var viewObject = this.getViewObject(item);
+
+            // if not already in the list, add it and sort
+            if(this.viewObjects.indexOf(viewObject) === -1){
+                this.viewObjects.push(viewObject);
+                this.sortViewObjects();
             }
 
-            return items;
+            // var ammo = this.game.player.equipment.ammo;
+            // if(ammo && type === ammo.type){
+            //     this.game.player.updateAmmoCount();
+            // }
+
+            this.viewObjectsByType[type].quantity++;
         },
 
         /**
-         * Find all items of given type.
-         * @method getByType
-         * @param {String} type
-         * @param {Number} [limit] - The limit to be removed. If not set all matches will be returned.
-         * @return {Array} Matching results.
+         * Optional callback called when an item is removed.
+         * @metod onRemove
+         * @param {Item} item - The item being removed.
          */
-        getByType: function(type, limit){
-            return this.get(function(item){
-                return item.type === type;
-            }, limit);
-        },
+        onRemove: function(item) {
+            var viewObject = this.getViewObject(item);
+            viewObject.quantity--;
 
-        /**
-         * Count all items in this manager that matches the `filter` function.
-         * @method count
-         * @param {Function} [filter] - Function to filter by.
-         * @return {Array} Matching results.
-         */
-        count: function(filter){
-            return this.get(filter).length;
-        },
-
-        /**
-         * Count the number of items of given type.
-         * @method countByType
-         * @param {[type]} type
-         * @param {[type]} limit
-         * @return {[type]}
-         */
-        countByType: function(type, limit){
-            return this.getByType(type, limit).length;
-        },
-
-        /**
-         * Remove a number of items by type.
-         * @method removeByType
-         * @param {String} type - The Item.Type to filter by.
-         * @param {Number} [quantity] - The quantity to be removed. If not set all matching items will be removed.
-         * @param {Bool} [strictQuantity=false] - If not provided value of `this.strictQuantity` is used instead.
-         * @see RL.Inventory.strictQuantity
-         * @return {Array} The removed items.
-         */
-        removeByType: function(type, quantity, strictQuantity){
-            if(strictQuantity === void 0){
-                strictQuantity = this.strictQuantity;
-            }
-
-            var items = this.getByType(type, quantity);
-
-            if(strictQuantity && items.length < quantity){
-                throw new Error('Attempting to remove ' + quantity + ' items from Inventory containing only ' + items.length + ' items matching action filter requirements.');
-            }
-
-            return this.removeMultiple(items, quantity);
-        },
-
-        /**
-         * Remove a number of items that match the given filter.
-         * @method removeByFilter
-         * @param {Function} filter - Function to filter by.
-         * @param {Number} [quantity] - The quantity to be removed. If not set all matches will be removed.
-         * @param {Bool} [strictQuantity=false] - If not provided value of `this.strictQuantity` is used instead.
-         * @see RL.Inventory.strictQuantity
-         * @return {Array} The removed items.
-         */
-        removeByFilter: function(filter, quantity, strictQuantity){
-            if(strictQuantity === void 0){
-                strictQuantity = this.strictQuantity;
-            }
-
-            var items = this.get(filter, quantity);
-
-            if(strictQuantity && items.length < quantity){
-                throw new Error('Attempting to remove ' + quantity + ' items from Inventory containing only ' + items.length + ' items matching action filter requirements.');
-            }
-
-            return this.removeMultiple(items, quantity);
-        },
-
-        /**
-         * Get the first item in this manager that matches the `filter` function.
-         * @method getFirst
-         * @param {Function} [filter] - Function to filter results by. If not provided the first item in this manager is returned.
-         * @return {Bool|Item} False if no results found.
-         */
-        getFirst: function(filter){
-            var items = this.items;
-
-            if(!filter){
-                return items[0];
-            }
-
-            for (var i = 0; i < items.length - 1; i++) {
-                var item = items[i];
-                if(filter(item)){
-                    return item;
+            // remove from list if quantity 0
+            if (!viewObject.quantity) {
+                var index = this.viewObjects.indexOf(viewObject);
+                if (index !== -1) {
+                    this.viewObjects.splice(index, 1);
                 }
             }
-            return false;
+
+            // var ammo = this.game.player.equipment.ammo;
+            // if(ammo && item.type === ammo.type){
+            //     this.game.player.updateAmmoCount();
+            // }
         },
-
-        /**
-         * Get the last item in this manager that matches the `filter` function.
-         * @method getLast
-         * @param {Function} [filter] - Function to filter results by. If not provided the last item in this manager is returned.
-         * @return {Bool|Item} False if no results found.
-         */
-        getLast: function(filter){
-            var items = this.items,
-                length = items.length;
-
-            if(!filter){
-                return items[length - 1];
-            }
-
-            for(var i = length - 1; i >= 0; i--){
-                var item = items[i];
-                if(filter(item)){
-                    return item;
-                }
-            }
-            return false;
-        },
-
-        /**
-         * Retrieves the first item of given type found.
-         * @method getFirstByType
-         * @param {String} type - A string to lookup an type `RL.Item.Types[type]`.
-         * @return {Bool|Item} False if no results found.
-         */
-        getFirstByType: function(type){
-            for (var i = 0; i < this.items.length - 1; i++) {
-                var item = this.items[i];
-                if(item.type === type){
-                    return item;
-                }
-            }
-            return false;
-        },
-
-        /**
-         * Retrieves the last item of given type found.
-         * @method getLastByType
-         * @param {String} type - A string to lookup an type `RL.Item.Types[type]`.
-         * @return {Bool|Item} False if no results found.
-         */
-        getLastByType: function(type){
-            for(var i = this.items.length - 1; i >= 0; i--){
-                var item = this.items[i];
-                if(item.type === type){
-                    return item;
-                }
-            }
-            return false;
-        },
-
     };
 
-    root.RL.Inventory = Inventory;
+    RL.Util.merge(RL.Inventory.prototype, extendedInventory);
 
 }(this));

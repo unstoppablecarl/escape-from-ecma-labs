@@ -1,38 +1,7 @@
 (function(root) {
     'use strict';
 
-    /**
-    * Represents an equipment item
-    * @class Equipment
-    * @constructor
-    * @uses TileDraw
-    * @extends {Item}
-    * @param {Object} game - Game instance this obj is attached to.
-    * @param {String} type - Type of tile. When created this object is merged with the value of Equipment.Types[type].
-    * @param {Number} x - The map tile coordinate position of this tile on the x axis.
-    * @param {Number} y - The map tile coordinate position of this tile on the y axis.
-    */
-    var Equipment = function Equipment(game, type, x, y) {
-        this.game = game;
-        this.x = x;
-        this.y = y;
-        this.type = type;
-
-        var typeData = Equipment.Types[type];
-        RL.Util.merge(this, typeData);
-
-        // copy from prototype
-        this.equipableToSlots = [].concat(this.equipableToSlots);
-
-        this.setResolvableAction('pickup');
-
-        if(this.init){
-            this.init(game, type, x, y);
-        }
-    };
-
     var equipmentPrototype = {
-        constructor: Equipment,
 
         /**
          * The default slot to equip this item to when none is specified.
@@ -54,7 +23,7 @@
         /**
          * Optional callback called when equipped.
          * @metod onEquip
-         * @param {Equipment|False} equipment - The equipment being added.
+         * @param {EquipmentManager} manager - The manager the equipment is being added to.
          * @param {String} slot - The slot being equiped to.
          */
         onEquip: false,
@@ -62,7 +31,7 @@
         /**
          * Optional callback called when un-equipped.
          * @metod onUnEquip
-         * @param {Equipment|False} equipment - The equipment being removed.
+         * @param {EquipmentManager} manager - The manager the equipment is being removed from.
          * @param {String} slot - The slot being unequiped from.
          */
         onUnEquip: false,
@@ -76,34 +45,105 @@
         canEquipToSlot: function(slot){
             return this.equipableToSlots.indexOf(slot) !== -1;
         },
+
+        use: false,
+
+        init: function(game, type){
+            // copy from prototype
+            this.equipableToSlots = [].concat(this.equipableToSlots);
+
+            this.setResolvableAction('pickup');
+        }
     };
 
-    Equipment.prototype = RL.Util.merge({}, RL.Item.prototype, equipmentPrototype);
+    // Equipment.prototype = RL.Util.merge({}, RL.Item.prototype, equipmentPrototype);
 
     var Defaults = {
         meleeWeapon: {
             itemType: 'weaponMelee',
             defaultSlot: 'weaponMelee',
-            equipableToSlots: ['weaponMelee']
+            equipableToSlots: ['weaponMelee'],
+            damage: 0,
         },
         rangedWeapon: {
             itemType: 'weaponRanged',
+            ammoType: null,
             defaultSlot: 'weaponRanged',
-            equipableToSlots: ['weaponRanged']
+            equipableToSlots: ['weaponRanged'],
+            damage: 0,
+            range: 0,
+            splashRange: 0,
+            splashDamage: 0,
+
+            canUseAmmo: function(ammo){
+                return ammo.ammoType === this.ammoType;
+            }
+        },
+        ammo: {
+            itemType: 'ammo',
+            defaultSlot: 'ammo',
+            equipableToSlots: ['ammo'],
+
+            consoleColor: 'yellow',
+
+            ammoType: null,
+            damageMod: 0,
+            rangeMod: 0,
+            splashDamageMod: 0,
+            splashRangeMod: 0,
+        },
+    };
+
+    var makeMeleeWeapon = function(newProto){
+        newProto = RL.Util.merge({}, equipmentPrototype, Defaults.meleeWeapon, newProto);
+
+        newProto.statDesc = '[Damage: ' + newProto.damage + ']';
+        return newProto;
+    };
+
+    var makeRangedWeapon = function(newProto){
+        newProto = RL.Util.merge({}, equipmentPrototype, Defaults.rangedWeapon, newProto);
+
+        newProto.statDesc = '[Damage: ' + newProto.damage + ', Range: ' + newProto.range + ']';
+        return newProto;
+    };
+
+    var makeAmmo = function(newProto){
+        newProto = RL.Util.merge({}, equipmentPrototype, Defaults.ammo, newProto);
+
+        var mods = {};
+        if(newProto.damageMod){
+            mods.Damage = newProto.damageMod;
         }
+        if(newProto.rangeMod){
+            mods.Range = newProto.rangeMod;
+        }
+        if(newProto.splashDamageMod){
+            mods['Splash Damage'] = newProto.splashDamageMod;
+        }
+        if(newProto.splashRangeMod){
+            mods['Splash Range'] = newProto.splashRangeMod;
+        }
+
+        var statDesc = [];
+        for(var key in mods){
+            var val = mods[key];
+            if(val > 0){
+                val = '+' + val;
+            }
+            statDesc.push(key + ': ' + val);
+        }
+
+        if(statDesc.length){
+            newProto.statDesc = '[' + statDesc.join(', ') + ']';
+        }
+        return newProto;
+
+        // var itemConstructor = RL.Util.compose(Equipment, newProto);
+        // return itemConstructor;
     };
 
-    var makeMeleeWeapon = function(obj){
-        obj.statDesc = '[Damage: ' + obj.damage + ']';
-        return RL.Util.merge(obj, Defaults.meleeWeapon);
-    };
-
-    var makeRangedWeapon = function(obj){
-        obj.statDesc = '[Damage: ' + obj.damage + ', Range: ' + obj.range + ']';
-        return RL.Util.merge(obj, Defaults.rangedWeapon);
-    };
-
-    Equipment.Types = {
+    var itemTypes = {
 
         // enemy weapons
         claws: makeMeleeWeapon({
@@ -183,18 +223,49 @@
             damage: 10,
         }),
 
-
         // ranged weapons
         pistol: makeRangedWeapon({
-            name: 'Pistol',
+            name: 'Pistol 9mm',
+            ammoType: '9mm',
             color: '#808080',
             char: 'r',
             damage: 2,
             range: 5,
+
+        }),
+
+        grenade: makeRangedWeapon({
+            name: 'Grenade',
+            color: '#808080',
+            char: 'g',
+            damage: 2,
+            range: 5,
+            splashRange: 1,
+            splashDamage: 1,
+        }),
+
+        'ammo_9mm': makeAmmo({
+            name: '9mm',
+            ammoType: '9mm',
+            color: 'yellow',
+            char: '"',
+            damageMod: 2,
+            rangeMod: 1,
+        }),
+
+        'ammo_45cal': makeAmmo({
+            name: '45cal',
+            ammoType: '45cal',
+            color: 'yellow',
+            char: '"',
+            damageMod: 2,
+            rangeMod: 1,
         }),
     };
 
-
-    root.RL.Equipment = Equipment;
+    for(var type in itemTypes){
+        var objProto = itemTypes[type];
+        RL.Item.addType(type, objProto);
+    }
 
 }(this));

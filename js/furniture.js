@@ -7,23 +7,16 @@
     * @constructor
     * @param {Object} game - Game instance this obj is attached to.
     * @param {String} type - Type of tile. When created this object is merged with the value of Furniture.Types[type].
-    * @param {Number} x - The map tile coordinate position of this tile on the x axis.
-    * @param {Number} y - The map tile coordinate position of this tile on the y axis.
     */
-    var Furniture = function Furniture(game, type, x, y) {
+    var Furniture = function Furniture(game, settings) {
         this.game = game;
-        this.x = x;
-        this.y = y;
-        this.type = type;
-
-        var typeData = Furniture.Types[type];
-        RL.Util.merge(this, typeData);
 
         // all furniture must be destroyable!
         this.setResolvableAction('melee_attack');
+        this.setResolvableAction('ranged_attack');
 
         if(this.init){
-            this.init();
+            this.init(game, settings);
         }
     };
 
@@ -155,7 +148,11 @@
         },
     };
 
-    RL.Util.merge(Furniture.prototype, RL.Mixins.TileDraw);
+    RL.Util.merge(
+        Furniture.prototype,
+        RL.Mixins.TileDraw,
+        RL.Mixins.ResolvableActionInterface
+    );
 
     /**
     * Describes different types of tiles. Used by the Furniture constructor 'type' param.
@@ -175,7 +172,7 @@
     * @class Furniture.Types
     * @static
     */
-    Furniture.Types = {
+    var furnitureTypes = {
         chair: {
             name: 'Chair',
             hp: 4,
@@ -493,11 +490,40 @@
                     this.game.lighting.remove(this.x, this.y);
                 }
             }
+        },
+        target: {
+            name: 'Target',
+            char: '+',
+            color: '#ff0000',
+            consoleColor: '#ff0000',
+            passable: false,
+            hp: 1,
+            init: function(){
+                this.setResolvableAction('melee_attack');
+                this.setResolvableAction('ranged_attack');
+            },
         }
     };
 
-    RL.Util.merge(Furniture.prototype, RL.Mixins.ResolvableActionInterface);
 
-    root.RL.Furniture = Furniture;
+    RL.Furniture = Furniture;
+
+    RL.Furniture.Types = {};
+
+    RL.Furniture.addType = function(type, objProto){
+        objProto.type = type;
+        var ObjConstructor = RL.Util.compose(Furniture, objProto);
+        RL.Furniture.Types[type] = ObjConstructor;
+    };
+
+    RL.Furniture.make = function(game, type, settings){
+        var Type = RL.Furniture.Types[type];
+        return new Type(game, settings);
+    };
+
+    for(var type in furnitureTypes){
+        var objProto = furnitureTypes[type];
+        RL.Furniture.addType(type, objProto);
+    }
 
 }(this));
