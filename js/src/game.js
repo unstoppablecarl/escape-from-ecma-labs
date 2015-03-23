@@ -12,7 +12,7 @@
 
         // un-populated instance of Array2d
         this.map = new RL.Map(this);
-        this.entityManager = new RL.ObjectManager(this, RL.Entity);
+        this.entityManager = new RL.ObjectManager(this, RL.Entity.make);
         this.renderer = new RL.Renderer(this);
         this.console = new RL.Console(this);
         this.lighting = new RL.LightingROT(this);

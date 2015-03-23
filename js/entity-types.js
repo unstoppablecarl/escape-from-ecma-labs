@@ -1,7 +1,12 @@
 (function(root) {
     'use strict';
 
-    root.RL.Entity.Types = {
+    RL.Util.merge(
+        RL.Entity.prototype,
+        RL.Mixins.Equipment
+    );
+
+    var entityTypes = {
         zombie: {
             name: 'Zombie',
             char: 'z',
@@ -30,14 +35,20 @@
 
             sightRange: 30,
 
-            initialize: function() {
+            equipment: {
+                armor: null,
+                weaponMelee: null,
+                weaponRanged: null,
+                ammo: null,
+            },
 
+            init: function() {
+                this.equipment = RL.Util.merge({}, this.equipment);
 
-                this.equipment = new RL.EquipmentManager(this.game);
-                var meleeWeapon = new RL.Equipment(this.game, 'claws');
-                this.equipment.equip(meleeWeapon);
+                var weaponMelee = RL.Item.make(this.game, 'claws');
+                this.equip(weaponMelee);
 
-                this.setPerformableAction('melee_attack');
+                this.setPerformableAction('melee_attack', 'melee_attack_zombie');
                 this.setPerformableAction('horde_push_bonus');
 
                 this.setResolvableAction('melee_attack');
@@ -59,6 +70,7 @@
                 this.hordePushBonus = 0;
                 return result;
             },
+
             /**
              * Called every turn by the entityManger (entity turns are triggered after player actions are complete)
              * @method update
@@ -272,6 +284,11 @@
             }
         },
     };
+
+    for(var type in entityTypes){
+        var objProto = entityTypes[type];
+        RL.Entity.addType(type, objProto);
+    }
 
     /*
         zombie types
