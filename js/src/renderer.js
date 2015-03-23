@@ -221,17 +221,20 @@
         * @method draw
         */
         draw: function(){
-            this.fillBg();
-            for (var x = this.width - 1; x >= 0; x--) {
-                for (var y = this.height - 1; y >= 0; y--) {
-                    // get the actual map tile coord from view coord using offset
-                    var tileX = x + this.originX,
-                        tileY = y + this.originY;
-                    this.drawTile(tileX, tileY);
+            var _this = this;
+            window.requestAnimationFrame(function(){
+                _this.fillBg();
+                for (var x = _this.width - 1; x >= 0; x--) {
+                    for (var y = _this.height - 1; y >= 0; y--) {
+                        // get the actual map tile coord from view coord using offset
+                        var tileX = x + _this.originX,
+                            tileY = y + _this.originY;
+                        _this.drawTile(tileX, tileY);
+                    }
                 }
-            }
+                _this.drawBufferToCanvas();
+            });
 
-            this.drawBufferToCanvas();
         },
 
         drawTile: function(x, y, layers){
