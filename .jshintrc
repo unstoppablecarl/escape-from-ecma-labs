@@ -1,4 +1,5 @@
 {
+    "predef": [ "RL" ],
   "laxbreak": true,
   "node": true,
   "unused": true,
