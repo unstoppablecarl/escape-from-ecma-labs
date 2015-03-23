@@ -3,6 +3,9 @@
 
     var merge = RL.Util.merge;
 
+    var PerformableActionTypes = {};
+    var ResolvableActionTypes = {};
+
     var makePerformableAction = function(obj){
         return merge({}, RL.PerformableAction, obj);
     };
@@ -15,6 +18,8 @@
         return function(settings){
             var _this = this;
             var validTargetsSettings = {
+                x: this.x,
+                y: this.y,
                 range: 1,
                 limitToFov: false,
                 limitToNonDiagonalAdjacent: true,
@@ -22,198 +27,33 @@
                     return _this.canPerformActionOnTarget(action, target, settings);
                 }
             };
-            var validTargetsFinder = new RL.ValidTargetsFinder(this.game, this, validTargetsSettings);
+            var validTargetsFinder = new RL.ValidTargetsFinder(this.game, validTargetsSettings);
             var result = validTargetsFinder.getValidTargets();
             return result;
         };
     };
 
-    var PerformableActionTypes = {
+    var makeActionTypePair = function (settings){
+        var action = settings.action;
+        var performable = settings.performable;
+        var resolvable = settings.resolvable;
 
-        open: makePerformableAction({
-            canPerformAction: true,
-            canPerformActionOnTarget: true,
+        PerformableActionTypes[action] = makePerformableAction(performable);
+        ResolvableActionTypes[action] = makeResolvableleAction(resolvable);
+    };
+
+    makeActionTypePair({
+        action: 'open',
+
+        performable: {
             performAction: function(target){
                 this.game.console.logOpen(this, target);
                 return true;
             },
             getTargetsForAction: makeAdjacentTargetsFinder('open')
-        }),
+        },
 
-        close: makePerformableAction({
-            canPerformAction: true,
-            canPerformActionOnTarget: true,
-            performAction: function(target){
-                this.game.console.logClose(this, target);
-                return true;
-            },
-            getTargetsForAction: makeAdjacentTargetsFinder('close')
-        }),
-
-        push: makePerformableAction({
-            canPerformAction: true,
-            canPerformActionOnTarget: true,
-            performAction: function(target){
-
-                // if grabbing an object already
-                // and pushing another object
-                // let go of the grabbed object
-                if(this.grabTarget && this.grabTarget !== target){
-                    this.game.console.logGrabLetGo(this, this.grabTarget);
-                    this.grabTarget = false;
-                }
-                return true;
-            },
-            getTargetsForAction: makeAdjacentTargetsFinder('push')
-        }),
-
-        grab: makePerformableAction({
-            canPerformAction: true,
-            canPerformActionOnTarget: true,
-            performAction: function(target, settings){
-                if(this.grabTarget){
-                    this.game.console.logGrabLetGo(this, this.grabTarget);
-                    this.grabTarget = false;
-                    return false;
-                }
-
-                this.grabTarget = target;
-                this.game.console.logGrab(this, target);
-            },
-            getTargetsForAction: function(settings){
-                if(this.grabTarget){
-                    return [{
-                        x: this.grabTarget.x,
-                        y: this.grabTarget.y,
-                        value: this.grabTarget,
-                    }];
-                }
-                var _this = this;
-                var validTargetsSettings = {
-                    range: 1,
-                    limitToFov: false,
-                    limitToNonDiagonalAdjacent: true,
-                    filter: function(target){
-                        return _this.canPerformActionOnTarget('grab', target, settings);
-                    }
-                };
-                var validTargetsFinder = new RL.ValidTargetsFinder(this.game, this, validTargetsSettings);
-                var result = validTargetsFinder.getValidTargets();
-                return result;
-            }
-        }),
-
-        pickup: makePerformableAction({
-            canPerformAction: true,
-            canPerformActionOnTarget: true,
-            performAction: function(target, settings){
-                return {};
-            },
-            getTargetsForAction: makeAdjacentTargetsFinder('pickup')
-        }),
-
-        melee_attack: makePerformableAction({
-            canPerformAction: function(settings){
-                if(!this.equipment.slots.weaponMelee){
-                    this.game.console.log('you do not have a melee weapon');
-                    return false;
-                }
-                return true;
-            },
-            canPerformActionOnTarget: true,
-            performAction: function(target, settings){
-                var weaponMelee = this.equipment.slots.weaponMelee;
-                return {
-                    damage: weaponMelee.damage,
-                    weapon: weaponMelee
-                };
-            },
-            getTargetsForAction: makeAdjacentTargetsFinder('melee_attack')
-        }),
-
-        ranged_attack: makePerformableAction({
-            canPerformAction: function(settings){
-                if(!this.equipment.slots.weaponRanged){
-                    this.game.console.log('you do not have a ranged weapon');
-                    return false;
-                }
-                return true;
-            },
-            canPerformActionOnTarget: function(target, settings){
-                if(!this.fov.get(target.x, target.y)){
-                    return false;
-                }
-                // range has already been checked by validTargets
-                return true;
-            },
-            performAction: function(target, settings){
-                var weaponRanged = this.equipment.slots.weaponRanged;
-                return {
-                    damage: weaponRanged.damage,
-                    weapon: weaponRanged
-                };
-            },
-            getTargetsForAction: function(settings){
-                var _this = this;
-                var validTargetsSettings = {
-                    range: this.equipment.slots.weaponRanged.range,
-                    limitToFov: true,
-                    filter: function(target){
-                        return _this.canPerformActionOnTarget('ranged_attack', target, settings);
-                    }
-                };
-                var validTargetsFinder = new RL.ValidTargetsFinder(this.game, this, validTargetsSettings);
-                return validTargetsFinder.getValidTargets();
-            },
-            afterPerformActionSuccess: function(target, settings){
-                if(settings.result.weapon.afterSuccess){
-                    settings.result.weapon.afterSuccess(this, target, settings);
-                }
-            }
-        }),
-
-        horde_push_bonus: makePerformableAction({
-            initialize: function(){
-                this.hordePushBonus = 0;
-            },
-            canPerformAction: true,
-            canPerformActionOnTarget: true,
-            performAction: function(source, settings){
-                settings.hordePushBonus = this.meleeWeapon.damage + this.hordePushBonus;
-                return true;
-            }
-        }),
-        use_item: makePerformableAction()
-
-    };
-
-    PerformableActionTypes.zombie_melee_attack = merge(
-        {},
-        PerformableActionTypes.melee_attack,
-        {
-            performAction: function(target, settings){
-                var damage = this.meleeWeapon.damage;
-                var targetIsFurniture = target instanceof RL.Furniture;
-                if(targetIsFurniture && this.hordePushBonus){
-                    damage += this.hordePushBonus;
-                    this.hordePushBonus = 0;
-                }
-                return {
-                    damage: damage,
-                    weapon: this.meleeWeapon
-                };
-            },
-        }
-    );
-
-    var ResolvableActionTypes = {
-
-        grab: makeResolvableleAction({
-            canResolveAction: true,
-            resolveAction: true,
-        }),
-
-        open: makeResolvableleAction({
+        resolvable: {
             canResolveAction: function(source, settings){
                 return !this.open;
             },
@@ -224,9 +64,21 @@
                 this.char = "'";
                 return true;
             },
-        }),
+        }
+    });
 
-        close: makeResolvableleAction({
+    makeActionTypePair({
+        action: 'close',
+
+        performable: {
+            performAction: function(target){
+                this.game.console.logClose(this, target);
+                return true;
+            },
+            getTargetsForAction: makeAdjacentTargetsFinder('close')
+        },
+
+        resolvable: {
             canResolveAction: function(source, settings){
                 if(!this.open){
                     return false;
@@ -247,9 +99,30 @@
                 this.char = "+";
                 return true;
             },
-        }),
+        }
+    });
 
-        push: makeResolvableleAction({
+    makeActionTypePair({
+        action: 'push',
+
+        performable: {
+            canPerformAction: true,
+            canPerformActionOnTarget: true,
+            performAction: function(target){
+
+                // if grabbing an object already
+                // and pushing another object
+                // let go of the grabbed object
+                if(this.grabTarget && this.grabTarget !== target){
+                    this.game.console.logGrabLetGo(this, this.grabTarget);
+                    this.grabTarget = false;
+                }
+                return true;
+            },
+            getTargetsForAction: makeAdjacentTargetsFinder('push')
+        },
+
+        resolvable: {
             canResolveAction: function(source, settings){
                 var pusherX = source.x,
                     pusherY = source.y,
@@ -278,9 +151,102 @@
                 }
                 return true;
             }
-        }),
+        }
+    });
 
-        melee_attack: makeResolvableleAction({
+    makeActionTypePair({
+        action: 'grab',
+
+        performable: {
+            canPerformAction: true,
+            canPerformActionOnTarget: true,
+            performAction: function(target, settings){
+                if(this.grabTarget){
+                    this.game.console.logGrabLetGo(this, this.grabTarget);
+                    this.grabTarget = false;
+                    return false;
+                }
+
+                this.grabTarget = target;
+                this.game.console.logGrab(this, target);
+            },
+            getTargetsForAction: function(settings){
+                if(this.grabTarget){
+                    return [{
+                        x: this.grabTarget.x,
+                        y: this.grabTarget.y,
+                        value: this.grabTarget,
+                    }];
+                }
+                var _this = this;
+                var validTargetsSettings = {
+                    x: this.x,
+                    y: this.y,
+                    range: 1,
+                    limitToFov: false,
+                    limitToNonDiagonalAdjacent: true,
+                    filter: function(target){
+                        return _this.canPerformActionOnTarget('grab', target, settings);
+                    }
+                };
+                var validTargetsFinder = new RL.ValidTargetsFinder(this.game, validTargetsSettings);
+                var result = validTargetsFinder.getValidTargets();
+                return result;
+            }
+        },
+
+        resolvable: {
+            canResolveAction: true,
+            resolveAction: true,
+        }
+    });
+
+
+    makeActionTypePair({
+        action: 'pickup',
+
+        performable: {
+            canPerformAction: true,
+            canPerformActionOnTarget: true,
+            performAction: function(target, settings){
+                return {};
+            },
+            getTargetsForAction: makeAdjacentTargetsFinder('pickup')
+        },
+
+        resolvable: {
+            resolveAction: function(source, settings){
+                this.game.itemManager.remove(this);
+                source.inventory.add(this);
+                this.game.console.logPickUp(source, this);
+                return true;
+            },
+        },
+    });
+
+
+    makeActionTypePair({
+        action: 'melee_attack',
+
+        performable: {
+            canPerformAction: function(settings){
+                if(!this.equipment.weaponMelee){
+                    this.game.console.log('you do not have a melee weapon');
+                    return false;
+                }
+                return true;
+            },
+            performAction: function(target, settings){
+                var weaponMelee = this.equipment.weaponMelee;
+                return {
+                    damage: weaponMelee.damage,
+                    weapon: weaponMelee
+                };
+            },
+            getTargetsForAction: makeAdjacentTargetsFinder('melee_attack')
+        },
+
+        resolvable: {
             canResolveAction: true,
             resolveAction: function(source, settings){
                 var result = settings.result;
@@ -313,9 +279,161 @@
                 }
                 return true;
             },
-        }),
+        }
+    });
+    // alternate melee_attack implementation
+    PerformableActionTypes.melee_attack_zombie = merge(
+        {},
+        PerformableActionTypes.melee_attack,
+        {
+            performAction: function(target, settings){
+                var damage = this.equipment.weaponMelee.damage;
+                var targetIsFurniture = target instanceof RL.Furniture;
+                if(targetIsFurniture && this.hordePushBonus){
+                    damage += this.hordePushBonus;
+                    this.hordePushBonus = 0;
+                }
+                return {
+                    damage: damage,
+                    weapon: this.equipment.weaponMelee
+                };
+            },
+        }
+    );
 
-        ranged_attack: makeResolvableleAction({
+    makeActionTypePair({
+        action: 'ranged_attack',
+
+        performable: {
+            getTargetsForAction: function(settings){
+                var _this = this;
+                var weaponRanged = this.equipment.weaponRanged;
+                var ammo = this.equipment.ammo;
+                var range = weaponRanged.range;
+
+                if(ammo){
+                    range += ammo.rangeMod;
+                }
+                var validTargetsSettings = {
+                    x: this.x,
+                    y: this.y,
+                    limitToFov: this.fov,
+                    range: range,
+                    filter: function(target){
+                        return _this.canPerformActionOnTarget('ranged_attack', target, settings);
+                    }
+                };
+                var validTargetsFinder = new RL.ValidTargetsFinder(this.game, validTargetsSettings);
+                return validTargetsFinder.getValidTargets();
+            },
+            canPerformAction: function(settings){
+                var weapon = this.equipment.weaponRanged;
+                var ammo = this.equipment.ammo;
+
+                if(!weapon){
+                    this.game.console.log('you do not have a ranged weapon');
+                    return false;
+                }
+
+                if(weapon.ammoType && !ammo){
+                    this.game.console.log('you do not have ammo equipped for your ranged weapon');
+                    return false;
+                }
+
+                return true;
+            },
+            canPerformActionOnTarget: function(target, settings){
+                if(!this.fov.get(target.x, target.y)){
+                    return false;
+                }
+                // range has already been checked by validTargets
+                return true;
+            },
+            performAction: function(target, settings){
+                var weaponRanged = this.equipment.weaponRanged;
+                var ammo = this.equipment.ammo;
+                var damage = weaponRanged.damage;
+                var range = weaponRanged.range;
+                var splashRange = weaponRanged.splashRange;
+                var splashDamage = weaponRanged.splashDamage;
+
+                if(ammo){
+                    damage += ammo.damageMod;
+                    range += ammo.rangeMod;
+                    splashRange += ammo.splashRangeMod;
+                    splashDamage += ammo.splashDamageMod;
+                }
+
+                return {
+                    weapon: weaponRanged,
+                    ammo: ammo,
+
+                    damage: damage,
+                    range: range,
+                    splashRange: splashRange,
+                    splashDamage: splashDamage,
+                };
+            },
+
+            afterPerformActionSuccess: function(target, settings){
+                var x = target.x;
+                var y = target.y;
+
+                var result = settings.result;
+
+                var splashDamage = result.splashDamage;
+                var splashRange = result.splashRange;
+
+                var newSettings = {
+                    result: {
+                        weapon: {
+                            name: 'Explosion',
+                            damage: splashDamage
+                        },
+                        damage: splashDamage
+                    }
+                };
+
+                if(splashRange){
+
+                    var source = this;
+                    var validTargetsFinder = new RL.ValidTargetsFinder(this.game, {
+                        x: x,
+                        y: y,
+                        limitToFov: false,
+                        range: splashRange,
+                        prepareValidTargets: false,
+                        includeTiles: true,
+                        filter: function(obj){
+                            if(obj instanceof RL.Tile) {
+                                return obj.type === 'wall';
+                            }
+                            return obj.canResolveAction && obj.canResolveAction('ranged_attack', source, newSettings);
+                        }
+                    });
+                    var adjacentTargets = validTargetsFinder.getValidTargets();
+
+                    if(adjacentTargets && adjacentTargets.length){
+                        for(var i = adjacentTargets.length - 1; i >= 0; i--){
+                            var newTarget = adjacentTargets[i];
+                            if(newTarget instanceof RL.Tile){
+                                if(newTarget.type === 'wall'){
+                                    this.game.map.remove(newTarget.x, newTarget.y);
+                                    this.game.map.set(newTarget.x, newTarget.y, 'floor');
+                                }
+                            } else {
+                                newTarget.resolveAction('ranged_attack', source, newSettings);
+                            }
+                        }
+                    }
+                }
+            },
+            afterPerformAction: function(target, settings){
+                this.useAmmo(1);
+            },
+        },
+
+        resolvable: {
             canResolveAction: true,
             resolveAction: function(source, settings){
                 var result = settings.result;
@@ -350,10 +468,26 @@
                 }
                 return true;
             },
-        }),
+        }
+    });
 
-        horde_push_bonus: makeResolvableleAction({
-            initialize: function(){
+    makeActionTypePair({
+        action: 'horde_push_bonus',
+
+        performable: {
+            init: function(){
+                this.hordePushBonus = 0;
+            },
+            canPerformAction: true,
+            canPerformActionOnTarget: true,
+            performAction: function(source, settings){
+                settings.hordePushBonus = this.equipment.weaponMelee.damage + this.hordePushBonus;
+                return true;
+            }
+        },
+
+        resolvable: {
+            inti: function(){
                 this.hordePushBonus = 0;
             },
             canResolveAction: true,
@@ -361,44 +495,40 @@
                 this.hordePushBonus += settings.hordePushBonus;
                 return true;
             }
-        }),
+        }
+    });
 
-        pickup: makeResolvableleAction({
-            resolveAction: function(source, settings){
-                this.game.itemManager.remove(this);
-                source.inventory.add(this);
-                this.game.console.logPickUp(source, this);
-                return true;
-            },
-        }),
+    makeActionTypePair({
+        action: 'use_item',
 
-        use_item: makeResolvableleAction({
+        performable: {},
+
+        resolvable: {
             resolveAction: function(source, settings){
                 source.inventory.remove(this);
                 this.use(source);
                 this.game.console.logItemUse(source, this);
                 return true;
             },
-        }),
+        }
+    });
 
-        use_item_healing: makeResolvableleAction({
-            canResolveAction: function(source, settings){
-                if(source.hp === source.hpMax){
-                    this.game.console.logCanNotUseHealing(source, this);
-                    return false;
-                }
-                return true;
-            },
-            resolveAction: function(source, settings){
-                source.inventory.remove(this);
-                this.use(source);
-                this.game.console.logItemUseHeal(source, this);
-                return true;
-            },
-
-        }),
-
-    };
+    // alternate use_item implementation
+    ResolvableActionTypes.use_item_healing = makeResolvableleAction({
+        canResolveAction: function(source, settings){
+            if(source.hp === source.hpMax){
+                this.game.console.logCanNotUseHealing(source, this);
+                return false;
+            }
+            return true;
+        },
+        resolveAction: function(source, settings){
+            source.inventory.remove(this);
+            this.use(source);
+            this.game.console.logItemUseHeal(source, this);
+            return true;
+        },
+    });
 
     root.RL.PerformableAction.Types = PerformableActionTypes;
     root.RL.ResolvableAction.Types = ResolvableActionTypes;
