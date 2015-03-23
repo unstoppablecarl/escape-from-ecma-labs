@@ -55,6 +55,72 @@
             return result;
         },
 
+        //area
+        exit: {
+            elevator: {
+                name: 'elevator',
+                author: 'unstoppableCarl',
+                area: 'exit',
+                sides: {
+                    up: {
+                        randomlyPlaceDoor: false,
+                    },
+                    down: {
+                        randomlyPlaceDoor: false,
+                    },
+                    left: {
+                        randomlyPlaceDoor: false,
+                    },
+                    right: {
+                        randomlyPlaceDoor: false,
+                    },
+                },
+
+                // can be extended/overridden by
+                characterToTileType: {
+                    '.': 'floor',
+                    '#': 'wall',
+                },
+
+                characterToType: {
+                    u: 'trashcan',
+                    T: 'table',
+                    t: 'toilet',
+                    U: 'trash',
+                    '+': 'door',
+                    S: 'sink',
+                    x: 'exit'
+                },
+
+                layers: [{
+                    mapData: [
+                        '....................',
+                        '...##############...',
+                        '...#t....##....t#...',
+                        '...####+####+####...',
+                        '...#u...S##S...u#...',
+                        '...+....S##S....+...',
+                        '...##############...',
+                        '....................',
+                        '...T............T...',
+                        '...T............T...',
+                        '...TTTTTTTTTTTTTT...',
+                        '....................',
+                        '....................',
+                        '....................',
+                        '....................',
+                        '...##++##++##++##...',
+                        '...##xx##xx##xx##...',
+                        '...##xx##xx##xx##...',
+                        '...##############...',
+                        '....................',
+                        '....................',
+                    ],
+                    defaultTileType: 'floor',
+                }]
+            },
+        },
+
         // area
         office: {
             // name

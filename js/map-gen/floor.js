@@ -22,16 +22,42 @@
             this.game.setMapSize(this.width, this.height);
             RL.MapGen.Template.prototype.loadToMap.call(this);
 
-            var _this = this;
             var area = this.template.area;
+
+            var roomPlaceholderOrigins = this.getRoomPlaceholderOriginCoords();
+            var roomTemplates = this.getRoomTemplateList(area, roomPlaceholderOrigins.length);
+
+            roomTemplates = RL.Random.shuffleArray(roomTemplates);
+
+            for (var i = 0; i < roomPlaceholderOrigins.length; i++) {
+                var coord = roomPlaceholderOrigins[i];
+                var roomTemplate = roomTemplates[i];
+                var room = new RL.MapGen.Room(this.game, roomTemplate, coord);
+                this.rooms.push(room);
+            }
+        },
+
+        getRoomPlaceholderOriginCoords: function(){
+            var roomPlaceholderOrigins = [];
             this.game.map.each(function(value, x, y){
                 if(value && value.type === 'room_placeholder_origin'){
-                    var roomTemplate = RL.MapGen.Template.Room.getRandom(area);
-                    var settings = {x: x, y: y};
-                    var room = new RL.MapGen.Room(_this.game, roomTemplate, settings);
-                    _this.rooms.push(room);
+                    roomPlaceholderOrigins.push({x: x, y: y});
                 }
             });
+            return roomPlaceholderOrigins;
+        },
+
+        getRoomTemplateList: function(area, count){
+            var out = [];
+            var exitTemplate = RL.MapGen.Template.Room.exit.elevator;
+            out.push(exitTemplate);
+            // reduce by one to account for exit template
+            count--;
+            for (var i = 0; i < count; i++) {
+                var roomTemplate = RL.MapGen.Template.Room.getRandom(area);
+                out.push(roomTemplate);
+            }
+            return out;
         },
 
         placeRooms: function(){
