@@ -162,8 +162,35 @@
             } else if(!outcome && handler.afterPerformActionFailure){
                 handler.afterPerformActionFailure.call(this, target, settings);
             }
+            if(handler.afterPerformAction){
+                handler.afterPerformAction.call(this, target, settings);
+            }
             return outcome;
         },
+
+        /**
+         * Optional Callback. Called after action is performed.
+         * @method afterPerformActionSuccess
+         * @param {Object} target - The target object to perform the action on.
+         * @param {Object} [settings] - Settings for the action.
+         */
+        afterPerformActionSuccess: false,
+
+        /**
+         * Optional Callback. Called after action is performed.
+         * @method afterPerformActionFailure
+         * @param {Object} target - The target object to perform the action on.
+         * @param {Object} [settings] - Settings for the action.
+         */
+        afterPerformActionFailure: false,
+
+        /**
+         * Optional Callback. Called after action is performed.
+         * @method afterPerformAction
+         * @param {Object} target - The target object to perform the action on.
+         * @param {Object} [settings] - Settings for the action.
+         */
+        afterPerformAction: false,
     };
 
     /**
