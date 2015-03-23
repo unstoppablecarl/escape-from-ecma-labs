@@ -98,6 +98,5 @@ RL.Views.equipment(game);
 RL.Views.stats(game);
 
 
-game.start();
 
 
