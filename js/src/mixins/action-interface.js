@@ -14,13 +14,17 @@
          * Sets a performable action implementation on object.
          * @method setPerformableAction
          * @param {String} action - The action name.
-         * @param {PerformableAction} implementation - Object to set as the action implementation.
+         * @param {PerformableAction|String} implementation - Object to set as the action implementation.
          *   or a string to lookup an implementation `RL.PerformableActions[implementation]`.
          */
         setPerformableAction: function(action, implementation){
             this.performableActions                     = this.performableActions                        || {};
             this.performableActions[action]             = this.performableActions[action]                || {};
             this.performableActions[action].actionName  = this.performableActions[action].actionName     || action;
+
+            if(typeof implementation === 'string'){
+                implementation = RL.PerformableAction.Types[implementation];
+            }
 
             implementation = implementation || RL.PerformableAction.Types[action];
 
@@ -206,12 +210,17 @@
          * Sets a resolvable action implementation on object.
          * @method setResolvableAction
          * @param {String} action - The action name.
-         * @param {ResolvableAction} [implementation] - Object to set as the action implementation.
+         * @param {ResolvableAction|String} [implementation] - Object to set as the action implementation.
+         *   or a string to lookup an implementation `RL.ResolvableAction[implementation]`.
          */
         setResolvableAction: function(action, implementation){
             this.resolvableActions                      = this.resolvableActions                        || {};
             this.resolvableActions[action]              = this.resolvableActions[action]                || {};
             this.resolvableActions[action].actionName   = this.resolvableActions[action].actionName     || action;
+
+            if(typeof implementation === 'string'){
+                implementation = RL.resolvableActions.Types[implementation];
+            }
 
             implementation = implementation || RL.ResolvableAction.Types[action];
             this.resolvableActions[action] = Object.create(implementation);
