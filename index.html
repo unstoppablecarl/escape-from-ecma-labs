@@ -18,28 +18,66 @@
 
             </div>
             <h3>Stats</h3>
-            <div class="tr">
+
+            <div id="stats-container" class="tr">
                 <span class="td">HP:</span>
-                <span class="td"><span id="stat-hp"></span>/<span id="stat-hp-max"></span></span>
+                <span class="td">{hp} / {hpMax}</span>
             </div>
 
-            <h3>Weapons</h3>
-            <div class="tr">
-                <span class="td">Melee:</span>
-                <span class="td" id="stat-melee-weapon-name"></span>
-                <span class="td" id="stat-melee-weapon-stats"></span>
-            </div>
+            <h3>Equipment</h3>
+            <div id="equipment-container">
+                <div class="tr">
+                    <span class="td">Armor:</span>
+                    <span class="td">
+                        {slots.armor.name}
+                    </span>
+                    <span class="td">
+                        {slots.armor.statDesc}
+                    </span>
+                </div>
+                <div class="tr">
+                    <span class="td">Melee:</span>
+                    <span class="td" id="stat-melee-weapon-name">
+                        {slots.weaponMelee.name}
+                    </span>
+                    <span class="td" id="stat-melee-weapon-stats">
+                        {slots.weaponMelee.statDesc}
+                    </span>
+                </div>
 
-            <div class="tr">
-                <span class="td">Ranged:</span>
-                <span class="td" id="stat-ranged-weapon-name"></span>
-                <span class="td" id="stat-ranged-weapon-stats"></span>
-            </div>
+                <div class="tr">
+                    <span class="td">Ranged:</span>
+                    <span class="td">
+                        {slots.weaponRanged.name}
+                    </span>
+                    <span class="td">
+                        {slots.weaponRanged.statDesc}
+                    </span>
+                </div>
+                <div class="tr">
+                    <span class="td">Ammo:</span>
+                    <span class="td">
+                        {slots.ammo.name} <span rv-if="slots.ammo">&times; {slots.ammo.ammoQuantity}</span>
+                    </span>
+                    <span class="td">
+                        {slots.ammo.statDesc}
+                    </span>
 
-            <br>
+                </div>
+
+            </div>
 
             <h3>Controls</h3>
-            <div id="controls" class="controls">
+            <div id="controls-container" class="controls">
+                <div class="tr">
+                    <div class="td">Action</div>
+                    <div class="td">Keys</div>
+                </div>
+
+                <div class="tr" rv-each-action="keyBindings">
+                    <div class="td">{action.name}</div>
+                    <div class="td">{action.keys}</div>
+                </div>
 
             </div>
         </div>
@@ -47,9 +85,27 @@
         <div id="console-container" class="console-container"></div>
         <div id="inventory-container" class="inventory-container">
             <h3>Inventory</h3>
-            <div rv-each-item="inventory.items" class="inventory-item">
-                {item.itemType} <strong rv-color="item.consoleColor">{item.name} {item.statDesc}</strong>
-                <span class="btn" rv-use_item="item">use</span>
+
+            <div rv-each-item="inventoryViewData" class="inventory-item tr">
+                <div class="td">
+                    <strong rv-color="item.consoleColor">{item.name}</strong>
+                </div>
+
+                <div class="td">
+                    {item.statDesc}
+                </div>
+
+                <div class="td">
+                    x {item.quantity}
+                </div>
+
+                <div class="td">
+
+                    <span class="btn btn-sm btn-default" rv-if="item.use" rv-use_item="item">use</span>
+                    <span rv-each-slot="item.equipableToSlots">
+                        <span class="btn btn-sm btn-default" rv-equip_item="item">Equip to {slot}</span>
+                    </span>
+                </div>
             </div>
         </div>
         <hr>
@@ -58,10 +114,9 @@
         </p>
         <!-- Load Vendor js files -->
         <script src="js/vendor/rot.js"></script>
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="bower_components/sightglass/index.js"></script>
-        <script src="bower_components/rivets/dist/rivets.js"></script>
-        <!-- <script src="bower_components/vue/dist/vue.js"></script> -->
+        <script src="js/vendor/jquery.min.js"></script>
+        <script src="js/vendor/rivets.bundled.min.js"></script>
+
 
         <!-- Load Lib js files -->
         <script src="js/src/rl.js"></script>
@@ -87,7 +142,11 @@
         <script src="js/src/valid-targets-finder.js"></script>
         <script src="js/src/object-manager.js"></script>
         <script src="js/src/multi-object-manager.js"></script>
+        <script src="js/src/inventory.js"></script>
+        <script src="js/src/item.js"></script>
         <script src="js/src/game.js"></script>
+
+        <script src="js/mixins/equipment.js"></script>
 
         <script src="js/util.js"></script>
         <script src="js/action-types.js"></script>
@@ -103,7 +162,6 @@
         <script src="js/map-gen/room-edge.js"></script>
         <script src="js/map-gen/door.js"></script>
 
-
         <script src="js/map-gen/template/floor.js"></script>
         <script src="js/map-gen/template/room.js"></script>
         <script src="js/map-gen/template/door.js"></script>
@@ -111,10 +169,11 @@
         <script src="js/random.js"></script>
         <script src="js/player.js"></script>
         <script src="js/game.js"></script>
+
         <script src="js/inventory.js"></script>
         <script src="js/item.js"></script>
+
         <script src="js/equipment.js"></script>
-        <script src="js/equipment-manager.js"></script>
         <script src="js/renderer.js"></script>
 
 
@@ -123,10 +182,9 @@
         <script src="js/tile.js"></script>
         <script src="js/entity-types.js"></script>
 
-
-
-        <script src="js/main.js"></script>
         <script src="js/ui.js"></script>
+        <script src="js/main.js"></script>
+
 
          <!-- <script src="test.js"></script> -->
 
