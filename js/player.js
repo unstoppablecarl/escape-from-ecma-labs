@@ -1,36 +1,8 @@
 (function(root) {
     'use strict';
 
-    var proto = root.RL.Player.prototype;
 
-    var NewPlayer = function Player(game){
-        proto.constructor.call(this, game);
-
-        var meleeWeapon = new RL.Equipment(this.game, 'fists');
-        var rangedWeapon = new RL.Equipment(this.game, 'pistol');
-
-        this.inventory = new RL.Inventory(this.game);
-        this.equipment = new RL.EquipmentManager(this.game);
-
-        this.equipment.equip(meleeWeapon);
-        this.equipment.equip(rangedWeapon);
-
-        this.setPerformableAction('open');
-        this.setPerformableAction('close');
-        this.setPerformableAction('grab');
-        this.setPerformableAction('push');
-        this.setPerformableAction('pickup');
-        this.setPerformableAction('use_item');
-
-        this.setPerformableAction('melee_attack');
-        this.setPerformableAction('ranged_attack');
-
-        this.setResolvableAction('melee_attack');
-    };
-
-    var newPlayerPrototype = {
-        constructor: NewPlayer,
-
+    var extendedPlayer = {
         name: 'You',
 
         fovMaxViewDistance: 20,
@@ -52,9 +24,37 @@
 
         bleeds: true,
 
+        equipment: {
+            armor: null,
+            weaponMelee: null,
+            weaponRanged: null,
+            ammo: null,
+        },
+
+        init: function(game){
+            this.inventory = new RL.Inventory(this.game);
+            this.equipment = RL.Util.merge({}, this.equipment);
+
+            var meleeWeapon = RL.Item.make(this.game, 'fists');
+            var rangedWeapon = RL.Item.make(this.game, 'pistol');
+
+            this.equip(meleeWeapon);
+            this.equip(rangedWeapon);
+
+            this.setPerformableAction('open');
+            this.setPerformableAction('close');
+            this.setPerformableAction('grab');
+            this.setPerformableAction('push');
+            this.setPerformableAction('pickup');
+            this.setPerformableAction('use_item');
+            this.setPerformableAction('melee_attack');
+            this.setPerformableAction('ranged_attack');
+
+            this.setResolvableAction('melee_attack');
+        },
+
         update: function(action) {
 
-            this.renderHtml();
             if(action === 'cancel'){
                 this.clearPendingAction();
             }
@@ -207,22 +207,25 @@
         rangedAttack: function(){
             this.pendingActionName = 'ranged_attack';
 
-            var targets = this.getTargetsForAction(this.pendingActionName);
-            if(!targets.length){
-                this.game.console.logNothingTo(this.pendingActionName);
-                return false;
+            var canPerform = this.canPerformAction('ranged_attack');
+
+            if(canPerform){
+                var targets = this.getTargetsForAction(this.pendingActionName, {skipCanPerformAction: true});
+                if(!targets.length){
+                    this.game.console.logNothingTo(this.pendingActionName);
+                    return false;
+                }
+
+                // uncomment this to auto perform an action when there is only one target
+                // if(targets.length === 1){
+                //     return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
+                // }
+                this.actionTargets = new RL.ValidTargets(this.game, targets);
+                this.game.queueDraw = true;
+                this.pendingAction = this.actionTargetSelect;
+                this.game.console.directionsSelectActionTarget(this.pendingActionName);
+                this.game.console.logSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
             }
-
-            // uncomment this to auto perform an action when there is only one target
-            // if(targets.length === 1){
-            //     return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
-            // }
-            this.actionTargets = new RL.ValidTargets(this.game, targets);
-            this.game.queueDraw = true;
-            this.pendingAction = this.actionTargetSelect;
-            this.game.console.directionsSelectActionTarget(this.pendingActionName);
-            this.game.console.logSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
-
             return false;
         },
 
@@ -345,7 +348,7 @@
             return false;
         },
 
-        takeDamage: function(amount, source) {
+        takeDamage: function(amount) {
             if(this.game.gameOver){
                 return;
             }
@@ -373,34 +376,6 @@
             }
         },
 
-        renderHtml: function(){
-            this.hpEl.innerHTML = this.hp;
-            this.hpMaxEl.innerHTML = this.hpMax;
-            if(this.meleeWeaponNameEl){
-                var meleeWeapon = this.equipment.slots.weaponMelee;
-                var meleeName = '';
-                var meleeStats = '';
-                if(meleeWeapon){
-                    meleeName = meleeWeapon.name;
-                    meleeStats = meleeWeapon.statDesc;
-                }
-                this.meleeWeaponNameEl.innerHTML = meleeName;
-                this.meleeWeaponStatsEl.innerHTML = meleeStats;
-            }
-            if(this.meleeWeaponNameEl){
-
-                var rangedWeapon = this.equipment.slots.weaponRanged;
-                var rangedName = '';
-                var rangedStats = '';
-                if(rangedWeapon){
-                    rangedName = rangedWeapon.name;
-                    rangedStats = rangedWeapon.statDesc;
-                }
-                this.rangedWeaponNameEl.innerHTML = rangedName;
-                this.rangedWeaponStatsEl.innerHTML = rangedStats;
-            }
-        },
-
         getConsoleName: function(){
             return {
                 name: this.name,
@@ -409,9 +384,11 @@
         },
     };
 
-    RL.Util.merge(NewPlayer.prototype, proto);
-    RL.Util.merge(NewPlayer.prototype, newPlayerPrototype);
+    RL.Util.merge(
+        RL.Player.prototype,
+        RL.Mixins.Equipment,
+        extendedPlayer
+    );
 
-    root.RL.Player = NewPlayer;
 
 }(this));
