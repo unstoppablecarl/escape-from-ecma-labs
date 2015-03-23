@@ -1,6 +1,8 @@
 (function(root) {
     'use strict';
-var entId = 0;
+
+	var entId = 0;
+
     /**
     * Represents an entity in the game. Usually a character or enemy.
     * Manages state (position, health, stats, etc)
@@ -11,16 +13,14 @@ var entId = 0;
     * @param {Game} game - Game instance this obj is attached to.
     * @param {String} type - Type of entity. When created this object is merged with the value of Entity.Types[type].
     */
-    var Entity = function Entity(game, type) {
+    var Entity = function Entity(game, settings) {
         this.game = game;
-        this.type = type;
-        var typeData = Entity.Types[type];
-        RL.Util.merge(this, typeData);
 
-        if(this.initialize){
-            this.initialize();
-        }
         this.id = entId++;
+
+        if(this.init){
+            this.init(game, settings);
+        }
     };
 
     Entity.prototype = {
@@ -34,6 +34,12 @@ var entId = 0;
         game: null,
 
         /**
+         * Unique id for this entity.
+         * @type {Number}
+         */
+        id: null,
+
+        /**
         * The type of entity this is.
         * When created this object is merged with the value of Entity.Types[type].
         * @property type
@@ -43,11 +49,11 @@ var entId = 0;
 
         /**
         * Called when the entity is first created. Intended to be assigned by Entity.Types.
-        * @method initialize
+        * @method init
+        * @param {Game} game - Game instance this obj is attached to.
+        * @param {String} type - Type of entity. When created this object is merged with the value of Entity.Types[type].
         */
-        initialize: function(){
-
-        },
+        init: false,
 
         /**
         * Name used when referencing or describing this entity.
@@ -178,9 +184,12 @@ var entId = 0;
         },
     };
 
-    RL.Util.merge(Entity.prototype, RL.Mixins.TileDraw);
-    RL.Util.merge(Entity.prototype, RL.Mixins.PerformableActionInterface);
-    RL.Util.merge(Entity.prototype, RL.Mixins.ResolvableActionInterface);
+    RL.Util.merge(
+        Entity.prototype,
+        RL.Mixins.TileDraw,
+        RL.Mixins.PerformableActionInterface,
+        RL.Mixins.ResolvableActionInterface
+    );
 
     /**
     * Describes different types of entities. Used by the Entity constructor 'type' param.
@@ -198,7 +207,7 @@ var entId = 0;
     * @class Entity.Types
     * @static
     */
-    Entity.Types = {
+    var entityTypes = {
         zombie: {
             name: 'Zombie',
             char: 'z',
@@ -207,6 +216,24 @@ var entId = 0;
         },
     };
 
-    root.RL.Entity = Entity;
+    RL.Entity = Entity;
+
+    RL.Entity.Types = {};
+
+    RL.Entity.addType = function(type, objProto){
+        objProto.type = type;
+        var ObjConstructor = RL.Util.compose(Entity, objProto);
+        RL.Entity.Types[type] = ObjConstructor;
+    };
+
+    RL.Entity.make = function(game, type, settings){
+        var Type = RL.Entity.Types[type];
+        return new Type(game, settings);
+    };
+
+    for(var type in entityTypes){
+        var objProto = entityTypes[type];
+        RL.Entity.addType(type, objProto);
+    }
 
 }(this));

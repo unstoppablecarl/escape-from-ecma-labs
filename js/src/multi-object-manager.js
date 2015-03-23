@@ -8,13 +8,14 @@
     * @class MultiObjectManager
     * @constructor
     * @param {Game} game - Game instance this `MultiObjectManager` is attached to.
-    * @param {Object} ObjectConstructor - Object constructor used to create new objects with `this.add()`.
+    * @param {Function} objectMaker - Function used to create new objects with `this.add()`.
     * @param {Number} [width] - Width of current map in tiles.
     * @param {Number} [height] - Height of current map in tiles.
     */
-    var MultiObjectManager = function MultiObjectManager(game, ObjectConstructor, width, height) {
+    var MultiObjectManager = function MultiObjectManager(game, objectMaker, width, height) {
         this.game = game;
-        this.ObjectConstructor = ObjectConstructor;
+        this.game = game;
+        this.objectMaker = objectMaker;
         this.objects = [];
         this.map = new RL.Array2d();
         this.setSize(width, height);
@@ -48,6 +49,14 @@
         * @type Array2d
         */
         map: null,
+
+        /**
+         * callback for making new objects when using `this.add()`.
+         * @method objectMaker
+         * @param {Game} game - The game object.
+         * @param {String} type - The name of the type to make.
+         */
+        objectMaker: null,
 
         /**
         * Retrieves all objects at given map tile coord.
@@ -164,7 +173,7 @@
          * @param {Function} [filter] - A function to filter the objects removed `function(object){  return true }`.
          */
         removeAt: function(x, y, filter){
-            var arr = this.map.get(x, y, filter);
+            var arr = this.get(x, y, filter);
             for(var i = arr.length - 1; i >= 0; i--){
                 this.remove(arr[i]);
             }
@@ -280,13 +289,13 @@
         },
 
         /**
-         * Creates a new object instance.
+         * Creates a new object instance of given type.
          * @method makeNewObjectFromType
          * @param {String} type - The type to make the object
          * @return {Object}
          */
-        makeNewObjectFromType: function(type){
-            return new this.ObjectConstructor(this.game, type);
+        makeNewObjectFromType: function(type, settings){
+            return this.objectMaker(this.game, type, settings);
         },
 
         /**

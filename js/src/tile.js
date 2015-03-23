@@ -1,6 +1,8 @@
 (function(root) {
     'use strict';
 
+    var tileId = 0;
+
     /**
     * Represents a tile in the game map.
     * @class Tile
@@ -11,15 +13,20 @@
     * @param {Number} x - The map tile coordinate position of this tile on the x axis.
     * @param {Number} y - The map tile coordinate position of this tile on the y axis.
     */
-    var Tile = function Tile(game, type, x, y) {
+    var Tile = function Tile(game, x, y) {
         this.game = game;
+
         this.x = x;
         this.y = y;
-        this.type = type;
 
-        var typeData = Tile.Types[type];
-        RL.Util.merge(this, typeData);
+
+        this.id = tileId++;
+
+        if(this.init){
+            this.init(game, x, y);
+        }
     };
+
 
     Tile.prototype = {
         constructor: Tile,
@@ -32,12 +39,28 @@
         game: null,
 
         /**
+         * Unique id for this tile.
+         * @type {Number}
+         */
+        id: null,
+
+        /**
         * The type of entity this is.
         * When created this object is merged with the value of `Tile.Types[type]`. See constructor.
         * @property type
         * @type {String}
         */
         type: null,
+
+        /**
+        * Optional Callback. Called when the entity is first created. Intended to be assigned by Entity.Types.
+        * @method init
+        * @param {Game} game - Game instance this obj is attached to.
+        * @param {String} type - Type of tile. When created this object is merged with the value of Tile.Types[type].
+        * @param {Number} x - The map tile coordinate position of this tile on the x axis.
+        * @param {Number} y - The map tile coordinate position of this tile on the y axis.
+        */
+        init: false,
 
         /**
         * Display name for this tile.
@@ -161,7 +184,7 @@
     * @class Tile.Types
     * @static
     */
-    Tile.Types = {
+    var tileTypes = {
         floor: {
             name: 'Floor',
             char: '.',
@@ -207,6 +230,24 @@
         // }
     };
 
-    root.RL.Tile = Tile;
+    RL.Tile = Tile;
+
+    RL.Tile.Types = {};
+
+    RL.Tile.addType = function(type, objProto){
+        objProto.type = type;
+        var ObjConstructor = RL.Util.compose(Tile, objProto);
+        RL.Tile.Types[type] = ObjConstructor;
+    };
+
+    RL.Tile.make = function(game, type, x, y){
+        var Type = RL.Tile.Types[type];
+        return new Type(game, x, y);
+    };
+
+    for(var type in tileTypes){
+        var objProto = tileTypes[type];
+        RL.Tile.addType(type, objProto);
+    }
 
 }(this));

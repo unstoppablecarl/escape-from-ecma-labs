@@ -167,6 +167,32 @@
         },
 
         /**
+         * Create a constructor with prototype based on a parent.
+         * @method compose
+         * @param {Function} parent - Constructor of parent to inherit from.
+         * @param {Object} newProto - new prototype object with optional constructor property.
+         * @return {Function}
+         */
+        compose: function(parent, newProto){
+
+            var child;
+
+            if(newProto.hasOwnProperty('constructor')){
+                child = newProto.constructor;
+            } else {
+                // copy the parent constructor
+                child = function Child(){
+                    return parent.apply(this, arguments);
+                };
+            }
+
+            child.prototype = Object.create(parent.prototype);
+            Util.merge(child.prototype, newProto);
+            child.prototype.constructor = child;
+            return child;
+        },
+
+        /**
         * Gets the offset coords of a given direction.
         * @method getOffsetCoordsFromDirection
         * @static
