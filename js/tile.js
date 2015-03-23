@@ -82,49 +82,45 @@
         },
     };
 
-    RL.Util.merge(root.RL.Tile.prototype, extendedTile);
+    RL.Util.merge(RL.Tile.prototype, extendedTile);
 
-    root.RL.Tile.Types.wall_alt = {
-        name: 'Wall Alt',
-        char: 'X',
-        color: RL.Util.COLORS.red,
-        consoleColor: RL.Util.COLORS.red_alt,
-        charStrokeColor: '#000',
-        charStrokeWidth: 2,
-        passable: false,
-        blocksLos: false,
-    };
-
-    RL.Tile.Types.door_placeholder = {
-        name: 'Door Placeholder',
-        char: 'D',
-         color: 'orange',
-         bgColor: 'red',
-         passable: true,
-    };
-
-    RL.Tile.Types.door_floor_placeholder = {
-        name: 'Door Floor Placeholder',
-        char: '.',
-         color: 'orange',
-         bgColor: 'red',
-         passable: true,
-    };
-
-    RL.Tile.Types.room_placeholder = {
-        name: 'Room Placeholder',
-        char: '-',
-        color: 'orange',
-        passable: true,
-    };
-
-    RL.Tile.Types.room_placeholder_origin = {
-        name: 'Room Placeholder Origin',
-        char: 'R',
-        passable: true,
-    };
-
-    root.RL.Tile.Types.exit = {
+    var tileTypes = {
+        wall_alt: {
+            name: 'Wall Alt',
+            char: 'X',
+            color: RL.Util.COLORS.red,
+            consoleColor: RL.Util.COLORS.red_alt,
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            passable: false,
+            blocksLos: false,
+        },
+        door_placeholder: {
+            name: 'Door Placeholder',
+            char: 'D',
+            color: 'orange',
+            bgColor: 'red',
+            passable: true,
+        },
+        door_floor_placeholder: {
+            name: 'Door Floor Placeholder',
+            char: '.',
+            color: 'orange',
+            bgColor: 'red',
+            passable: true,
+        },
+        room_placeholder: {
+            name: 'Room Placeholder',
+            char: '-',
+            color: 'orange',
+            passable: true,
+        },
+        room_placeholder_origin: {
+            name: 'Room Placeholder Origin',
+            char: 'R',
+            passable: true,
+        },
+        exit: {
             name: 'Exit',
             char: 'X',
             color: RL.Util.COLORS.red,
@@ -139,6 +135,13 @@
                     this.game.gameOver = true;
                 }
             }
-        };
+        }
+    };
+
+    for(var type in tileTypes){
+        var objProto = tileTypes[type];
+        RL.Tile.addType(type, objProto);
+    }
+
 
 }(this));

@@ -6,9 +6,20 @@
     var NewGame = function Game(){
         proto.constructor.call(this);
         this.miniMap = new RL.Renderer(this, null, null, 2, 'mini-map');
+
         this.renderer.miniMap = this.miniMap;
+
+        var game = this;
+
         this.furnitureManager = new RL.MultiObjectManager(this, RL.Furniture);
+        this.furnitureManager.makeNewObjectFromType = function(type){
+            return RL.Furniture.make(game, type);
+        };
         this.itemManager = new RL.MultiObjectManager(this, RL.Item);
+        this.itemManager.makeNewObjectFromType = function(type){
+            return RL.Item.make(game, type);
+        };
+
         this.smashLayer = new RL.Array2d();
         this.damageLayer = new RL.Array2d();
     };

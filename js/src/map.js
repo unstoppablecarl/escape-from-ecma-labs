@@ -35,7 +35,7 @@
                 return;
             }
             if(typeof tile === 'string'){
-                tile = new RL.Tile(this.game, tile, x, y);
+                tile = RL.Tile.make(this.game, tile, x, y);
             }
             this.data[x][y] = tile;
             return tile;
@@ -106,7 +106,7 @@
                 if(type === void 0 && defaultTileType){
                     type = defaultTileType;
                 }
-                var tile = new RL.Tile(_this.game, type, x, y);
+                var tile = RL.Tile.make(_this.game, type, x, y);
                 _this.set(x, y, tile);
             });
         }
