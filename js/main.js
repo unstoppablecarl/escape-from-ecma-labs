@@ -18,25 +18,11 @@ var keyBindings = {
     grab: ['G'],
     cancel: ['ESC']
 };
-var controlsEL = document.getElementById('controls');
+
 var mapContainerEl = document.getElementById('map-container');
 var consoleContainerEl = document.getElementById('console-container');
 var consoleDirectionsEl = document.getElementById('console-directions');
 var miniMapContainerEl = document.getElementById('mini-map-container');
-
-var controlsHtml = '';
- controlsHtml += '<div class="tr"><div class="td">Action</div><div class="td">Keys</div></div>';
-for(var action in keyBindings){
-    controlsHtml += '<div class="tr">';
-    controlsHtml += '<div class="td">' + action + '</div>';
-
-    var val = keyBindings[action];
-    controlsHtml += '<div class="td">';
-    controlsHtml += val.join(', ');
-    controlsHtml += '</div>';
-    controlsHtml += '</div>';
-}
-controlsEL.innerHTML = controlsHtml;
 
 var playerStartX = 2;
 var playerStartY = 2;
@@ -91,19 +77,6 @@ consoleContainerEl.appendChild(game.console.el);
 game.console.directionsEl = consoleDirectionsEl;
 miniMapContainerEl.appendChild(game.miniMap.canvas);
 
-var statElements = {
-    hpEl: document.getElementById('stat-hp'),
-    hpMaxEl: document.getElementById('stat-hp-max'),
-    meleeWeaponNameEl: document.getElementById('stat-melee-weapon-name'),
-    meleeWeaponStatsEl: document.getElementById('stat-melee-weapon-stats'),
-    rangedWeaponNameEl: document.getElementById('stat-ranged-weapon-name'),
-    rangedWeaponStatsEl: document.getElementById('stat-ranged-weapon-stats'),
-};
-
-RL.Util.merge(game.player, statElements);
-
-game.player.renderHtml();
-
 // game.furnitureManager.add(25, 7, 'chest');
 // game.furnitureManager.add(25, 7, 'crate');
 
@@ -117,7 +90,12 @@ game.player.renderHtml();
 // });
 //
 
+game.start();
 
+RL.Views.inventory(game);
+RL.Views.controls(keyBindings);
+RL.Views.equipment(game);
+RL.Views.stats(game);
 
 
 game.start();
