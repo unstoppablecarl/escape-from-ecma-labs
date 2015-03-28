@@ -47,9 +47,10 @@ if(testMode){
 }
 
 var template = RL.MapGen.Template.Floor.office.basic;
-var floor = new RL.MapGen.Floor(game, template);
+var requiredRoomTemplates = [RL.MapGen.Template.Room.exit.elevator];
+var randomRoomTemplates = RL.MapGen.Template.Room.areaToArray('office');
+var floor = new RL.MapGen.Floor(game, template, requiredRoomTemplates, randomRoomTemplates);
 floor.loadToMap();
-floor.placeRooms();
 
 // add input keybindings
 game.input.addBindings(keyBindings);
