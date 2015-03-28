@@ -229,8 +229,6 @@
             init: function(){
                 this.setResolvableAction('grab');
                 this.setResolvableAction('push');
-
-                this.setResolvableAction('ranged_attack');
             }
         },
 
@@ -246,8 +244,6 @@
             init: function(){
                 this.setResolvableAction('grab');
                 this.setResolvableAction('push');
-
-                this.setResolvableAction('ranged_attack');
             }
         },
         analyzer: {
@@ -262,8 +258,6 @@
             init: function(){
                 this.setResolvableAction('grab');
                 this.setResolvableAction('push');
-
-                this.setResolvableAction('ranged_attack');
             }
         },
         microscope: {
@@ -284,7 +278,6 @@
             passable: false,
             init: function(){
 
-                // this.setResolvableAction('ranged_attack');
             }
         },
         desk: {
