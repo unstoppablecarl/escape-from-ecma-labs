@@ -55,26 +55,19 @@
             weightKey = weightKey || 'weight';
             valueKey = valueKey || 'value';
 
-            var percentChance = [],
-                total = 0,
+            var total = 0,
                 i, item;
 
             for (i = 0; i < list.length; i++) {
                 item = list[i];
                 total += item[weightKey] || 0;
             }
-
-            for (i = 0; i < list.length; i++) {
-                item = list[i];
-                percentChance[i] = item[weightKey] / total;
-            }
-
-            var random = rng(),
+            var random = Math.floor(rng() * total + 1),
                 currentTotal = 0;
 
             for (i = 0; i < list.length; i++) {
                 item = list[i];
-                currentTotal += percentChance[i];
+                currentTotal += item[weightKey];
                 if (random < currentTotal) {
                     return item[valueKey];
                 }
