@@ -85,7 +85,6 @@
 
         loadLayer: function(layer, originX, originY){
 
-            // console.log('loadLayer', layer);
             originX = originX || 0;
             originY = originY || 0;
             var types = this.getMergedTypes(layer);
@@ -107,9 +106,11 @@
                     }
 
                     var tileType = types.characterToTileType[char] || layer.defaultTileType;
-                    RL.Random.resolveRandomData(tileType, function(value){
-                        _this.tileAssign(tx, ty, value);
-                    });
+                    if(tileType){
+                        RL.Random.resolveRandomData(tileType, function(value){
+                            _this.tileAssign(tx, ty, value);
+                        });
+                    }
 
                     var objType = types.characterToType[char];
                     RL.Random.resolveRandomData(objType, function(value){

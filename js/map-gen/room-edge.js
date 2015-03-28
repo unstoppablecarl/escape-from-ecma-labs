@@ -193,4 +193,47 @@
 
     root.RL.MapGen.RoomEdge = RoomEdge;
 
+
+    var makeRoomEdgeList = function RoomEdgeList(game, rooms){
+
+        var edges = {};
+        var tempEdge = new RL.MapGen.RoomEdge(this.game);
+
+        var getEdgeKeyFromRoomSide = function(room, side){
+            tempEdge.setRangeFromRoomSide(room, side);
+            return tempEdge.key;
+        };
+
+        var getEdgeFromRoomSide = function(room, side){
+            var key = getEdgeKeyFromRoomSide(room, side);
+            if(!edges[key]){
+                edges[key] = new RL.MapGen.RoomEdge(game);
+            }
+            return edges[key];
+        };
+
+        var addRoom = function(room){
+            var sides = room.template.sides;
+            if(!sides){
+                return;
+            }
+
+            for(var side in sides){
+                if(sides[side].randomlyPlaceDoor){
+                    var roomEdge = getEdgeFromRoomSide(room, side);
+                    roomEdge.addRoom(room, side);
+                }
+            }
+        };
+
+
+        for(var i = rooms.length - 1; i >= 0; i--){
+            var room = rooms[i];
+            addRoom(room);
+        }
+        return edges;
+    };
+
+    root.RL.MapGen.makeRoomEdgeList = makeRoomEdgeList;
+
 }(this));

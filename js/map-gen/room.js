@@ -11,8 +11,8 @@
         this.x = settings.x;
         this.y = settings.y;
 
-        this.width = 20; // settings.width
-        this.height = 20; // settings.height
+        this.width = settings.width || this.width; // settings.width
+        this.height = settings.height || this.height; // settings.height
 
         this.sides = {
             left: this.checkSide('left'),
@@ -29,8 +29,8 @@
 
         x: null,
         y: null,
-        width: null,
-        height: null,
+        width: 20,
+        height: 20,
         template: null,
 
         sides: null,
