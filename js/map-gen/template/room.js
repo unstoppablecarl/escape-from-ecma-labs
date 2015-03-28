@@ -46,6 +46,20 @@
  *
  */
     var Room = {
+        areaToArray: function(area){
+            var rooms = this[area];
+            var keys = Object.keys(rooms);
+            var out = [];
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var room = rooms[key];
+
+                room.name = key;
+                room.area = area;
+                out.push(room);
+            }
+            return out;
+        },
         getRandom: function(area) {
             var keys = Object.keys(this[area]);
             var name = keys[Math.floor(Math.random() * keys.length)];
@@ -86,37 +100,67 @@
                     u: 'trashcan',
                     T: 'table',
                     t: 'toilet',
+                    h: 'chair',
                     U: 'trash',
                     '+': 'door',
-                    S: 'sink',
-                    x: 'exit'
+                    s: 'sink',
+                    C: 'computer',
+                    x: 'exit',
+                    c: 'cubicle_wall',
+                    f: 'fern',
                 },
 
                 layers: [{
                     mapData: [
-                        '....................',
-                        '...##############...',
-                        '...#t....##....t#...',
-                        '...####+####+####...',
-                        '...#u...S##S...u#...',
-                        '...+....S##S....+...',
-                        '...##############...',
-                        '....................',
-                        '...T............T...',
-                        '...T............T...',
-                        '...TTTTTTTTTTTTTT...',
-                        '....................',
-                        '....................',
-                        '....................',
-                        '....................',
-                        '...##++##++##++##...',
-                        '...##xx##xx##xx##...',
-                        '...##xx##xx##xx##...',
-                        '...##############...',
-                        '....................',
-                        '....................',
+                        '####################',
+                        '#t.ctctct##tctctc.t#',
+                        '#..c.c.c.##.c.c.c..#',
+                        '#c+c+c+c+##+c+c+c+c#',
+                        '#........##........#',
+                        '#...ssssu##ussss...#',
+                        '#+################+#',
+                        ' .................. ',
+                        ' ..T..h......h..T.. ',
+                        ' ..TTTC......CTTT.. ',
+                        ' ..TTTTTTTTTTTTTT.. ',
+                        ' .................. ',
+                        ' .................. ',
+                        ' .................. ',
+                        ' .................. ',
+                        ' ..f...f.T.f...f... ',
+                        ' ..##++#####++##... ',
+                        ' ..#xxx#####xxx#... ',
+                        ' ..#xxx#####xxx#... ',
+                        '   #############    ',
                     ],
-                    defaultTileType: 'floor',
+                    // defaultTileType: 'floor',
+                },
+                {
+                    mapData: [
+                        '                    ',
+                        '                    ',
+                        '                    ',
+                        '                    ',
+                        '                    ',
+                        '                    ',
+                        '                    ',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'X                  X',
+                        'XXX              XXX',
+                    ],
+                    characterToType: {
+                        'X': {placeholder: 'valid_door', value: 'door'}
+                    }
                 }]
             },
         },
