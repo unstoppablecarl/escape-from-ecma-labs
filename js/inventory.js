@@ -58,7 +58,8 @@
                     itemType: item.itemType,
                     equipableToSlots: item.equipableToSlots,
                     quantity: 0,
-                    consoleColor: item.consoleColor
+                    consoleColor: item.consoleColor,
+                    usable: item.usable
                 };
                 this.viewObjectsByType[type] = newViewObject;
             }
@@ -72,6 +73,13 @@
          */
         onAdd: function(item) {
             var type = item.type;
+            // if ammo is same type as equipped add to quantity instead of inventory
+            var ammo = this.game.player.equipment.ammo;
+            if(ammo && type === ammo.type){
+                this.game.player.equipment.ammo.ammoQuantity++;
+                this.remove(item);
+                return;
+            }
 
             var viewObject = this.getViewObject(item);
 
@@ -80,11 +88,6 @@
                 this.viewObjects.push(viewObject);
                 this.sortViewObjects();
             }
-
-            // var ammo = this.game.player.equipment.ammo;
-            // if(ammo && type === ammo.type){
-            //     this.game.player.updateAmmoCount();
-            // }
 
             this.viewObjectsByType[type].quantity++;
         },
@@ -99,17 +102,12 @@
             viewObject.quantity--;
 
             // remove from list if quantity 0
-            if (!viewObject.quantity) {
+            if (viewObject.quantity <= 0) {
                 var index = this.viewObjects.indexOf(viewObject);
                 if (index !== -1) {
                     this.viewObjects.splice(index, 1);
                 }
             }
-
-            // var ammo = this.game.player.equipment.ammo;
-            // if(ammo && item.type === ammo.type){
-            //     this.game.player.updateAmmoCount();
-            // }
         },
     };
 
