@@ -445,6 +445,28 @@
             passable: true
         },
 
+        sink: {
+            name: 'Sink',
+            char: 's',
+            color: RL.Util.COLORS.blue,
+            consoleColor: RL.Util.COLORS.blue,
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            hp: 5,
+            passable: false,
+        },
+
+        fern: {
+            name: 'Fern',
+            char: '*',
+            color: RL.Util.COLORS.green,
+            consoleColor: RL.Util.COLORS.green,
+            charStrokeColor: '#000',
+            charStrokeWidth: 2,
+            hp: 2,
+            blocksLos: false,
+            passable: false,
+        },
 
         work_bench: {
             name: 'Work Bench',
