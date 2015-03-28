@@ -101,7 +101,7 @@
 
                 <div class="td">
 
-                    <span class="btn btn-sm btn-default" rv-if="item.use" rv-use_item="item">use</span>
+                    <span class="btn btn-sm btn-default" rv-if="item.usable" rv-use_item="item">use</span>
                     <span rv-each-slot="item.equipableToSlots">
                         <span class="btn btn-sm btn-default" rv-equip_item="item">Equip to {slot}</span>
                     </span>

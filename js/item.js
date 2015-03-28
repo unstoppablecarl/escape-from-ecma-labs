@@ -15,6 +15,7 @@
         healing: {
             itemType: 'healing',
             consoleColor: 'pink',
+            usable: true,
             init: function(){
                 this.setResolvableAction('pickup');
                 this.setResolvableAction('use_item', RL.ResolvableAction.Types.use_item_healing);
