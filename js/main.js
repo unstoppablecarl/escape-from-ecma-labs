@@ -1,5 +1,5 @@
 
-var testMode = true;
+var testMode = false;
 
 var keyBindings = {
     up: ['UP_ARROW', 'K', 'W'],
@@ -98,6 +98,19 @@ RL.Views.controls(keyBindings);
 RL.Views.equipment(game);
 RL.Views.stats(game);
 
+
+// test data
+//
+// game.player.takeDamage(10);
+
+// game.player.inventory.add(RL.Item.make(game, 'pistol'));
+// game.player.inventory.add(RL.Item.make(game, 'grenade'));
+// game.player.inventory.add(RL.Item.make(game, 'ammo_9mm'));
+// game.player.inventory.add(RL.Item.make(game, 'ammo_9mm'));
+// game.player.inventory.add(RL.Item.make(game, 'ammo_9mm'));
+// game.player.inventory.add(RL.Item.make(game, 'ammo_45cal'));
+
+// game.player.inventory.add(RL.Item.make(game, 'medkit'));
 
 
 

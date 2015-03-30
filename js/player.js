@@ -36,7 +36,7 @@
             this.equipment = RL.Util.merge({}, this.equipment);
 
             var meleeWeapon = RL.Item.make(this.game, 'fists');
-            var rangedWeapon = RL.Item.make(this.game, 'pistol');
+            var rangedWeapon = RL.Item.make(this.game, 'throw');
 
             this.equip(meleeWeapon);
             this.equip(rangedWeapon);
