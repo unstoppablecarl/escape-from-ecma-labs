@@ -487,7 +487,7 @@
         },
 
         resolvable: {
-            inti: function(){
+            init: function(){
                 this.hordePushBonus = 0;
             },
             canResolveAction: true,
