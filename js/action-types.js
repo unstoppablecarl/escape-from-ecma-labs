@@ -331,17 +331,17 @@
                 var ammo = this.equipment.ammo;
 
                 if(!weapon){
-                    this.game.console.log('you do not have a ranged weapon');
+                    this.game.console.log('You do not have a ranged weapon');
                     return false;
                 }
 
                 if(weapon.ammoType && !ammo){
-                    this.game.console.log('you do not have ammo equipped for your ranged weapon');
+                    this.game.console.log('You do not have ammo equipped for your ranged weapon');
                     return false;
                 }
 
                 if(weapon.ammoUsedPerAttack && ammo.ammoQuantity < weapon.ammoUsedPerAttack){
-                    this.game.console.log('you do not have enough ammo to fire your ranged weapon (ammo used per attack: ' + weapon.ammoUsedPerAttack + ' )');
+                    this.game.console.log('You do not have enough ammo to fire your ranged weapon (ammo used per attack: ' + weapon.ammoUsedPerAttack + ' )');
                     return false;
                 }
 
