@@ -195,21 +195,22 @@
                 },
 
                 characterToType: {
-                    // z: 'zombie',
+                    z: 'zombie',
                     u: 'trashcan',
                     y: 'medkit',
                     h: 'chair',
-                    T: 'table'
+                    T: 'table',
+                    b: 'bandaid',
                 },
 
                 layers: [{
                     mapData: [
                         '####################',
-                        '#u.y...............#',
+                        '#u.y..z............#',
                         '#..TTTTTTTTTTTTTT..#',
                         '#..TTTTTTTTTTTTTT..#',
+                        '#zb................#',
                         '#..................#',
-                        '#....z.............#',
                         '#...hh........hh...#',
                         '#..hTTh......hTTh..#',
                         '#...hh........hh...#',
@@ -254,6 +255,7 @@
                     }
                 }]
             },
+
             executives: {
                 name: 'executives',
                 author: 'unstoppableCarl',
