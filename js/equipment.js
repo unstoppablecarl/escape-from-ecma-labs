@@ -56,8 +56,6 @@
         }
     };
 
-    // Equipment.prototype = RL.Util.merge({}, RL.Item.prototype, equipmentPrototype);
-
     var Defaults = {
         meleeWeapon: {
             itemType: 'weaponMelee',
@@ -94,53 +92,94 @@
         },
     };
 
+    var makeStatsArr = function(stats, modifiers){
+        modifiers = modifiers || false;
+        var out = [];
+
+        for(var key in stats){
+            var val = stats[key];
+
+            if(val){
+                if(modifiers && val > 0){
+                    val = '+' + val;
+                }
+                out.push({
+                    key: key,
+                    val: val
+                });
+            }
+        }
+
+        return out;
+    };
+
+    var makeStatsDesc = function(statsArr){
+        var statDesc = [];
+
+        for (var i = 0; i < statsArr.length; i++) {
+            var stat = statsArr[i];
+            var key = stat.key;
+            var val = stat.val;
+            statDesc.push(key + ': ' + val);
+        }
+
+        if(statDesc.length){
+            return statDesc.join(', ');
+        }
+    };
+
     var makeMeleeWeapon = function(newProto){
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.meleeWeapon, newProto);
 
-        newProto.statDesc = '[Damage: ' + newProto.damage + ']';
+        var stats = {
+            Damage: newProto.damage
+        };
+
+        var statsArr = makeStatsArr(stats);
+        var statsDesc = makeStatsDesc(statsArr);
+
+        newProto.stats = statsArr;
+        newProto.statDesc = statsDesc;
+
         return newProto;
     };
 
     var makeRangedWeapon = function(newProto){
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.rangedWeapon, newProto);
 
-        newProto.statDesc = '[Damage: ' + newProto.damage + ', Range: ' + newProto.range + ']';
+        var stats = {
+            Damage: newProto.damage,
+            Range: newProto.range,
+            'Splash Damage': newProto.splashDamage,
+            'Splash Range': newProto.splashRange,
+        };
+
+        var statsArr = makeStatsArr(stats);
+        var statsDesc = makeStatsDesc(statsArr);
+
+        newProto.stats = statsArr;
+        newProto.statDesc = statsDesc;
+
         return newProto;
     };
 
     var makeAmmo = function(newProto){
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.ammo, newProto);
 
-        var mods = {};
-        if(newProto.damageMod){
-            mods.Damage = newProto.damageMod;
-        }
-        if(newProto.rangeMod){
-            mods.Range = newProto.rangeMod;
-        }
-        if(newProto.splashDamageMod){
-            mods['Splash Damage'] = newProto.splashDamageMod;
-        }
-        if(newProto.splashRangeMod){
-            mods['Splash Range'] = newProto.splashRangeMod;
-        }
+        var stats = {
+            Damage: newProto.damageMod,
+            Range: newProto.rangeMod,
+            'Splash Damage': newProto.splashDamageMod,
+            'Splash Range': newProto.splashRangeMod,
+        };
 
-        var statDesc = [];
-        for(var key in mods){
-            var val = mods[key];
-            if(val > 0){
-                val = '+' + val;
-            }
-            statDesc.push(key + ': ' + val);
-        }
+        var statsArr = makeStatsArr(stats, true);
+        var statsDesc = makeStatsDesc(statsArr);
 
-        if(statDesc.length){
-            newProto.statDesc = '[' + statDesc.join(', ') + ']';
-        }
+        newProto.stats = statsArr;
+        newProto.statDesc = statsDesc;
+
         return newProto;
-
-        // var itemConstructor = RL.Util.compose(Equipment, newProto);
-        // return itemConstructor;
     };
 
     var itemTypes = {
