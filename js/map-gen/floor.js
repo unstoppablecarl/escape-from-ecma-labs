@@ -51,8 +51,10 @@
 
             this.placeRooms();
             this.placeDoors();
-            this.removeFurniturePlaceholders();
-            this.removeTilePlaceholders();
+            if(!this.game.showDoorPlacementDebug){
+                this.removeFurniturePlaceholders();
+                this.removeTilePlaceholders();
+            }
         },
 
         removeFurniturePlaceholders: function(){

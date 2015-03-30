@@ -95,20 +95,6 @@
             passable: false,
             blocksLos: false,
         },
-        door_placeholder: {
-            name: 'Door Placeholder',
-            char: 'D',
-            color: 'orange',
-            bgColor: 'red',
-            passable: true,
-        },
-        door_floor_placeholder: {
-            name: 'Door Floor Placeholder',
-            char: '.',
-            color: 'orange',
-            bgColor: 'red',
-            passable: true,
-        },
         room_placeholder: {
             name: 'Room Placeholder',
             char: '-',
