@@ -236,7 +236,6 @@
             window.requestAnimationFrame(function(){
                 _this.drawBufferToCanvas();
             });
-
         },
 
         drawTile: function(x, y, layers){

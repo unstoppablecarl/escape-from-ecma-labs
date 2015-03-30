@@ -80,6 +80,8 @@
          * @return {Array} Array of valid targets.
          */
         afterPerformActionFailure: null,
+
+        afterPerformAction: null,
     };
 
     /**
@@ -99,7 +101,6 @@
 
         /**
          * Checks if the entity with this `ResolvableAction` can currently resolve the action given source and settings.
-         * Instead of a function `this.canPerformAction` can be set to a boolean value if the check should always be true or false.
          *
          * If this functions should always return `true` or `false` it can be set to a `Boolean` value that will be used
          * instead of the value returned by calling the function.

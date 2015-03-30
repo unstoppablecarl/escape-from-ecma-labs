@@ -59,17 +59,17 @@
                     this.smashLayer.reset();
                     this.damageLayer.reset();
                     if(this.player.dead){
-                        console.log('game over');
+                        this.console.log('Game Over');
                     }
 
-                    for (var i = 0; i < this.entityManager.objects.length; i++) {
-                        var ent = this.entityManager.objects[i];
-                        var existing = this.entityManager.get(ent.x, ent.y);
+                    // for (var i = 0; i < this.entityManager.objects.length; i++) {
+                    //     var ent = this.entityManager.objects[i];
+                    //     var existing = this.entityManager.get(ent.x, ent.y);
 
-                        if(ent !== existing ){
-                            var x = 1;
-                        }
-                    }
+                    //     if(ent !== existing ){
+                    //         var x = 1;
+                    //     }
+                    // }
                 } else if(this.queueDraw){
                     this.renderer.draw();
                 }
