@@ -223,11 +223,11 @@
         draw: function(){
 
             this.fillBg();
-            for (var x = _this.width - 1; x >= 0; x--) {
-                for (var y = _this.height - 1; y >= 0; y--) {
+            for (var x = this.width - 1; x >= 0; x--) {
+                for (var y = this.height - 1; y >= 0; y--) {
                     // get the actual map tile coord from view coord using offset
-                    var tileX = x + _this.originX,
-                        tileY = y + _this.originY;
+                    var tileX = x + this.originX,
+                        tileY = y + this.originY;
                     this.drawTile(tileX, tileY);
                 }
             }
