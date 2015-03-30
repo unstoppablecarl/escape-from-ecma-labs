@@ -66,6 +66,7 @@
         rangedWeapon: {
             itemType: 'weaponRanged',
             ammoType: null,
+            ammoUsedPerAttack: 1,
             defaultSlot: 'weaponRanged',
             equipableToSlots: ['weaponRanged'],
             damage: 0,
@@ -74,7 +75,7 @@
             splashDamage: 0,
 
             canUseAmmo: function(ammo){
-                return ammo.ammoType === this.ammoType;
+                return (!this.ammoType) || ammo.ammoType === this.ammoType;
             }
         },
         ammo: {
@@ -263,6 +264,14 @@
         }),
 
         // ranged weapons
+
+        'throw': makeRangedWeapon({
+            name: 'Throw',
+            ammoType: 'thrown',
+            damage: 0,
+            range: 5,
+        }),
+
         pistol: makeRangedWeapon({
             name: 'Pistol 9mm',
             ammoType: '9mm',
@@ -273,14 +282,15 @@
 
         }),
 
-        grenade: makeRangedWeapon({
+        // ammo
+        grenade: makeAmmo({
             name: 'Grenade',
+            ammoType: 'thrown',
             color: '#808080',
             char: 'g',
-            damage: 2,
-            range: 5,
-            splashRange: 1,
-            splashDamage: 1,
+            damageMod: 2,
+            splashRangeMod: 1,
+            splashDamageMod: 1,
         }),
 
         ammo_9mm: makeAmmo({

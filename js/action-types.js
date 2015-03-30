@@ -340,6 +340,11 @@
                     return false;
                 }
 
+                if(weapon.ammoUsedPerAttack && ammo.ammoQuantity < weapon.ammoUsedPerAttack){
+                    this.game.console.log('you do not have enough ammo to fire your ranged weapon (ammo used per attack: ' + weapon.ammoUsedPerAttack + ' )');
+                    return false;
+                }
+
                 return true;
             },
             canPerformActionOnTarget: function(target, settings){
@@ -429,7 +434,13 @@
                 }
             },
             afterPerformAction: function(target, settings){
-                this.useAmmo(1);
+                var result = settings.result;
+                if(result.weapon.ammoType){
+                    var ammoUsedPerAttack = result.weapon.ammoUsedPerAttack;
+                    if(ammoUsedPerAttack){
+                        this.useAmmo(ammoUsedPerAttack);
+                    }
+                }
             },
         },
 
@@ -529,6 +540,139 @@
             return true;
         },
     });
+
+    // makeActionTypePair({
+    //     action: 'equip_item',
+
+    //     performable: {
+    //         init: function(){
+    //             this.equipment = {
+    //                 armor: null,
+    //                 weaponMelee: null,
+    //                 weaponRanged: null,
+    //                 ammo: null,
+    //             };
+    //         },
+    //         canPerformActionOnTarget: function(target, settings){
+    //             settings = settings || {};
+    //             var equipment = target;
+    //             var slot = settings.slot || equipment.defaultSlot || equipment.equipableToSlots[0];
+
+    //             if (!(slot in this.equipment)) {
+    //                 console.log('Equipment "' + equipment.name + '" cannot be equiped to slot "' + slot + '" (slot does not exist)');
+    //                 return false;
+    //             }
+
+    //             return true;
+    //         },
+    //         performAction: function(target, settings){
+    //             settings = settings || {};
+    //             var equipment = target;
+    //             var slot = settings.slot || equipment.defaultSlot || equipment.equipableToSlots[0];
+    //             var current = this.equipment[slot];
+    //             if(current){
+    //                 this.performAction('un_equip_item', current, {slot: slot});
+    //             }
+
+    //             if (slot === 'weaponRanged' && this.equipment.ammo) {
+    //                 this.performAction('un_equip_item', this.equipment.ammo, {slot: 'ammo'});
+    //             }
+
+    //             if (slot === 'ammo') {
+    //                 // combind ammo into 1 object with ammoQuantity
+    //                 var ammoOfSameType = this.inventory.getByType(equipment.type);
+    //                 this.inventory.removeMultiple(ammoOfSameType);
+    //                 equipment.ammoQuantity = 1 + ammoOfSameType.length;
+    //                 return true;
+    //             }
+
+    //             if(equipment.onEquip){
+    //                 equipment.onEquip(this, slot);
+    //             }
+
+    //             this.equipment[slot] = equipment;
+
+    //             return true;
+    //         }
+    //     },
+
+    //     resolvable: {
+    //         canResolveAction: function(source, settings){
+    //             var slot = settings.slot || this.defaultSlot || this.equipableToSlots[0];
+    //             if (!this.canEquipToSlot(slot)) {
+    //                 this.game.console.log('Equipment "' + this.name + '" cannot be equiped to slot "' + slot + '" (cannot equip to slot)');
+    //                 return false;
+    //             }
+    //             return true;
+    //         }
+    //     }
+    // });
+
+    // makeActionTypePair({
+    //     action: 'un_equip_item',
+
+    //     performable: {
+
+    //         canPerformActionOnTarget: function(target, settings){
+    //             var equipment = target;
+
+    //             for (var slotKey in this.equipment) {
+    //                 var equipped = this.equipment[slotKey];
+    //                 if (equipment === equipped) {
+    //                     return true;
+    //                 }
+    //             }
+
+    //             settings = settings || {};
+    //             var slot = settings.slot || equipment.defaultSlot || equipment.equipableToSlots[0];
+
+    //             if (!(slot in this.equipment)) {
+    //                 console.log('Equipment "' + equipment.name + '" cannot be equiped to slot "' + slot + '" (slot does not exist)');
+    //                 return false;
+    //             }
+
+    //             return true;
+    //         },
+    //         performAction: function(target, settings){
+    //             settings = settings || {};
+    //             var equipment = target;
+    //             var slot = settings.slot || equipment.defaultSlot || equipment.equipableToSlots[0];
+    //             this.performAction('un_equip', this.equipment[slot], {slot: slot});
+
+    //             this.equipment[slot] = void 0;
+
+    //             if (slot === 'weaponRanged' && this.equipment.ammo) {
+    //                 this.performAction('un_equip', this.equipment.ammo, {slot: 'ammo'});
+    //             }
+
+    //             if (slot === 'ammo') {
+    //                 // break ammo into separate objects
+    //                 var quantity = equipment.ammoQuantity;
+    //                 if (quantity) {
+    //                     this.inventory.addByType(equipment.type, quantity);
+    //                 }
+    //             } else {
+    //                 this.inventory.add(equipment);
+    //             }
+
+    //             return true;
+    //         }
+    //     },
+
+    //     resolvable: {
+    //         canResolveAction: function(source, settings){
+    //             var slot = settings.slot || this.defaultSlot || this.equipableToSlots[0];
+    //             if (!this.canEquipToSlot(slot)) {
+    //                 console.log('Equipment "' + this.name + '" cannot be equiped to slot "' + slot + '" (cannot equip to slot)');
+    //                 return false;
+    //             }
+    //             return true;
+    //         }
+    //     }
+    // });
+
+
+
 
     root.RL.PerformableAction.Types = PerformableActionTypes;
     root.RL.ResolvableAction.Types = ResolvableActionTypes;

@@ -5,6 +5,14 @@
      * Surface API to handle {{#crossLink "PerformableAction"}}{{/crossLink}} implementations.
      * This allows a source object and target object to have separate action resolution logic without directly referencing eachother.
      * See also {{#crossLink "ResolvableActionInterface"}}{{/crossLink}}, {{#crossLink "ResolvableAction"}}{{/crossLink}}
+     *
+     * Functions are called in the following order
+     * source.performAction
+     *  - source.canPerformAction
+     *  - source.canPerformActionOnTarget
+     *  - target.canResolveAction
+     *  - target.resolveAction
+     *
      * @class PerformableActionInterface
      * @static
      */
