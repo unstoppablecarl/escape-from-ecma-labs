@@ -30,18 +30,22 @@
                     <span class="td">Armor:</span>
                     <span class="td">
                         {slots.armor.name}
+                        <br>
+                        <small>{slots.armor.statDesc}</small>
                     </span>
                     <span class="td">
-                        {slots.armor.statDesc}
+
                     </span>
                 </div>
                 <div class="tr">
                     <span class="td">Melee:</span>
                     <span class="td" id="stat-melee-weapon-name">
                         {slots.weaponMelee.name}
+                        <br>
+                        <small>{slots.weaponMelee.statDesc}</small>
                     </span>
                     <span class="td" id="stat-melee-weapon-stats">
-                        {slots.weaponMelee.statDesc}
+
                     </span>
                 </div>
 
@@ -49,18 +53,22 @@
                     <span class="td">Ranged:</span>
                     <span class="td">
                         {slots.weaponRanged.name}
+                        <br>
+                        <small>{slots.weaponRanged.statDesc}</small>
                     </span>
                     <span class="td">
-                        {slots.weaponRanged.statDesc}
+
                     </span>
                 </div>
                 <div class="tr">
                     <span class="td">Ammo:</span>
                     <span class="td">
                         {slots.ammo.name} <span rv-if="slots.ammo">&times; {slots.ammo.ammoQuantity}</span>
+                        <br>
+                        <small>{slots.ammo.statDesc}</small>
                     </span>
                     <span class="td">
-                        {slots.ammo.statDesc}
+
                     </span>
 
                 </div>
