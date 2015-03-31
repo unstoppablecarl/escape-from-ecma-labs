@@ -52,6 +52,34 @@ var randomRoomTemplates = RL.MapGen.Template.Room.areaToArray('office');
 var floor = new RL.MapGen.Floor(game, template, requiredRoomTemplates, randomRoomTemplates);
 floor.loadToMap();
 
+var zombiePopulator = function(game, min, max){
+    var targetCount = Math.floor(RL.Random.range(min, max));
+    var currentObjects = game.entityManager.objects;
+    RL.MapGen.FloorPopulator({
+        targetCount: targetCount,
+        currentObjects: currentObjects,
+        getPlaceableCoords: function(){
+            var placeableCoords = [];
+            var zombie = RL.Entity.make(game, 'zombie');
+            game.map.each(function(val, x, y){
+                if(zombie.canMoveTo(x, y)){
+                    placeableCoords.push({x: x, y: y});
+                }
+            });
+            return placeableCoords;
+        },
+        remove: function(obj){
+            game.entityManager.remove(obj);
+        },
+        add: function(x, y){
+            game.entityManager.add(x, y, 'zombie');
+        },
+    });
+};
+
+zombiePopulator(game, 55, 60);
+
+
 // add input keybindings
 game.input.addBindings(keyBindings);
 

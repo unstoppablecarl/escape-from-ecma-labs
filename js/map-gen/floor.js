@@ -150,4 +150,48 @@
 
     root.RL.MapGen.Floor = Floor;
 
+    var FloorPopulator = function(settings){
+
+        var getPlaceableCoords  = settings.getPlaceableCoords;
+
+        var removeObj           = settings.remove;
+        var addObj              = settings.add;
+        var targetCount         = settings.targetCount;
+
+        var currentObjects      = settings.currentObjects;
+        var count               = currentObjects.length;
+
+        var placeableCoords;
+
+        var remove = function(){
+            var obj = RL.Random.arrayItem(currentObjects);
+            removeObj(obj);
+        };
+
+        var add = function(){
+            var coord = RL.Random.arrayItemRemove(placeableCoords);
+            addObj(coord.x, coord.y);
+        };
+
+        var repeat = function(amount, func){
+            for (var i = 0; i < amount; i++) {
+                func();
+            }
+        };
+
+        if(count > targetCount){
+            var removeCount = count - targetCount;
+            repeat(removeCount, remove);
+        }
+        else if(count < targetCount){
+            var addCount = targetCount - count;
+            placeableCoords = getPlaceableCoords();
+            repeat(addCount, add);
+        }
+
+    };
+
+    root.RL.MapGen.FloorPopulator = FloorPopulator;
+
+
 }(this));
