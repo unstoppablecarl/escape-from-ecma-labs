@@ -500,7 +500,6 @@
                 this.game.lighting.set(this.x, this.y, this.light_r, this.light_g, this.light_b);
             },
             onRemove: function(){
-                console.log('zxccxz', this.x, this.y, this.game.lighting.get(this.x, this.y));
                 if(this.game.lighting.get(this.x, this.y)){
                     this.game.lighting.remove(this.x, this.y);
                 }
