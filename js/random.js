@@ -40,6 +40,19 @@
             rng = rng !== void 0 ? rng : this.rng;
             return array[Math.floor(rng() * array.length)];
         },
+        /**
+         * Removes a random array item.
+         * @method arrayItemRemove
+         * @param {Array} array - The array to remove a random item from.
+         * @param {Function} [rng=this.rng] - Random number generator function.
+         * @return {Mixed} The removed object.
+         */
+        arrayItemRemove: function(array, rng){
+            rng = rng !== void 0 ? rng : this.rng;
+            var index = Math.floor(rng() * array.length);
+            var removed = array.splice(index, 1);
+            return removed[0];
+        },
 
         /**
          * Returns a weighted random result from an array of objects.
