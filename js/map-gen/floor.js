@@ -18,7 +18,7 @@
 
         getRoomTemplateList: function(count){
             var out = [];
-            out.concat(this.requiredRoomTemplates);
+            out = out.concat(this.requiredRoomTemplates);
 
             if(out.length > count){
                 throw new Error('requiredRoomTemplates.length exceeds requested count');
