@@ -16,21 +16,6 @@
 
         rooms: null,
 
-        getRoomTemplateList: function(count){
-            var out = [];
-            out = out.concat(this.requiredRoomTemplates);
-
-            if(out.length > count){
-                throw new Error('requiredRoomTemplates.length exceeds requested count');
-            }
-
-            while(out.length < count){
-                var roomTemplate = RL.Random.arrayItem(this.randomRoomTemplates);
-                out.push(roomTemplate);
-            }
-            return out;
-        },
-
         loadToMap: function(){
 
             this.game.setMapSize(this.width, this.height);
@@ -39,7 +24,6 @@
             var roomPlaceholderOrigins = this.getRoomPlaceholderOriginCoords();
             var roomCount = roomPlaceholderOrigins.length;
             var roomTemplates = this.getRoomTemplateList(roomCount);
-
             roomTemplates = RL.Random.shuffleArray(roomTemplates);
 
             for (var i = 0; i < roomPlaceholderOrigins.length; i++) {
@@ -55,6 +39,22 @@
                 this.removeFurniturePlaceholders();
                 this.removeTilePlaceholders();
             }
+        },
+
+        getRoomTemplateList: function(count){
+            var out = [];
+            out = out.concat(this.requiredRoomTemplates);
+
+            if(out.length > count){
+                throw new Error('requiredRoomTemplates.length exceeds requested count');
+            }
+
+            while(out.length < count){
+                var roomTemplate = RL.Random.arrayItem(this.randomRoomTemplates);
+                out.push(roomTemplate);
+            }
+
+            return out;
         },
 
         removeFurniturePlaceholders: function(){
