@@ -33,9 +33,6 @@
             var adapter = rivets.adapters['.'];
             var model = this.model;
             var keypath = this.keypath;
-
-            var slot = model.slot;
-
             this.callback = function() {
                 var viewItem = adapter.get(model, keypath);
                 var player = model.player;
@@ -43,7 +40,7 @@
 
                 if(player.canEquip(item)){
                     player.inventory.remove(item);
-                    player.equip(item, slot);
+                    player.equip(item);
                 }
             };
 
