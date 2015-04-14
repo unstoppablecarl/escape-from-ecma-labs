@@ -204,15 +204,11 @@
             }
 
             if(this.player.actionTargets && this.player.actionTargets.targets.length){
-                var objects = this.getObjectsAtPostion(coords.x, coords.y);
-                for(var i = objects.length - 1; i >= 0; i--){
-                    var obj = objects[i];
-                    var target = this.player.actionTargets.map.getFirst(tile.x, tile.y);
-                    if(target){
-                        this.player.actionTargets.setCurrent(target);
-                        this.renderer.draw();
-                        return;
-                    }
+                var target = this.player.actionTargets.map.getFirst(tile.x, tile.y);
+                if(target){
+                    this.player.actionTargets.setCurrent(target);
+                    this.renderer.draw();
+                    return;
                 }
             }
 
