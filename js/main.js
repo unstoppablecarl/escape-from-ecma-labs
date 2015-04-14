@@ -98,6 +98,7 @@ game.renderer.layers = [
     new RL.RendererLayer(game, 'damage',    {draw: false,   mergeWithPrevLayer: true}),
 
     new RL.RendererLayer(game, 'lighting',  {draw: true,    mergeWithPrevLayer: false}),
+    new RL.RendererLayer(game, 'sound',     {draw: true,    mergeWithPrevLayer: false}),
     new RL.RendererLayer(game, 'fov',       {draw: true,    mergeWithPrevLayer: false}),
 ];
 
