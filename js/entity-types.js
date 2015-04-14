@@ -42,7 +42,11 @@
                 ammo: null,
             },
 
+            moveSoundChance: 0.5,
+            attackSoundChance: 0.95,
+
             knockedDown: false,
+
             init: function() {
                 this.equipment = RL.Util.merge({}, this.equipment);
 

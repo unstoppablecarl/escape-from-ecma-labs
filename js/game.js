@@ -22,6 +22,7 @@
 
         this.smashLayer = new RL.Array2d();
         this.damageLayer = new RL.Array2d();
+        this.soundLayer = new RL.Array2d();
     };
 
     var newGamePrototype = {
@@ -58,6 +59,7 @@
 
                     this.smashLayer.reset();
                     this.damageLayer.reset();
+                    this.soundLayer.reset();
                     if(this.player.dead){
                         this.console.log('Game Over');
                     }
@@ -84,6 +86,7 @@
             this.furnitureManager.setSize(width, height);
             this.smashLayer.setSize(width, height);
             this.damageLayer.setSize(width, height);
+            this.soundLayer.setSize(width, height);
             this.miniMap.resize(width, height);
         },
 
@@ -135,6 +138,16 @@
                     for(var i = items.length - 1; i >= 0; i--){
                         var item = items[i];
                         entity.performAction('pickup', item);
+                    }
+                }
+            }
+            else {
+                if(entity.moveSoundChance){
+                    var outOfFov = !this.player.fov.get(x, y);
+                    if(outOfFov){
+                        if(Math.random() < entity.moveSoundChance){
+                            this.soundLayer.set(x, y, 'move');
+                        }
                     }
                 }
             }

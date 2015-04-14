@@ -266,7 +266,31 @@
                 return false;
             }
         },
+        sound: {
+            mergeWithPrevLayer: false,
+            draw: true,
+            getTileData: function(x, y, prevTileData){
+                var sound = this.game.soundLayer.get(x, y);
+                if(sound){
+                    var char;
+                    var color = 'pink';
+                    if(sound === 'move'){
+                        char = '?';
+                    } else if(sound === 'melee'){
+                        char = '*';
+                    } else if(sound === 'knockBack'){
+                        char = '*';
+                        color = 'rgba(246,185,196, 0.5)';
+                    }
 
+                    return {
+                        char: char,
+                        color: color,
+                    };
+                }
+                return false;
+            }
+        },
         hover: {
             mergeWithPrevLayer: true,
             draw: true,
