@@ -42,6 +42,7 @@
                 ammo: null,
             },
 
+            knockedDown: false,
             init: function() {
                 this.equipment = RL.Util.merge({}, this.equipment);
 
@@ -77,6 +78,11 @@
              */
             _update: function() {
 
+                if(this.knockedDown){
+                    this.knockedDown = false;
+                    this.behavior = 'gettingUp';
+                    return true;
+                }
                 var stumbleChance = this.turnsSinceStumble / this.maxTurnsWithoutStumble;
                 if(this.turnsSinceStumble && Math.random() < stumbleChance) {
                     this.turnsSinceStumble = 0;
