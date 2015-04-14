@@ -89,12 +89,8 @@
                             tileData.color = 'red';
                         }
                     }
-
-                } else {
-                    this.game.furnitureManager.removeAt(x, y, function(furniture){
-                        return furniture.type === 'placeholder';
-                    });
                 }
+
                 if(tileData){
                     return tileData;
                 }
