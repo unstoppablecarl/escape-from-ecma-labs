@@ -247,7 +247,7 @@
                 tileData = layer.getModifiedTileData(x, y, tileData);
 
                 if(layer.cancelTileDrawWhenNotFound && !tileData){
-                    return false;
+                    // return false;
                 }
 
                 if(tileData && layer.draw){

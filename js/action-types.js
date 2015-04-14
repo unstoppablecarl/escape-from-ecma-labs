@@ -240,7 +240,8 @@
                 var weaponMelee = this.equipment.weaponMelee;
                 return {
                     damage: weaponMelee.damage,
-                    weapon: weaponMelee
+                    weapon: weaponMelee,
+                    knockBack: weaponMelee.knockBack
                 };
             },
             getTargetsForAction: makeAdjacentTargetsFinder('melee_attack')
@@ -255,7 +256,8 @@
 
                 var weapon = {
                     name: result.weapon.name,
-                    damage: result.damage
+                    damage: result.damage,
+                    knockBack: result.knockBack
                 };
                 this.game.console.logAttack(source, weapon, this);
 
@@ -277,6 +279,11 @@
                     }
                     this.game.splatter(this.x, this.y, splatter);
                 }
+                var target = this;
+                if(weapon.knockBack){
+                    console.log('weapon.knockBack', weapon.knockBack);
+                    target.knockBack(source.x, source.y, weapon.knockBack);
+                }
                 return true;
             },
         }
@@ -293,6 +300,14 @@
                     damage += this.hordePushBonus;
                     this.hordePushBonus = 0;
                 }
+                if(this.attackSoundChance){
+                    var outOfFov = !this.game.player.fov.get(this.x, this.y);
+                    if(outOfFov){
+                        if(Math.random() < this.attackSoundChance){
+                            this.game.soundLayer.set(this.x, this.y, 'melee');
+                        }
+                    }
+                }
                 return {
                     damage: damage,
                     weapon: this.equipment.weaponMelee
@@ -300,6 +315,7 @@
             },
         }
     );
+
 
     makeActionTypePair({
         action: 'ranged_attack',
@@ -361,12 +377,14 @@
                 var range = weaponRanged.range;
                 var splashRange = weaponRanged.splashRange;
                 var splashDamage = weaponRanged.splashDamage;
+                var knockBack = weaponRanged.knockBack;
 
                 if(ammo){
                     damage += ammo.damageMod;
                     range += ammo.rangeMod;
                     splashRange += ammo.splashRangeMod;
                     splashDamage += ammo.splashDamageMod;
+                    knockBack += ammo.knockBackMod;
                 }
 
                 return {
@@ -377,6 +395,7 @@
                     range: range,
                     splashRange: splashRange,
                     splashDamage: splashDamage,
+                    knockBack: knockBack,
                 };
             },
 
@@ -388,6 +407,7 @@
 
                 var splashDamage = result.splashDamage;
                 var splashRange = result.splashRange;
+                var knockBack = result.knockBack;
 
                 var newSettings = {
                     result: {
@@ -398,10 +418,10 @@
                         damage: splashDamage
                     }
                 };
-
+                var source = this;
                 if(splashRange){
 
-                    var source = this;
+
                     var validTargetsFinder = new RL.ValidTargetsFinder(this.game, {
                         x: x,
                         y: y,
@@ -431,6 +451,10 @@
                             }
                         }
                     }
+                }
+
+                if(knockBack){
+                    target.knockBack(source.x, source.y, knockBack);
                 }
             },
             afterPerformAction: function(target, settings){

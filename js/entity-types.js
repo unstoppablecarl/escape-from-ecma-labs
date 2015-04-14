@@ -291,7 +291,52 @@
                     };
                 }
                 return result;
+            },
+
+            knockBack: function(originX, originY, pushDistance){
+                pushDistance = pushDistance || 1;
+                var game = this.game;
+                var target = this;
+                var distanceToTarget = RL.Util.getTileMoveDistance(originX, originY, this.x, this.y) - 1;
+
+                var lineDistance = distanceToTarget + pushDistance;
+
+                var canMoveToCheck = function(tile){
+                    // skip source tile
+                    if(tile.x === originX && tile.y === originY){
+                        return false;
+                    }
+                    // skip target tile
+                    if(tile.x === target.x && tile.y === target.y){
+                        return false;
+                    }
+                    return !game.entityCanMoveTo(target, tile.x, tile.y);
+                };
+
+                var list = this.game.map.getLineThrough(originX, originY, this.x, this.y, canMoveToCheck, false, lineDistance);
+
+                var lastCoord = list[list.length - 1];
+                if(!game.entityCanMoveTo(target, lastCoord.x, lastCoord.y)){
+                    // remove last coord if target cannot move to it
+                    list.pop();
+                }
+
+                // mark knockback tiles startin at target
+                var started = false;
+                for (var i = 0; i < list.length; i++) {
+                    var t = list[i];
+                    if(!started && t.x === target.x && t.y === target.y){
+                        started = true;
+                    }
+                    if(started){
+                        this.game.soundLayer.set(t.x, t.y, 'knockBack');
+                    }
+                }
+                var destinationTile = list.pop();
+                this.moveTo(destinationTile.x, destinationTile.y);
+                this.knockedDown = true;
             }
+
         },
     };
 

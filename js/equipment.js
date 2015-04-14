@@ -62,6 +62,7 @@
             defaultSlot: 'weaponMelee',
             equipableToSlots: ['weaponMelee'],
             damage: 0,
+            knockBack: 0,
         },
         rangedWeapon: {
             itemType: 'weaponRanged',
@@ -73,10 +74,18 @@
             range: 0,
             splashRange: 0,
             splashDamage: 0,
+            knockBack: 0,
 
             canUseAmmo: function(ammo){
                 return (!this.ammoType) || ammo.ammoType === this.ammoType;
             }
+        },
+        armor: {
+            itemType: 'armor',
+            defaultSlot: 'armor',
+            equipableToSlots: ['armor'],
+            consoleColor: 'blue',
+            dodgeChance: 0,
         },
         ammo: {
             itemType: 'ammo',
@@ -90,6 +99,7 @@
             rangeMod: 0,
             splashDamageMod: 0,
             splashRangeMod: 0,
+            knockBackMod: 0,
         },
     };
 
@@ -133,7 +143,8 @@
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.meleeWeapon, newProto);
 
         var stats = {
-            Damage: newProto.damage
+            Damage: newProto.damage,
+            'Knock Back': newProto.knockBack
         };
 
         var statsArr = makeStatsArr(stats);
@@ -153,6 +164,7 @@
             Range: newProto.range,
             'Splash Damage': newProto.splashDamage,
             'Splash Range': newProto.splashRange,
+            'Knock Back': newProto.knockBack
         };
 
         var statsArr = makeStatsArr(stats);
@@ -172,6 +184,27 @@
             Range: newProto.rangeMod,
             'Splash Damage': newProto.splashDamageMod,
             'Splash Range': newProto.splashRangeMod,
+            'Knock Back': newProto.knockBack
+        };
+
+        var statsArr = makeStatsArr(stats, true);
+        var statsDesc = makeStatsDesc(statsArr);
+
+        newProto.stats = statsArr;
+        newProto.statDesc = statsDesc;
+
+        return newProto;
+    };
+
+    var makeArmor = function(newProto){
+        newProto = RL.Util.merge({}, equipmentPrototype, Defaults.armor, newProto);
+
+
+        var dodge = (newProto.dodgeChance * 100) + '%';
+
+        var stats = {
+            Dodge: dodge,
+
         };
 
         var statsArr = makeStatsArr(stats, true);
@@ -205,6 +238,7 @@
             bgColor: false,
             char: '☂',
             damage: 2,
+            knockBack: 2,
         }),
         folding_chair: makeMeleeWeapon({
             name: 'Folding Chair',
@@ -279,6 +313,7 @@
             char: 'r',
             damage: 2,
             range: 5,
+            knockBack: 2,
 
         }),
 
@@ -298,8 +333,8 @@
             ammoType: '9mm',
             color: 'yellow',
             char: '"',
-            damageMod: 2,
-            rangeMod: 1,
+            damageMod: 0,
+            rangeMod: 0,
         }),
 
         ammo_45cal: makeAmmo({
@@ -310,6 +345,11 @@
             damageMod: 2,
             rangeMod: 1,
         }),
+
+        heavy_coat: makeArmor({
+            name: 'Heavy Coat',
+            dodgeChance: 0.5,
+        })
     };
 
     for(var type in itemTypes){
