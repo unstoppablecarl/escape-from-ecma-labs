@@ -264,11 +264,13 @@
         * @param {Number} y1 - Map tile y coord of crossing.
         * @param {Function} [condition=false] - A function to determine when to end the line. A coord value returning true when passed to the function will end the line. (function(value, x, y){ return true;})
         * @param {Bool} [withCoords=false] - If true the returned array will include the coords of each value ([{x: 0, y: 0, value: 1}, ...])
+        * @param {Number} [maxDistance=Infinity] - The max distance of the line.
         * @return {Array} An array of coord values.
         */
-        getLineThrough: function(x0, y0, x1, y1, condition, withCoords) {
+        getLineThrough: function(x0, y0, x1, y1, condition, withCoords, maxDistance) {
             withCoords = withCoords || false;
             condition = condition || false;
+            maxDistance = maxDistance || Math.Infinity;
             var output = [],
                 dx = Math.abs(x1 - x0),
                 dy = Math.abs(y1 - y0),
@@ -277,7 +279,10 @@
                 err = dx - dy,
                 e2, val;
 
-            while (true) {
+            var currentDistance = 0;
+
+            while (currentDistance < maxDistance) {
+                currentDistance++;
                 if (x0 < 0 || x0 >= this.width || y0 < 0 || y0 >= this.height) {
                     break;
                 }
