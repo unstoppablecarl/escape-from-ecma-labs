@@ -100,6 +100,8 @@
             splashDamageMod: 0,
             splashRangeMod: 0,
             knockBackMod: 0,
+            knockBackRadiusMod: 0,
+            knockDownMod: 0,
         },
     };
 
@@ -314,6 +316,7 @@
             damage: 2,
             range: 5,
             knockBack: 2,
+            knockDown: 4,
 
         }),
 

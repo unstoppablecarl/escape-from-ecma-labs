@@ -339,7 +339,8 @@
                     knockBack: weaponMelee.knockBack,
                     knockBackRadius: weaponMelee.knockBackRadius,
                     splashDamage: weaponMelee.splashDamage,
-                    splashDamageRadius: weaponMelee.splashDamageRadius
+                    splashDamageRadius: weaponMelee.splashDamageRadius,
+                    knockDown: weaponMelee.knockDown,
                 };
             },
             getTargetsForAction: makeAdjacentTargetsFinder('melee_attack'),
@@ -359,6 +360,11 @@
                 if(knockBack || knockBackRadius){
                     doKnockBack(source, target, settings);
                 }
+
+                var knockDown = result.knockDown;
+                if(knockDown){
+                    target.knockDown(knockDown);
+                }
             },
         },
 
@@ -376,7 +382,8 @@
                     knockBack: result.knockBack,
                     knockBackRadius: result.knockBackRadius,
                     splashDamage: result.splashDamage,
-                    splashDamageRadius: result.splashDamageRadius
+                    splashDamageRadius: result.splashDamageRadius,
+                    knockDown: result.knockDown
                 };
                 this.game.console.logAttack(source, weapon, this);
                 doSmash(source, target, settings, 'melee_attack');
@@ -412,7 +419,6 @@
             },
         }
     );
-
 
     makeActionTypePair({
         action: 'ranged_attack',
@@ -476,6 +482,7 @@
                 var splashDamage = weaponRanged.splashDamage;
                 var knockBack = weaponRanged.knockBack;
                 var knockBackRadius = weaponRanged.knockBackRadius;
+                var knockDown = weaponRanged.knockDown;
 
                 if(ammo){
                     damage += ammo.damageMod;
@@ -484,6 +491,7 @@
                     splashDamage += ammo.splashDamageMod;
                     knockBack += ammo.knockBackMod;
                     knockBackRadius += ammo.knockBackRadiusMod;
+                    knockDown += ammo.knockDownMod;
                 }
 
                 return {
@@ -495,14 +503,15 @@
                     splashRange: splashRange,
                     splashDamage: splashDamage,
                     knockBack: knockBack,
-                    knockBackRadius: knockBackRadius
+                    knockBackRadius: knockBackRadius,
+                    knockDown: knockDown,
                 };
             },
 
             afterPerformActionSuccess: function(target, settings){
                 var source = this;
                 var result = settings.result;
-
+                console.log('afterPerformActionSuccess', result);
                 var splashDamage = result.splashDamage;
 
                 if(splashDamage){
@@ -514,6 +523,12 @@
 
                 if(knockBack || knockBackRadius){
                     doKnockBack(source, target, settings);
+                }
+
+                var knockDown = result.knockDown;
+                if(knockDown){
+                    console.log('knockDown', knockDown);
+                    target.knockDown(knockDown);
                 }
             },
             afterPerformAction: function(target, settings){
@@ -541,7 +556,8 @@
                     knockBack: result.knockBack,
                     knockBackRadius: result.knockBackRadius,
                     splashDamage: result.splashDamage,
-                    splashDamageRadius: result.splashDamageRadius
+                    splashDamageRadius: result.splashDamageRadius,
+                    knockDown: result.knockDown,
                 };
 
                 this.game.console.logAttack(source, weapon, this);
