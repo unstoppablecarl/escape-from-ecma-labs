@@ -49,6 +49,19 @@
             var targetName = this.wrap(target);
 
             var msg = '' + sourceName + ' hit ' + targetName + ' with ' + weaponName + ' dealing ' + weaponDamage + ' damage';
+
+            if(weapon.knockBack){
+                var kb = this.wrapStr('<em>Knocked Back</em>', RL.Util.COLORS.orange);
+                var kbDistance = this.wrapStr(weapon.knockBack, RL.Util.COLORS.red_alt);
+                msg += ', ' + kb + ' ' + kbDistance + ' spaces';
+            }
+
+            if(weapon.knockDown){
+                var kd = this.wrapStr('<em>Knocked Down</em>', RL.Util.COLORS.orange);
+                var kdCount = this.wrapStr(weapon.knockDown, RL.Util.COLORS.red_alt);
+                msg += ', ' + kd + ' for ' + kdCount + ' turns';
+            }
+
             if(target.dead){
                 if(target instanceof RL.Furniture){
                     msg += this.wrapStr(' Destroying It', RL.Util.COLORS.red_alt);
