@@ -55,9 +55,9 @@
 
         update: function(action) {
 
-            if(action === 'cancel'){
-                this.clearPendingAction();
-            }
+            // if(action === 'cancel'){
+            //     this.clearPendingAction();
+            // }
 
             if(this.pendingAction){
                 return this.pendingAction(action);
@@ -222,9 +222,10 @@
                 // }
                 this.actionTargets = new RL.ValidTargets(this.game, targets);
                 this.game.queueDraw = true;
-                this.pendingAction = this.actionTargetSelect;
-                this.game.console.directionsSelectActionTarget(this.pendingActionName);
-                this.game.console.logSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
+                this.pendingAction = this.actionTargetSelectCoord;
+                this.game.console.directionsSelectActionCoord(this.pendingActionName);
+                this.game.console.logSelectActionCoord(this.pendingActionName);
+                this.game.console.logSelectActionCoordChoice(this.pendingActionName, this.actionTargets.getTargetsAtCurrentCoord());
             }
             return false;
         },
@@ -234,6 +235,7 @@
             this.pendingActionName = 'pickup';
             return this.actionAdjacentTargetSelect('pickup');
         },
+
 
         actionAdjacentTargetSelect: function(action){
             var targets = this.getTargetsForAction(this.pendingActionName);
@@ -250,14 +252,15 @@
             this.actionTargets = new RL.ValidTargets(this.game, targets);
             this.actionTargets.ignoreCurrent = true;
             this.game.queueDraw = true;
-
             this.pendingAction = this.actionAdjacentDirectionTargetSelect;
-            this.game.console.logChooseDirection(this.pendingActionName);
+            this.game.console.directionsSelectActionTarget(this.pendingActionName);
+
             return false;
         },
 
         // pending action
         actionAdjacentDirectionTargetSelect: function(action){
+            this.game.console.logChooseDirection(this.pendingActionName);
             var pendingActionName = this.pendingActionName;
             var actionTargets = this.actionTargets;
 
@@ -304,26 +307,55 @@
             }
             this.clearPendingAction();
             this.actionTargets = new RL.ValidTargets(this.game, objects);
-            this.pendingAction = this.actionTargetSelect;
+            this.pendingAction = this.actionTargetSelectFromCoord;
             this.pendingActionName = pendingActionName;
+            this.actionTargets.setCurrentCoord(objects[0].x, objects[0].y);
             this.game.console.directionsSelectActionTarget(this.pendingActionName);
             this.game.console.logSelectActionTarget(pendingActionName, this.actionTargets.getCurrent().value);
+            this.game.console.logSelectActionTargetChoice(this.pendingActionName, this.actionTargets.getCurrent().value);
             return false;
         },
 
         // pending action
-        actionTargetSelect: function(action){
+        actionTargetSelectCoord: function(action){
+            if(
+                action === 'up' ||
+                action === 'down' ||
+                action === 'left' ||
+                action === 'right'
+            ){
+                this.game.queueDraw = true;
+                this.actionTargets.setCurrentCoordInDirection(action);
+                this.game.console.logSelectActionCoordChoice(this.pendingActionName, this.actionTargets.getTargetsAtCurrentCoord());
+                return false;
+            }
 
+            if(action === this.pendingActionName || action === 'select'){
+                this.actionTargets.selectedCoord = this.actionTargets.getCurrentCoord();
+                this.pendingAction = this.actionTargetSelectFromCoord;
+                this.game.console.directionsSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
+                this.game.console.logSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
+                this.game.console.logSelectActionTargetChoice(this.pendingActionName, this.actionTargets.getCurrent().value);
+                this.game.queueDraw = true;
+                return false;
+            }
+
+            this.clearPendingAction();
+            return false;
+        },
+
+        // pending action
+        actionTargetSelectFromCoord: function(action){
             this.actionTargets.ignoreCurrent = false;
+
             if(
                 action === 'prev_target' ||
                 action === 'left' ||
                 action === 'down'
             ){
-
                 this.game.queueDraw = true;
                 this.actionTargets.prev();
-                this.game.console.logSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
+                this.game.console.logSelectActionTargetChoice(this.pendingActionName, this.actionTargets.getCurrent().value);
                 return false;
             }
 
@@ -334,7 +366,7 @@
             ){
                 this.game.queueDraw = true;
                 this.actionTargets.next();
-                this.game.console.logSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
+                this.game.console.logSelectActionTargetChoice(this.pendingActionName, this.actionTargets.getCurrent().value);
                 return false;
             }
 
@@ -344,7 +376,12 @@
                 this.clearPendingAction();
                 return true;
             }
-            this.clearPendingAction();
+
+            this.game.queueDraw = true;
+            this.pendingAction = this.actionTargetSelectCoord;
+            this.game.console.logSelectActionCoord(this.pendingActionName);
+            this.game.console.directionsSelectActionCoord(this.pendingActionName);
+
             return false;
         },
 
