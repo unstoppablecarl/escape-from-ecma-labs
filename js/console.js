@@ -14,8 +14,7 @@
             this.directionsEl.innerHTML = this.wrapStr('<small> (ENTER to select, movement keys to change selected location, esc or other to cancel)</small>', RL.Util.COLORS.blue_alt);
         },
         directionsSelectActionTarget: function(action){
-            var verb = this.wrapStr(action, RL.Util.COLORS.blue);
-            this.directionsEl.innerHTML = this.wrapStr('<small> (ENTER to select, movement keys for prev/next target, esc or other to cancel)</small>', RL.Util.COLORS.blue_alt);
+            this.directionsEl.innerHTML = this.wrapStr('<small> (ENTER to select, movement keys to change target, esc or other to cancel)</small>', RL.Util.COLORS.blue_alt);
         },
 
         logWait: function(entity){

@@ -295,8 +295,6 @@
             damage: result.damage
         };
 
-        target.game.console.logAttack(source, weapon, target);
-
         var smash = {
             source: source,
             target: target,
