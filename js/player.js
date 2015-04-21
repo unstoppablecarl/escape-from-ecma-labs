@@ -217,15 +217,11 @@
                 }
 
                 // uncomment this to auto perform an action when there is only one target
-                // if(targets.length === 1){
-                //     return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
-                // }
-                this.actionTargets = new RL.ValidTargets(this.game, targets);
-                this.game.queueDraw = true;
-                this.pendingAction = this.actionTargetSelectCoord;
-                this.game.console.directionsSelectActionCoord(this.pendingActionName);
-                this.game.console.logSelectActionCoord(this.pendingActionName);
-                this.game.console.logSelectActionCoordChoice(this.pendingActionName, this.actionTargets.getTargetsAtCurrentCoord());
+                if(targets.length === 1){
+                    return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
+                }
+                var actionTargets = new RL.ValidTargets(this.game, targets);
+                this.setPendingAction_actionTargetSelectCoord(this.pendingActionName, actionTargets);
             }
             return false;
         },
@@ -236,7 +232,7 @@
             return this.actionAdjacentTargetSelect('pickup');
         },
 
-
+        // action
         actionAdjacentTargetSelect: function(action){
             var targets = this.getTargetsForAction(this.pendingActionName);
             if(!targets.length){
@@ -249,71 +245,24 @@
             // if(targets.length === 1){
             //     return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
             // }
-            this.actionTargets = new RL.ValidTargets(this.game, targets);
-            this.actionTargets.ignoreCurrent = true;
-            this.game.queueDraw = true;
-            this.pendingAction = this.actionAdjacentDirectionTargetSelect;
-            this.game.console.directionsSelectActionTarget(this.pendingActionName);
+            var actionTargets = new RL.ValidTargets(this.game, targets);
 
+            this.setPendingAction_actionTargetSelectCoord(this.pendingActionName, actionTargets);
             return false;
         },
 
-        // pending action
-        actionAdjacentDirectionTargetSelect: function(action){
-            this.game.console.logChooseDirection(this.pendingActionName);
-            var pendingActionName = this.pendingActionName;
-            var actionTargets = this.actionTargets;
+        setPendingAction_actionTargetSelectCoord: function(pendingActionName, actionTargets){
+            // this.clearPendingAction();
 
-            if(action === pendingActionName){
-                if(actionTargets.targets.length === 1){
-                    this.clearPendingAction();
-                    return this.performAction(pendingActionName, actionTargets.targets[0].value);
-                }
-                return false;
-            }
-
-            var isMoveDirection = RL.Util.DIRECTIONS_4.indexOf(action) !== -1;
-            if(!isMoveDirection){
-                this.clearPendingAction();
-                return false;
-            }
-
-            var _this = this;
-            var moveOffsetCoord = RL.Util.getOffsetCoordsFromDirection(action),
-                moveToX = this.x + moveOffsetCoord.x,
-                moveToY = this.y + moveOffsetCoord.y,
-                objects = this.game.getObjectsAtPostion(moveToX, moveToY).filter(function(obj){
-                    return _this.canPerformActionOnTarget(pendingActionName, obj);
-                })
-                // needs to be the same format as RL.ValidTargetsFinder.getValidTargets();
-                .map(function(obj){
-                    return {
-                        x: obj.x,
-                        y: obj.y,
-                        range: 1,
-                        value: obj
-                    };
-                });
-
-            if(!objects.length){
-                this.game.console.logNothingTo(pendingActionName);
-                this.clearPendingAction();
-                return false;
-            }
-
-            if(objects.length === 1){
-                this.clearPendingAction();
-                return this.performAction(pendingActionName, objects[0].value);
-            }
-            this.clearPendingAction();
-            this.actionTargets = new RL.ValidTargets(this.game, objects);
-            this.pendingAction = this.actionTargetSelectFromCoord;
             this.pendingActionName = pendingActionName;
-            this.actionTargets.setCurrentCoord(objects[0].x, objects[0].y);
-            this.game.console.directionsSelectActionTarget(this.pendingActionName);
-            this.game.console.logSelectActionTarget(pendingActionName, this.actionTargets.getCurrent().value);
-            this.game.console.logSelectActionTargetChoice(this.pendingActionName, this.actionTargets.getCurrent().value);
-            return false;
+            this.actionTargets = actionTargets;
+            this.pendingAction = this.actionTargetSelectCoord;
+
+            this.game.queueDraw = true;
+
+            this.game.console.directionsSelectActionCoord(pendingActionName);
+            this.game.console.logSelectActionCoord(pendingActionName);
+            this.game.console.logSelectActionCoordChoice(pendingActionName, this.actionTargets.getTargetsAtCurrentCoord());
         },
 
         // pending action
@@ -331,17 +280,34 @@
             }
 
             if(action === this.pendingActionName || action === 'select'){
-                this.actionTargets.selectedCoord = this.actionTargets.getCurrentCoord();
-                this.pendingAction = this.actionTargetSelectFromCoord;
-                this.game.console.directionsSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
-                this.game.console.logSelectActionTarget(this.pendingActionName, this.actionTargets.getCurrent().value);
-                this.game.console.logSelectActionTargetChoice(this.pendingActionName, this.actionTargets.getCurrent().value);
-                this.game.queueDraw = true;
+                var currentTargets = this.actionTargets.getTargetsAtCurrentCoord();
+                if(currentTargets.length === 1){
+                    var first = currentTargets[0];
+                    var target = first.value;
+                    this.performAction(this.pendingActionName, target, this.pendingActionSettings);
+                    this.clearPendingAction();
+                    return true;
+                }
+                this.setPendingAction_actionTargetSelectFromCoord(this.pendingActionName, this.actionTargets);
                 return false;
             }
 
             this.clearPendingAction();
             return false;
+        },
+
+        setPendingAction_actionTargetSelectFromCoord: function(pendingActionName, actionTargets){
+
+            this.pendingActionName = pendingActionName;
+            this.actionTargets = actionTargets;
+            this.pendingAction = this.actionTargetSelectFromCoord;
+
+            this.queueDraw = true;
+
+            var target = this.actionTargets.getCurrent().value;
+            this.game.console.directionsSelectActionTarget(pendingActionName);
+            this.game.console.logSelectActionTarget(pendingActionName);
+            this.game.console.logSelectActionTargetChoice(pendingActionName, target);
         },
 
         // pending action
@@ -377,6 +343,7 @@
                 return true;
             }
 
+            this.setPendingAction_actionTargetSelectCoord(this.pendingActionName, this.actionTargets);
             this.game.queueDraw = true;
             this.pendingAction = this.actionTargetSelectCoord;
             this.game.console.logSelectActionCoord(this.pendingActionName);
