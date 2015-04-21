@@ -204,7 +204,7 @@
             }
 
             if(this.player.actionTargets && this.player.actionTargets.targets.length){
-                var target = this.player.actionTargets.map.getFirst(tile.x, tile.y);
+                var target = this.player.actionTargets.objectManager.getFirst(tile.x, tile.y);
                 if(target){
                     this.player.actionTargets.setCurrent(target);
                     this.renderer.draw();

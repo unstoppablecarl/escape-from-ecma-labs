@@ -28,6 +28,9 @@
 
                     var current = targets.getCurrent(false);
                     var isCurrent = current && current.x === x && current.y === y;
+                    var currentCoord = targets.getCurrentCoord();
+
+                    var isCurrentCoord = currentCoord && currentCoord.x === x && currentCoord.y === y;
 
                     if(isCurrent){
                         if(!targets.ignoreCurrent){
@@ -39,11 +42,16 @@
                         }
 
                     } else {
-                        var targetsAtTile = targets.map.get(x, y);
+                        var targetsAtTile = targets.objectManager.get(x, y);
                         if(targetsAtTile.length){
                             tileData.borderColor = borderColor;
                             tileData.borderWidth = 1;
                         }
+                    }
+
+                    if(isCurrentCoord){
+                        tileData.borderColor = 'red';
+                        tileData.borderWidth = 1;
                     }
                 }
                 return tileData;
@@ -248,7 +256,6 @@
                     return false;
                 }
 
-                // change the bg color of the hovered tile
                 var damage = this.game.damageLayer.get(x, y);
                 if(damage){
                     return {

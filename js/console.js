@@ -9,9 +9,13 @@
         clearDirections: function(){
             this.directionsEl.innerHTML = '';
         },
+        directionsSelectActionCoord: function(action){
+            // var verb = this.wrapStr(action, RL.Util.COLORS.blue);
+            this.directionsEl.innerHTML = this.wrapStr('<small> (ENTER to select, movement keys to change selected location, esc or other to cancel)</small>', RL.Util.COLORS.blue_alt);
+        },
         directionsSelectActionTarget: function(action){
             var verb = this.wrapStr(action, RL.Util.COLORS.blue);
-            this.directionsEl.innerHTML = this.wrapStr('(ENTER to select, movement keys for prev/next target, esc or other to cancel)', RL.Util.COLORS.blue_alt);
+            this.directionsEl.innerHTML = this.wrapStr('<small> (ENTER to select, movement keys for prev/next target, esc or other to cancel)</small>', RL.Util.COLORS.blue_alt);
         },
 
         logWait: function(entity){
@@ -127,8 +131,27 @@
             verb = this.wrapStr(verb, RL.Util.COLORS.blue);
             this.log(verb + ' where? '+ this.wrapStr('(choose direction)', RL.Util.COLORS.blue_alt));
         },
+        logSelectActionCoord: function(verb){
+            verb = this.wrapStr(verb, RL.Util.COLORS.blue);
+            this.log('Select <em>Location</em> to perform: ' + verb);
+        },
+        logSelectActionCoordChoice: function(action, targets){
+            var verb = this.wrapStr(action, RL.Util.COLORS.blue);
 
-        logSelectActionTarget: function(action, target){
+            var self = this;
+            var targetName = targets.map(function(target){
+                return target.value;
+            }).map(function(target){
+                return self.wrap(target);
+            }).join(', ');
+
+            this.log(verb + ' at location with: ' + targetName + ' ?');
+        },
+        logSelectActionTarget: function(action){
+            var verb = this.wrapStr(action, RL.Util.COLORS.blue);
+            this.log('Select <em>Target</em> of: ' + verb);
+        },
+        logSelectActionTargetChoice: function(action, target){
             var verb = this.wrapStr(action, RL.Util.COLORS.blue);
             var targetName = this.wrap(target);
             this.log(verb + ' ' + targetName + '?');
