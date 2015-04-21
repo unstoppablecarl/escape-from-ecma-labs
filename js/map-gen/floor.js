@@ -23,22 +23,25 @@
 
             var roomPlaceholderOrigins = this.getRoomPlaceholderOriginCoords();
             var roomCount = roomPlaceholderOrigins.length;
-            var roomTemplates = this.getRoomTemplateList(roomCount);
-            roomTemplates = RL.Random.shuffleArray(roomTemplates);
+            if(roomCount){
+                var roomTemplates = this.getRoomTemplateList(roomCount);
+                roomTemplates = RL.Random.shuffleArray(roomTemplates);
 
-            for (var i = 0; i < roomPlaceholderOrigins.length; i++) {
-                var coord = roomPlaceholderOrigins[i];
-                var roomTemplate = roomTemplates[i];
-                var room = new RL.MapGen.Room(this.game, roomTemplate, coord);
-                this.rooms.push(room);
+                for (var i = 0; i < roomPlaceholderOrigins.length; i++) {
+                    var coord = roomPlaceholderOrigins[i];
+                    var roomTemplate = roomTemplates[i];
+                    var room = new RL.MapGen.Room(this.game, roomTemplate, coord);
+                    this.rooms.push(room);
+                }
+
+                this.placeRooms();
+                this.placeDoors();
+                if(!this.game.showDoorPlacementDebug){
+                    this.removeFurniturePlaceholders();
+                    this.removeTilePlaceholders();
+                }
             }
 
-            this.placeRooms();
-            this.placeDoors();
-            if(!this.game.showDoorPlacementDebug){
-                this.removeFurniturePlaceholders();
-                this.removeTilePlaceholders();
-            }
         },
 
         getRoomTemplateList: function(count){
