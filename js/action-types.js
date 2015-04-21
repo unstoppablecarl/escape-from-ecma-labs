@@ -225,6 +225,101 @@
     });
 
 
+    var doSplashDamage = function(source, target, settings){
+        var x = target.x;
+        var y = target.y;
+
+        var result = settings.result;
+
+        var splashDamage = result.splashDamage;
+        var splashRange = result.splashRange;
+        var newSettings = {
+            result: {
+                weapon: {
+                    name: 'Explosion',
+                    damage: splashDamage
+                },
+                damage: splashDamage
+            }
+        };
+        var validTargetsFinder = new RL.ValidTargetsFinder(this.game, {
+            x: x,
+            y: y,
+            limitToFov: false,
+            range: splashRange,
+            prepareValidTargets: false,
+            includeTiles: true,
+            filter: function(obj){
+                if(obj instanceof RL.Tile) {
+                    return obj.type === 'wall';
+                }
+                return obj.canResolveAction && obj.canResolveAction('ranged_attack', source, newSettings);
+            }
+        });
+        var adjacentTargets = validTargetsFinder.getValidTargets();
+        if(adjacentTargets && adjacentTargets.length){
+            for(var i = adjacentTargets.length - 1; i >= 0; i--){
+                var newTarget = adjacentTargets[i];
+                if(newTarget instanceof RL.Tile){
+                    if(newTarget.type === 'wall'){
+                        this.game.map.remove(newTarget.x, newTarget.y);
+                        this.game.map.set(newTarget.x, newTarget.y, 'floor');
+                    }
+                } else {
+                    newTarget.resolveAction('ranged_attack', source, newSettings);
+                }
+            }
+        }
+    };
+
+    var doKnockBack = function(source, target, settings){
+        var result = settings.result;
+
+        var knockBack = result.knockBack;
+        var knockBackRadius = result.knockBackRadius;
+
+        if(knockBackRadius){
+            knockBack = knockBack || 1;
+            this.game.knockBackRadius(target.x, target.y, knockBack, knockBackRadius);
+        }
+        else if(knockBack){
+            target.knockBack(source.x, source.y, knockBack);
+        }
+    };
+
+    var doSmash = function(source, target, settings, type){
+        var result = settings.result;
+
+        var weapon = {
+            name: result.weapon.name,
+            damage: result.damage
+        };
+
+        target.game.console.logAttack(source, weapon, target);
+
+        var smash = {
+            source: source,
+            target: target,
+            type: type,
+            targetX: target.x,
+            targetY: target.y,
+            sourceX: source.x,
+            sourceY: source.y
+        };
+
+        target.game.smashLayer.set(source.x, source.y, smash);
+        target.game.damageLayer.set(target.x, target.y, 1);
+
+        if(target.bleeds){
+            var splatter = result.damage / 10;
+            if(target.dead){
+                splatter *= 1.5;
+            }
+            target.game.splatter(target.x, target.y, splatter);
+        }
+
+    };
+
     makeActionTypePair({
         action: 'melee_attack',
 
@@ -241,15 +336,36 @@
                 return {
                     damage: weaponMelee.damage,
                     weapon: weaponMelee,
-                    knockBack: weaponMelee.knockBack
+                    knockBack: weaponMelee.knockBack,
+                    knockBackRadius: weaponMelee.knockBackRadius,
+                    splashDamage: weaponMelee.splashDamage,
+                    splashDamageRadius: weaponMelee.splashDamageRadius
                 };
             },
-            getTargetsForAction: makeAdjacentTargetsFinder('melee_attack')
+            getTargetsForAction: makeAdjacentTargetsFinder('melee_attack'),
+            afterPerformActionSuccess: function(target, settings){
+                var source = this;
+                var result = settings.result;
+
+                var splashDamage = result.splashDamage;
+
+                if(splashDamage){
+                    doSplashDamage(source, target, settings);
+                }
+
+                var knockBack = result.knockBack;
+                var knockBackRadius = result.knockBackRadius;
+
+                if(knockBack || knockBackRadius){
+                    doKnockBack(source, target, settings);
+                }
+            },
         },
 
         resolvable: {
             canResolveAction: true,
             resolveAction: function(source, settings){
+                var target = this;
                 var result = settings.result;
 
                 this.takeDamage(result.damage);
@@ -257,36 +373,17 @@
                 var weapon = {
                     name: result.weapon.name,
                     damage: result.damage,
-                    knockBack: result.knockBack
+                    knockBack: result.knockBack,
+                    knockBackRadius: result.knockBackRadius,
+                    splashDamage: result.splashDamage,
+                    splashDamageRadius: result.splashDamageRadius
                 };
                 this.game.console.logAttack(source, weapon, this);
-
-                var smash = {
-                    source: source,
-                    target: this,
-                    type: 'melee_attack',
-                    targetX: this.x,
-                    targetY: this.y,
-                    sourceX: source.x,
-                    sourceY: source.y
-                };
-                this.game.smashLayer.set(source.x, source.y, smash);
-
-                if(this.bleeds){
-                    var splatter = result.damage / 10;
-                    if(this.dead){
-                        splatter *= 1.5;
-                    }
-                    this.game.splatter(this.x, this.y, splatter);
-                }
-                var target = this;
-                if(weapon.knockBack){
-                    console.log('weapon.knockBack', weapon.knockBack);
-                    target.knockBack(source.x, source.y, weapon.knockBack);
-                }
+                doSmash(source, target, settings, 'melee_attack');
                 return true;
             },
-        }
+        },
+
     });
     // alternate melee_attack implementation
     PerformableActionTypes.melee_attack_zombie = merge(
@@ -378,6 +475,7 @@
                 var splashRange = weaponRanged.splashRange;
                 var splashDamage = weaponRanged.splashDamage;
                 var knockBack = weaponRanged.knockBack;
+                var knockBackRadius = weaponRanged.knockBackRadius;
 
                 if(ammo){
                     damage += ammo.damageMod;
@@ -385,6 +483,7 @@
                     splashRange += ammo.splashRangeMod;
                     splashDamage += ammo.splashDamageMod;
                     knockBack += ammo.knockBackMod;
+                    knockBackRadius += ammo.knockBackRadiusMod;
                 }
 
                 return {
@@ -396,65 +495,25 @@
                     splashRange: splashRange,
                     splashDamage: splashDamage,
                     knockBack: knockBack,
+                    knockBackRadius: knockBackRadius
                 };
             },
 
             afterPerformActionSuccess: function(target, settings){
-                var x = target.x;
-                var y = target.y;
-
+                var source = this;
                 var result = settings.result;
 
                 var splashDamage = result.splashDamage;
-                var splashRange = result.splashRange;
-                var knockBack = result.knockBack;
 
-                var newSettings = {
-                    result: {
-                        weapon: {
-                            name: 'Explosion',
-                            damage: splashDamage
-                        },
-                        damage: splashDamage
-                    }
-                };
-                var source = this;
-                if(splashRange){
-
-
-                    var validTargetsFinder = new RL.ValidTargetsFinder(this.game, {
-                        x: x,
-                        y: y,
-                        limitToFov: false,
-                        range: splashRange,
-                        prepareValidTargets: false,
-                        includeTiles: true,
-                        filter: function(obj){
-                            if(obj instanceof RL.Tile) {
-                                return obj.type === 'wall';
-                            }
-                            return obj.canResolveAction && obj.canResolveAction('ranged_attack', source, newSettings);
-                        }
-                    });
-                    var adjacentTargets = validTargetsFinder.getValidTargets();
-
-                    if(adjacentTargets && adjacentTargets.length){
-                        for(var i = adjacentTargets.length - 1; i >= 0; i--){
-                            var newTarget = adjacentTargets[i];
-                            if(newTarget instanceof RL.Tile){
-                                if(newTarget.type === 'wall'){
-                                    this.game.map.remove(newTarget.x, newTarget.y);
-                                    this.game.map.set(newTarget.x, newTarget.y, 'floor');
-                                }
-                            } else {
-                                newTarget.resolveAction('ranged_attack', source, newSettings);
-                            }
-                        }
-                    }
+                if(splashDamage){
+                    doSplashDamage(source, target, settings);
                 }
 
-                if(knockBack){
-                    target.knockBack(source.x, source.y, knockBack);
+                var knockBack = result.knockBack;
+                var knockBackRadius = result.knockBackRadius;
+
+                if(knockBack || knockBackRadius){
+                    doKnockBack(source, target, settings);
                 }
             },
             afterPerformAction: function(target, settings){
@@ -471,36 +530,23 @@
         resolvable: {
             canResolveAction: true,
             resolveAction: function(source, settings){
+                var target = this;
                 var result = settings.result;
 
                 this.takeDamage(result.damage);
 
                 var weapon = {
                     name: result.weapon.name,
-                    damage: result.damage
+                    damage: result.damage,
+                    knockBack: result.knockBack,
+                    knockBackRadius: result.knockBackRadius,
+                    splashDamage: result.splashDamage,
+                    splashDamageRadius: result.splashDamageRadius
                 };
+
                 this.game.console.logAttack(source, weapon, this);
 
-                var smash = {
-                    source: source,
-                    target: this,
-                    type: 'ranged_attack',
-                    targetX: this.x,
-                    targetY: this.y,
-                    sourceX: source.x,
-                    sourceY: source.y
-                };
-
-                this.game.smashLayer.set(source.x, source.y, smash);
-                this.game.damageLayer.set(this.x, this.y, 1);
-
-                if(this.bleeds){
-                    var splatter = result.damage / 10;
-                    if(this.dead){
-                        splatter *= 1.5;
-                    }
-                    this.game.splatter(this.x, this.y, splatter);
-                }
+                doSmash(source, target, settings, 'ranged_attack');
                 return true;
             },
         }

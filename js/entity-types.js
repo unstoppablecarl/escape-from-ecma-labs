@@ -45,7 +45,7 @@
             moveSoundChance: 0.5,
             attackSoundChance: 0.95,
 
-            knockedDown: false,
+            knockedDownCount: 0,
 
             init: function() {
                 this.equipment = RL.Util.merge({}, this.equipment);
@@ -81,10 +81,12 @@
              * @method update
              */
             _update: function() {
-
-                if(this.knockedDown){
-                    this.knockedDown = false;
-                    this.behavior = 'gettingUp';
+                if(this.immobilized){
+                    return true;
+                }
+                if(this.knockedDownCount){
+                    this.knockedDownCount--;
+                    this.behavior = 'knocked down';
                     return true;
                 }
                 var stumbleChance = this.turnsSinceStumble / this.maxTurnsWithoutStumble;
@@ -294,49 +296,77 @@
             },
 
             knockBack: function(originX, originY, pushDistance){
+                console.log('kb');
                 pushDistance = pushDistance || 1;
                 var game = this.game;
                 var target = this;
-                var distanceToTarget = RL.Util.getTileMoveDistance(originX, originY, this.x, this.y) - 1;
+                // var distanceToTarget = RL.Util.getTileMoveDistance(originX, originY, this.x, this.y) - 1;
+                // if(!distanceToTarget){
+                //     distanceToTarget = 2;
+                // }
+                var lineDistance = pushDistance + 1;
 
-                var lineDistance = distanceToTarget + pushDistance;
-
-                var canMoveToCheck = function(tile){
-                    // skip source tile
-                    if(tile.x === originX && tile.y === originY){
-                        return false;
-                    }
+                var canMoveToCheck = function(tile, x, y){
                     // skip target tile
-                    if(tile.x === target.x && tile.y === target.y){
+                    if(x === target.x && y === target.y){
                         return false;
                     }
                     return !game.entityCanMoveTo(target, tile.x, tile.y);
                 };
 
-                var list = this.game.map.getLineThrough(originX, originY, this.x, this.y, canMoveToCheck, false, lineDistance);
+                var list = this.game.map.getLineThrough(originX, originY, this.x, this.y, canMoveToCheck, false, true, lineDistance);
 
-                var lastCoord = list[list.length - 1];
-                if(!game.entityCanMoveTo(target, lastCoord.x, lastCoord.y)){
-                    // remove last coord if target cannot move to it
-                    list.pop();
+                // remove first coord, it is the current position
+                list.shift();
+
+                if(list.length){
+                    var lastCoord = list[list.length - 1];
+                    if(!game.entityCanMoveTo(target, lastCoord.x, lastCoord.y)){
+                        // remove last coord if target cannot move to it
+                        list.pop();
+                    }
+
+                    if(list.length){
+                        this._knockBackPath = list;
+                        var destinationTile = list.pop();
+                        this.game.knockBackLayer.push({
+                            start: {x: this.x, y: this.y},
+                            end: {x: destinationTile.x, y: destinationTile.y},
+                            distance: list.length,
+                        });
+
+                        var ent = this.game.entityManager.get(destinationTile.x, destinationTile.y);
+
+                        if(ent){
+                            ent.knockBack(this.x, this.y);
+                        }
+                        if(!this.canMoveTo(destinationTile.x, destinationTile.y)){
+                            throw new Error('cannot move');
+                        }
+
+                        this.moveTo(destinationTile.x, destinationTile.y);
+                    }
                 }
+
 
                 // mark knockback tiles startin at target
-                var started = false;
-                for (var i = 0; i < list.length; i++) {
-                    var t = list[i];
-                    if(!started && t.x === target.x && t.y === target.y){
-                        started = true;
-                    }
-                    if(started){
-                        this.game.soundLayer.set(t.x, t.y, 'knockBack');
-                    }
-                }
-                var destinationTile = list.pop();
-                this.moveTo(destinationTile.x, destinationTile.y);
-                this.knockedDown = true;
-            }
-
+                // var started = false;
+                // for (var i = 0; i < list.length; i++) {
+                //     var t = list[i];
+                //     if(!started && t.x === target.x && t.y === target.y){
+                //         started = true;
+                //     }
+                //     if(started){
+                //         this.game.soundLayer.set(t.x, t.y, 'knockBack');
+                //     }
+                // }
+                //
+                console.log('z:', this.char, 'lineDistance', lineDistance, list);
+            },
+            knockDown: function(turns){
+                this.behavior = 'knocked down';
+                this.knockedDownCount += turns;
+            },
         },
     };
 

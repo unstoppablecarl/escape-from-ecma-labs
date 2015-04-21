@@ -23,6 +23,8 @@
         this.smashLayer = new RL.Array2d();
         this.damageLayer = new RL.Array2d();
         this.soundLayer = new RL.Array2d();
+
+        this.knockBackLayer = [];
     };
 
     var newGamePrototype = {
@@ -230,6 +232,69 @@
                 }
             }
         },
+
+        knockBackRadius: function(x, y, radius, pushDistance){
+            var settings = {
+                radius: radius,
+                filter: function(val){
+                    return val;
+                }
+            };
+
+            var ent = this.entityManager.get(x, y);
+
+            if(ent){
+                ent.immobilized = true;
+            }
+
+            var targets = this.entityManager.map.getWithinSquareRadius(x, y, settings);
+
+            var getTargetsByDistance = function(targets){
+                // console.log(x, y, 'targets', targets);
+                var targetDistances = [];
+
+                for (var i = 0; i < targets.length; i++) {
+                    var target = targets[i];
+                    // target.knockedDown = true;
+                    target.immobilized = true;
+                    target.color = 'green';
+
+                    var distance = RL.Util.getDistance(x, y, target.x, target.y);
+
+                    targetDistances.push({
+                        target: target,
+                        distance: distance
+                    });
+                }
+
+                targetDistances.sort(function (a, b) {
+                    if (b.distance > a.distance) {
+                        return 1;
+                    }
+                    if (b.distance < a.distance) {
+                        return -1;
+                    }
+                    return 0;
+                });
+
+                return targetDistances;
+            };
+
+            var targetDistances = getTargetsByDistance(targets);
+
+
+            for (var i = 0; i < targetDistances.length; i++) {
+
+                var td = targetDistances[i];
+                // console.log(td.target.x, td.target.y);
+                td.target.char = i + '';
+                if(td.target.knockBack){
+                    td.target.knockBack(x, y, pushDistance);
+                }
+            }
+            // this.renderer.draw();
+
+        }
     };
 
     RL.Util.merge(NewGame.prototype, proto);
