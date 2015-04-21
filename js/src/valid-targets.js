@@ -65,6 +65,10 @@
          */
         current: null,
 
+        /**
+         * The currently selected map coord
+         * @type {Object}
+         */
         currentCoord: null,
 
         /**
@@ -186,16 +190,14 @@
         },
 
         getCurrentCoord: function(autoset){
-            // autoset =  autoset !== void 0 ? autoset : true;
-            // if(autoset && !this.currentCoord && this.targets.length){
-            //     this.sort();
-            //     var first = this.targets[0];
-            //     this.setCurrentCoord(first.x, first.y);
-            // }
-
             return this.currentCoord;
         },
 
+        /**
+         *
+         * @method getTargetsAtCurrentCoord
+         * @return {Array}
+         */
         getTargetsAtCurrentCoord: function(){
             var coord = this.getCurrentCoord();
             return this.objectManager.get(coord.x, coord.y);
@@ -306,10 +308,6 @@
                 }
             }
         },
-
-
-
-
     };
 
     root.RL.ValidTargets = ValidTargets;

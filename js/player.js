@@ -217,9 +217,9 @@
                 }
 
                 // uncomment this to auto perform an action when there is only one target
-                if(targets.length === 1){
-                    return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
-                }
+                // if(targets.length === 1){
+                //     return this.performAction(this.pendingActionName, targets[0].value, this.pendingActionSettings);
+                // }
                 var actionTargets = new RL.ValidTargets(this.game, targets);
                 this.setPendingAction_actionTargetSelectCoord(this.pendingActionName, actionTargets);
             }
