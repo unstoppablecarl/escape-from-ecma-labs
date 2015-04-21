@@ -264,52 +264,64 @@
         * @param {Number} y1 - Map tile y coord of crossing.
         * @param {Function} [condition=false] - A function to determine when to end the line. A coord value returning true when passed to the function will end the line. (function(value, x, y){ return true;})
         * @param {Bool} [withCoords=false] - If true the returned array will include the coords of each value ([{x: 0, y: 0, value: 1}, ...])
-        * @param {Number} [maxDistance=Infinity] - The max distance of the line.
+        * @param {Bool} [excludeCoordsBefore=false] - If true coords along the line before x1, y1 will not be included in results.
+        * @param {Number} [maxDistance=Infinity] - The max distance of the line from x1, y1.
         * @return {Array} An array of coord values.
         */
-        getLineThrough: function(x0, y0, x1, y1, condition, withCoords, maxDistance) {
+        getLineThrough: function(x0, y0, x1, y1, condition, withCoords, excludeCoordsBefore, maxDistance) {
             withCoords = withCoords || false;
             condition = condition || false;
-            maxDistance = maxDistance || Math.Infinity;
+            excludeCoordsBefore = excludeCoordsBefore || false;
+            maxDistance = maxDistance || Infinity;
             var output = [],
                 dx = Math.abs(x1 - x0),
                 dy = Math.abs(y1 - y0),
                 sx = (x0 < x1) ? 1 : -1,
                 sy = (y0 < y1) ? 1 : -1,
                 err = dx - dy,
+                x = x0,
+                y = y0,
                 e2, val;
-
             var currentDistance = 0;
+            var after = false;
 
-            while (currentDistance < maxDistance) {
-                currentDistance++;
-                if (x0 < 0 || x0 >= this.width || y0 < 0 || y0 >= this.height) {
+            while (currentDistance <= maxDistance) {
+
+                if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
                     break;
                 }
+                if(!excludeCoordsBefore || (excludeCoordsBefore && after)){
+                    val = this.get(x, y);
+                    if (withCoords) {
+                        output.push({
+                            x: x,
+                            y: y,
+                            value: val
+                        });
+                    } else {
+                        output.push(val);
+                    }
 
-                val = this.get(x0, y0);
-                if (withCoords) {
-                    output.push({
-                        x: x0,
-                        y: y0,
-                        value: val
-                    });
-                } else {
-                    output.push(val);
-                }
-
-                if (condition !== false && condition(val, x0, y0)) {
-                    break;
+                    if (condition !== false && condition(val, x, y)) {
+                        break;
+                    }
                 }
 
                 e2 = 2 * err;
                 if (e2 > -dy) {
                     err -= dy;
-                    x0 += sx;
+                    x += sx;
                 }
                 if (e2 < dx) {
                     err += dx;
-                    y0 += sy;
+                    y += sy;
+                }
+
+                if(!after && x === x1 && y === y1){
+                    after = true;
+                }
+                if(after){
+                    currentDistance++;
                 }
             }
             return output;
