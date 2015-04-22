@@ -290,11 +290,6 @@
     var doSmash = function(source, target, settings, type){
         var result = settings.result;
 
-        var weapon = {
-            name: result.weapon.name,
-            damage: result.damage
-        };
-
         var smash = {
             source: source,
             target: target,
