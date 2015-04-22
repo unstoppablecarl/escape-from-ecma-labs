@@ -9,11 +9,10 @@
         clearDirections: function(){
             this.directionsEl.innerHTML = '';
         },
-        directionsSelectActionCoord: function(action){
-            // var verb = this.wrapStr(action, RL.Util.COLORS.blue);
+        directionsSelectActionCoord: function(){
             this.directionsEl.innerHTML = this.wrapStr('<small> (ENTER to select, movement keys to change selected location, esc or other to cancel)</small>', RL.Util.COLORS.blue_alt);
         },
-        directionsSelectActionTarget: function(action){
+        directionsSelectActionTarget: function(){
             this.directionsEl.innerHTML = this.wrapStr('<small> (ENTER to select, movement keys to change target, esc or other to cancel)</small>', RL.Util.COLORS.blue_alt);
         },
 
@@ -74,19 +73,29 @@
         logTileInspect: function(tile, list){
             var msg = '';
             if(list.length){
-                var _this = this;
                 list = list.map(function(item){
-                    var result = _this.wrap(item);
-                    if(item.behavior){
-                        result += _this.wrapStr(' (' + item.behavior + ')', RL.Util.COLORS.orange_alt);
-                    }
-                    return result;
-                });
+                    return this.logInspect(item);
+                }, this);
                 msg += this.wrap(this.game.player) + ' see: ' + list.join(' and ') + ' on ' + this.wrap(tile);
             } else {
                 msg = this.wrap(this.game.player) + ' see: ' + this.wrap(tile);
             }
             this.log(msg);
+        },
+        logInspect: function(obj){
+            var result = '';
+
+            result += this.wrap(obj);
+
+            if(obj.conditionDescription){
+                var condition = '(' + obj.conditionDescription() + ')';
+                result +=  this.wrapStr(condition, RL.Util.COLORS.gray) + ' ';
+            }
+
+            if(obj.behavior){
+                result += this.wrapStr(' (' + obj.behavior + ')', RL.Util.COLORS.orange_alt);
+            }
+            return result;
         },
         logPickUp: function(entity, item){
             entity = this.wrap(entity);

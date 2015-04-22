@@ -285,6 +285,14 @@
             },
             getTileDrawData: function(){
                 var result = RL.Entity.prototype.getTileDrawData.call(this);
+                if(this.hp !== this.hpMax){
+                    var hpRatio = this.hp / this.hpMax;
+                    var ROTColor = ROT.Color;
+                    var color = ROTColor.fromString(result.color);
+                    color = ROTColor.interpolate([255,200,0],color, hpRatio);
+                    result.color = ROTColor.toHex(color);
+                }
+
                 if(this.alerted){
                     result.color = RL.Util.COLORS.red_alt;
                     result.after = {
@@ -369,6 +377,26 @@
                 // }
                 //
                 console.log('z:', this.char, 'lineDistance', lineDistance, list);
+            },
+            conditionDescription: function(){
+                var hp = this.hp;
+                var max = this.hpMax;
+                if(hp < max){
+                    var ratio = hp/max;
+
+                    if(ratio > 0.75){
+                        return 'injured';
+                    }
+
+                    if(ratio > 0.5){
+                        return 'wounded';
+                    }
+
+                    if(ratio > 0.25){
+                        return 'almost dead';
+                    }
+                }
+                return 'unharmed';
             },
             knockDown: function(turns){
                 this.behavior = 'knocked down';
