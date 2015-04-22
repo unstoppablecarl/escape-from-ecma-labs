@@ -63,6 +63,8 @@
             equipableToSlots: ['weaponMelee'],
             damage: 0,
             knockBack: 0,
+            knockBackRadius: 0,
+            knockDown: 0,
         },
         rangedWeapon: {
             itemType: 'weaponRanged',
@@ -75,6 +77,8 @@
             splashRange: 0,
             splashDamage: 0,
             knockBack: 0,
+            knockBackRadius: 0,
+            knockDown: 0,
 
             canUseAmmo: function(ammo){
                 return (!this.ammoType) || ammo.ammoType === this.ammoType;
@@ -146,7 +150,11 @@
 
         var stats = {
             Damage: newProto.damage,
-            'Knock Back': newProto.knockBack
+            'Knock Back': newProto.knockBack,
+            'knock Back Radius': newProto.knockBackRadius,
+            'Knock Down': newProto.knockDown,
+            'Splash Damage': newProto.splashDamage,
+            'Splash Range': newProto.splashRange,
         };
 
         var statsArr = makeStatsArr(stats);
@@ -164,9 +172,11 @@
         var stats = {
             Damage: newProto.damage,
             Range: newProto.range,
+            'Knock Back': newProto.knockBack,
+            'knock Back Radius': newProto.knockBackRadius,
+            'Knock Down': newProto.knockDown,
             'Splash Damage': newProto.splashDamage,
             'Splash Range': newProto.splashRange,
-            'Knock Back': newProto.knockBack
         };
 
         var statsArr = makeStatsArr(stats);
@@ -184,9 +194,11 @@
         var stats = {
             Damage: newProto.damageMod,
             Range: newProto.rangeMod,
+            'Knock Back': newProto.knockBackMod,
+            'knock Back Radius': newProto.knockBackRadiusMod,
+            'Knock Down': newProto.knockDownMod,
             'Splash Damage': newProto.splashDamageMod,
             'Splash Range': newProto.splashRangeMod,
-            'Knock Back': newProto.knockBack
         };
 
         var statsArr = makeStatsArr(stats, true);
@@ -200,15 +212,11 @@
 
     var makeArmor = function(newProto){
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.armor, newProto);
-
-
         var dodge = (newProto.dodgeChance * 100) + '%';
-
         var stats = {
             Dodge: dodge,
 
         };
-
         var statsArr = makeStatsArr(stats, true);
         var statsDesc = makeStatsDesc(statsArr);
 
