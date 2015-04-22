@@ -357,11 +357,17 @@
                 return;
             }
             this.hp -= amount;
+            var splatter = amount / 10;
+
             if (this.hp <= 0) {
+                splatter *= 1.5;
                 this.color = 'red';
                 this.game.gameOver = true;
                 this.game.console.logDied(this);
+                this.game.queueDraw = true;
             }
+
+            this.game.splatter(this.x, this.y, splatter);
         },
 
         clearPendingAction: function(){

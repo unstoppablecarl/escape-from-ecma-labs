@@ -307,15 +307,6 @@
 
         target.game.smashLayer.set(source.x, source.y, smash);
         target.game.damageLayer.set(target.x, target.y, 1);
-
-        if(target.bleeds){
-            var splatter = result.damage / 10;
-            if(target.dead){
-                splatter *= 1.5;
-            }
-            target.game.splatter(target.x, target.y, splatter);
-        }
-
     };
 
     makeActionTypePair({

@@ -64,9 +64,16 @@
 
             takeDamage: function(amount) {
                 this.hp -= amount;
+
                 if(this.hp <= 0) {
                     this.dead = true;
                 }
+
+                var splatter = amount / 10;
+                if(this.dead){
+                    splatter *= 1.5;
+                }
+                this.game.splatter(this.x, this.y, splatter);
             },
 
             update: function() {
