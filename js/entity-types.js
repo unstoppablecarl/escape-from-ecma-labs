@@ -311,7 +311,6 @@
             },
 
             knockBack: function(originX, originY, pushDistance){
-                console.log('kb');
                 pushDistance = pushDistance || 1;
                 var game = this.game;
                 var target = this;
@@ -355,11 +354,12 @@
                         if(ent){
                             ent.knockBack(this.x, this.y);
                         }
-                        if(!this.canMoveTo(destinationTile.x, destinationTile.y)){
-                            throw new Error('cannot move');
+                        if(this.canMoveTo(destinationTile.x, destinationTile.y)){
+                            // throw new Error('cannot move');
+                            this.moveTo(destinationTile.x, destinationTile.y);
                         }
 
-                        this.moveTo(destinationTile.x, destinationTile.y);
+
                     }
                 }
                 // mark knockback tiles startin at target

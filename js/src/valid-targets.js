@@ -184,7 +184,6 @@
 
             var targets = this.getTargetsAtCurrentCoord();
             if(targets.length){
-                console.log('targets', targets[0].value);
                 this.setCurrent(targets[0]);
             }
         },
