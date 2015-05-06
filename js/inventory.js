@@ -53,13 +53,17 @@
             if (!this.viewObjectsByType[type]) {
                 var newViewObject = {
                     name: item.name,
+                    stats: item.stats,
                     statDesc: item.statDesc,
                     type: type,
                     itemType: item.itemType,
+                    ammoType: item.ammoType,
+                    primaryStats: item.primaryStats,
+                    secondaryStats: item.secondaryStats,
                     equipableToSlots: item.equipableToSlots,
                     quantity: 0,
                     consoleColor: item.consoleColor,
-                    usable: item.usable
+                    usable: item.usable,
                 };
                 this.viewObjectsByType[type] = newViewObject;
             }

@@ -30,7 +30,6 @@
     var drawKnockback = function(game){
 
         var lines = game.knockBackLayer;
-        console.log('lines.length', lines.length);
         if(!lines.length){
             return;
         }

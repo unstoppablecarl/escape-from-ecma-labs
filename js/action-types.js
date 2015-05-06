@@ -242,7 +242,7 @@
                 damage: splashDamage
             }
         };
-        var validTargetsFinder = new RL.ValidTargetsFinder(this.game, {
+        var validTargetsFinder = new RL.ValidTargetsFinder(source.game, {
             x: x,
             y: y,
             limitToFov: false,
@@ -256,14 +256,15 @@
                 return obj.canResolveAction && obj.canResolveAction('ranged_attack', source, newSettings);
             }
         });
+
         var adjacentTargets = validTargetsFinder.getValidTargets();
         if(adjacentTargets && adjacentTargets.length){
             for(var i = adjacentTargets.length - 1; i >= 0; i--){
                 var newTarget = adjacentTargets[i];
                 if(newTarget instanceof RL.Tile){
                     if(newTarget.type === 'wall'){
-                        this.game.map.remove(newTarget.x, newTarget.y);
-                        this.game.map.set(newTarget.x, newTarget.y, 'floor');
+                        source.game.map.remove(newTarget.x, newTarget.y);
+                        source.game.map.set(newTarget.x, newTarget.y, 'floor');
                     }
                 } else {
                     newTarget.resolveAction('ranged_attack', source, newSettings);
@@ -275,14 +276,18 @@
     var doKnockBack = function(source, target, settings){
         var result = settings.result;
 
+        if(!target.knockBack){
+            return;
+        }
+
         var knockBack = result.knockBack;
         var knockBackRadius = result.knockBackRadius;
 
         if(knockBackRadius){
             knockBack = knockBack || 1;
-            this.game.knockBackRadius(target.x, target.y, knockBack, knockBackRadius);
+            target.game.knockBackRadius(target.x, target.y, knockBack, knockBackRadius);
         }
-        else if(knockBack){
+        else if(knockBack && target.knockBack){
             target.knockBack(source.x, source.y, knockBack);
         }
     };
@@ -510,8 +515,7 @@
                 }
 
                 var knockDown = result.knockDown;
-                if(knockDown){
-                    console.log('knockDown', knockDown);
+                if(knockDown && target.knockDown){
                     target.knockDown(knockDown);
                 }
             },

@@ -118,12 +118,13 @@
             for(key in tileData1){
                 result[key] = tileData1[key];
             }
-            for(key in tileData2){
-                val = tileData2[key];
-                if(val !== false && val !== void 0){
-                    result[key] = val;
+
+            Object.keys(tileData2).forEach(function(key2){
+                var val2 = tileData2[key2];
+                if(val !== false && val2 !== void 0){
+                    result[key2] = val2;
                 }
-            }
+            });
             return result;
         },
     };

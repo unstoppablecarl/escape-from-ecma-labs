@@ -2584,7 +2584,7 @@ pre[class*="language-"] {
 }
 .td {
     display: table-cell;
-    padding: 0 3px;
+    padding: 2px 3px;
 }
 .map-container {
     float:left;
@@ -2666,4 +2666,51 @@ pre[class*="language-"] {
 
 .controls {
     font-size: 12px;
+}
+.inventory-item .top-row {
+    border-bottom: 1px dotted #444;
+}
+.inventory-item {
+    border: 1px solid transparent;
+    border-top: 1px solid #555;
+    border-collapse: collapse;
+}
+.inventory-item > .td {
+    border-top: 1px solid #555;
+    border-collapse: collapse;
+}
+
+.secondary-stats {
+    min-width: 140px;
+}
+
+.secondary-stats {
+ min-width: 140px;
+}
+
+.table {
+    width: 100%;
+}
+.table td {
+    padding: 3px;
+}
+.tr-section > td{
+    border-top: 1px solid #333333;
+    border-bottom: 1px dotted #333333;
+    color: #cacaca;
+}
+
+.tr-sub-section > td {
+    padding: 1px 3px;
+    font-size: 80%;
+    /*border-top: 1px dotted #333333;*/
+}
+
+.tr-sub-section-divider > td:first-child,
+.tr-sub-section > td:first-child {
+    padding-left: 1em;
+}
+
+.tr-sub-section-divider > td:first-child {
+    padding: 3px 0 0;
 }

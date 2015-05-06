@@ -8,6 +8,13 @@
         }
     };
 
+    rivets.binders.render_name = function(el, obj) {
+        if(!obj){
+            return;
+        }
+        el.innerHTML = obj.game.console.wrap(obj);
+    };
+
     rivets.binders.use_item = {
         bind: function(el) {
             var adapter = rivets.adapters['.'];

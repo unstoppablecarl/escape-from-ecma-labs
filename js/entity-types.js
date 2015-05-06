@@ -362,8 +362,6 @@
                         this.moveTo(destinationTile.x, destinationTile.y);
                     }
                 }
-
-
                 // mark knockback tiles startin at target
                 // var started = false;
                 // for (var i = 0; i < list.length; i++) {
@@ -376,7 +374,6 @@
                 //     }
                 // }
                 //
-                console.log('z:', this.char, 'lineDistance', lineDistance, list);
             },
             conditionDescription: function(){
                 var hp = this.hp;

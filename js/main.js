@@ -77,7 +77,7 @@ var zombiePopulator = function(game, min, max){
     });
 };
 
-zombiePopulator(game, 55, 60);
+// zombiePopulator(game, 55, 60);
 
 
 // add input keybindings
@@ -120,6 +120,20 @@ miniMapContainerEl.appendChild(game.miniMap.canvas);
 // });
 //
 
+// var d = 0;
+// var canMoveToCheck = function(val, x, y){
+//     console.log(x, y, val);
+//     d++;
+//     val.char = '' + d;
+//     return false;
+// };
+
+// game.map.get(2, 1).char = 'a';
+// game.map.get(5, 1).char = 'b';
+
+// var list = game.map.getLineThrough(2, 1, 5, 1, canMoveToCheck, true, true, 3);
+// console.log('list', list);
+
 game.start();
 
 RL.Views.inventory(game);
@@ -127,19 +141,35 @@ RL.Views.controls(keyBindings);
 RL.Views.equipment(game);
 RL.Views.stats(game);
 
+game.renderer.draw();
+
 
 // test data
 //
-// game.player.takeDamage(10);
 
-// game.player.inventory.add(RL.Item.make(game, 'pistol'));
-// game.player.inventory.add(RL.Item.make(game, 'grenade'));
-// game.player.inventory.add(RL.Item.make(game, 'ammo_9mm'));
-// game.player.inventory.add(RL.Item.make(game, 'ammo_9mm'));
-// game.player.inventory.add(RL.Item.make(game, 'ammo_9mm'));
-// game.player.inventory.add(RL.Item.make(game, 'ammo_45cal'));
+// game.player.inventory.add(RL.Item.make(game, 'heavy_coat'));
 
-// game.player.inventory.add(RL.Item.make(game, 'medkit'));
+// game.player.equip(RL.Item.make(game, 'umbrella'));
+
+
+game.player.inventory.addByType('pistol_9mm', 1);
+game.player.inventory.addByType('pistol_45cal', 1);
+
+
+game.player.inventory.addByType('grenade', 10);
+game.player.inventory.addByType('shock_grenade', 10);
+
+game.player.inventory.addByType('ammo_9mm', 10);
+game.player.inventory.addByType('ammo_45cal', 10);
+game.player.inventory.addByType('ammo_shock_cannon', 10);
+
+
+game.player.equip(RL.Item.make(game, 'shock_cannon'));
+game.player.equip(RL.Item.make(game, 'ammo_shock_cannon'));
+
+
+
+
 
 
 

@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <title>RL Demo</title>
+    <link href="../css/main.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="page container">
+
+        <div id="map-container" class="map-container"></div>
+        <div class="stats-container">
+        <div id="mini-map-container" class="mini-map-container">
+
+            </div>
+            <h3>Stats</h3>
+
+            <div id="stats-container" class="tr">
+                <span class="td">HP:</span>
+                <span class="td">{hp} / {hpMax}</span>
+            </div>
+
+            <h3>Equipment</h3>
+
+
+            <div id="equipment-container">
+
+                <table class="table">
+                    <tbody>
+                        <tr class="tr-section">
+                            <td colspan="2">
+                                Armor:&nbsp; <span rv-render_name="slots.armor"></span>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                        <tr class="tr-sub-section" rv-each-stat="slots.armor.secondaryStats">
+                            <td>
+                                {stat.key}:
+                            </td>
+                            <td>
+                                <strong>{stat.val}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+
+
+                        <tr class="tr-section">
+                            <td colspan="2">
+                                Melee:&nbsp; <span rv-render_name="slots.weaponMelee"></span>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                        <tr class="tr-sub-section" rv-if="slots.weaponMelee.ammoType">
+                            <td>
+                                Ammo Type:
+                            </td>
+                            <td>
+                                <strong>{slots.weaponMelee.ammoType}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section" rv-each-stat="slots.weaponMelee.secondaryStats">
+                            <td>
+                                {stat.key}:
+                            </td>
+                            <td>
+                                <strong>{stat.val}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+
+
+                        <tr class="tr-section">
+                            <td colspan="2">
+                                Ranged: <span rv-render_name="slots.weaponRanged"></span>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                        <tr class="tr-sub-section" rv-if="slots.weaponRanged.ammoType">
+                            <td>
+                                Ammo Type:
+                            </td>
+                            <td>
+                                <strong>{slots.weaponRanged.ammoType}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section" rv-each-stat="slots.weaponRanged.secondaryStats">
+                            <td>
+                                {stat.key}:
+                            </td>
+                            <td>
+                                <strong>{stat.val}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+
+
+                        <tr class="tr-section">
+                            <td colspan="2">
+                                Ammo:&nbsp; <span rv-render_name="slots.ammo"></span>
+                                <span rv-if="slots.ammo">&times; {slots.ammo.ammoQuantity}</span>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                        <!-- <tr class="tr-sub-section" rv-if="slots.ammo.ammoType">
+                            <td>
+                                Ammo Type:
+                            </td>
+                            <td>
+                                <strong>{slots.ammo.ammoType}</strong>
+                            </td>
+                        </tr> -->
+                        <tr class="tr-sub-section" rv-each-stat="slots.ammo.secondaryStats">
+                            <td>
+                                {stat.key}:
+                            </td>
+                            <td>
+                                <strong>{stat.val}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <h3>Controls</h3>
+            <div id="controls-container" class="controls">
+                <div class="tr">
+                    <div class="td">Action</div>
+                    <div class="td">Keys</div>
+                </div>
+
+                <div class="tr" rv-each-action="keyBindings">
+                    <div class="td">{action.name}</div>
+                    <div class="td">{action.keys}</div>
+                </div>
+
+            </div>
+        </div>
+        <div id="console-directions" class="console-container"></div>
+        <div id="console-container" class="console-container"></div>
+        <div id="inventory-container" class="inventory-container">
+            <h3>Inventory</h3>
+
+            <div rv-each-item="inventoryViewData" class="inventory-item tr">
+                <div class="td">
+                    <div class="top-row">
+                        <span class="pull-right">
+                            &times; <strong>{item.quantity}</strong>
+                        </span>
+                        <strong rv-color="item.consoleColor">{item.name}</strong>
+                    </div>
+                    <small>
+                        <div rv-each-primary="item.primaryStats" class="tr">
+                            <div class="td">
+                                {primary.key}:
+                            </div>
+                            <div class="td">
+                                <strong>{primary.val}</strong>
+                            </div>
+                        </div>
+                    </small>
+                </div>
+
+                <div class="td">
+                    <br>
+                    <div rv-each-stat="item.secondaryStats">
+                        <small>{stat.key}</small>
+                    </div>
+                </div>
+                <div class="td">
+                    <br>
+                    <div rv-each-stat="item.secondaryStats">
+                        <small><strong>{stat.val}</strong></small>
+                    </div>
+                </div>
+
+                <div class="td">
+                    <span class="btn btn-sm btn-default" rv-if="item.usable" rv-use_item="item">use</span>
+
+                    <span rv-each-slot="item.equipableToSlots" class="btn btn-sm btn-default" rv-equip_item="item">Equip</span>
+
+                </div>
+            </div>
+        </div>
+        <hr>
+        <p>
+            WIP Demo game using  <a href="https://github.com/unstoppablecarl/js-roguelike-skeleton">js-roguelike-skeleton</a>
+        </p>
+        <!-- Load Vendor js files -->
+        <script src="../js/vendor/rot.js"></script>
+        <script src="../js/vendor/jquery.min.js"></script>
+        <script src="../js/vendor/rivets.bundled.min.js"></script>
+
+
+        <!-- Load Lib js files -->
+        <script src="../js/src/rl.js"></script>
+
+        <script src="../js/src/util.js"></script>
+        <script src="../js/src/mixins.js"></script>
+        <script src="../js/src/mixins/action-interface.js"></script>
+        <script src="../js/src/action.js"></script>
+
+        <script src="../js/src/array-2d.js"></script>
+        <script src="../js/src/map.js"></script>
+        <script src="../js/src/entity.js"></script>
+        <script src="../js/src/input.js"></script>
+        <script src="../js/src/mouse.js"></script>
+        <script src="../js/src/player.js"></script>
+        <script src="../js/src/renderer.js"></script>
+        <script src="../js/src/renderer-layer.js"></script>
+        <script src="../js/src/tile.js"></script>
+        <script src="../js/src/console.js"></script>
+        <script src="../js/src/fov-rot.js"></script>
+        <script src="../js/src/lighting-rot.js"></script>
+        <script src="../js/src/valid-targets.js"></script>
+        <script src="../js/src/valid-targets-finder.js"></script>
+        <script src="../js/src/object-manager.js"></script>
+        <script src="../js/src/multi-object-manager.js"></script>
+        <script src="../js/src/inventory.js"></script>
+        <script src="../js/src/item.js"></script>
+        <script src="../js/src/game.js"></script>
+
+        <script src="../js/mixins/equipment.js"></script>
+
+        <script src="../js/util.js"></script>
+        <script src="../js/action-types.js"></script>
+
+        <script src="../js/console.js"></script>
+        <script src="../js/furniture.js"></script>
+
+        <script src="../js/map-gen.js"></script>
+
+        <script src="../js/map-gen/template.js"></script>
+        <script src="../js/map-gen/floor.js"></script>
+        <script src="../js/map-gen/room.js"></script>
+        <script src="../js/map-gen/room-edge.js"></script>
+        <script src="../js/map-gen/door.js"></script>
+
+        <script src="../js/map-gen/template/floor.js"></script>
+        <script src="../js/map-gen/template/room.js"></script>
+        <script src="../js/map-gen/template/door.js"></script>
+
+        <script src="../js/random.js"></script>
+        <script src="../js/player.js"></script>
+        <script src="../js/game.js"></script>
+
+        <script src="../js/inventory.js"></script>
+        <script src="../js/item.js"></script>
+
+        <script src="../js/equipment.js"></script>
+        <script src="../js/renderer.js"></script>
+
+        <script src="../js/renderer-layer-types.js"></script>
+
+        <script src="../js/tile.js"></script>
+        <script src="../js/entity-types.js"></script>
+
+        <script src="../js/ui.js"></script>
+
+        <script src="js/default.js"></script>
+        <script src="js/firing-range.js"></script>
+
+
+</body>
+
+</html>

@@ -282,12 +282,10 @@
 
             var targetDistances = getTargetsByDistance(targets);
 
-
             for (var i = 0; i < targetDistances.length; i++) {
-
                 var td = targetDistances[i];
                 // console.log(td.target.x, td.target.y);
-                td.target.char = i + '';
+                // td.target.char = i + '';
                 if(td.target.knockBack){
                     td.target.knockBack(x, y, pushDistance);
                 }

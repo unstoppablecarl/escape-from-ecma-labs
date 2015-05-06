@@ -64,6 +64,7 @@
             damage: 0,
             knockBack: 0,
             knockBackRadius: 0,
+            knockBackRadiusDamage: 0,
             knockDown: 0,
         },
         rangedWeapon: {
@@ -78,6 +79,7 @@
             splashDamage: 0,
             knockBack: 0,
             knockBackRadius: 0,
+            knockBackRadiusDamage: 0,
             knockDown: 0,
 
             canUseAmmo: function(ammo){
@@ -95,7 +97,7 @@
             itemType: 'ammo',
             defaultSlot: 'ammo',
             equipableToSlots: ['ammo'],
-
+            char: '"',
             consoleColor: 'yellow',
 
             ammoType: null,
@@ -105,6 +107,7 @@
             splashRangeMod: 0,
             knockBackMod: 0,
             knockBackRadiusMod: 0,
+            knockBackRadiusDamageMod: 0,
             knockDownMod: 0,
         },
     };
@@ -141,7 +144,7 @@
         }
 
         if(statDesc.length){
-            return statDesc.join(', ');
+            return statDesc.join('<br>');
         }
     };
 
@@ -152,6 +155,21 @@
             Damage: newProto.damage,
             'Knock Back': newProto.knockBack,
             'knock Back Radius': newProto.knockBackRadius,
+            'knock Back Radius Damage': newProto.knockBackRadiusDamage,
+            'Knock Down': newProto.knockDown,
+            'Splash Damage': newProto.splashDamage,
+            'Splash Range': newProto.splashRange,
+        };
+
+        var primaryStats = {
+            'Item Type': 'Melee Weapon',
+        };
+
+        var secondaryStats = {
+            Damage: newProto.damage,
+            'Knock Back': newProto.knockBack,
+            'knock Back Radius': newProto.knockBackRadius,
+            'knock Back Radius Damage': newProto.knockBackRadiusDamage,
             'Knock Down': newProto.knockDown,
             'Splash Damage': newProto.splashDamage,
             'Splash Range': newProto.splashRange,
@@ -162,6 +180,9 @@
 
         newProto.stats = statsArr;
         newProto.statDesc = statsDesc;
+
+        newProto.primaryStats = makeStatsArr(primaryStats);
+        newProto.secondaryStats = makeStatsArr(secondaryStats);
 
         return newProto;
     };
@@ -170,10 +191,29 @@
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.rangedWeapon, newProto);
 
         var stats = {
+            'Ammo Type' : newProto.ammoType,
             Damage: newProto.damage,
             Range: newProto.range,
             'Knock Back': newProto.knockBack,
             'knock Back Radius': newProto.knockBackRadius,
+            'knock Back Radius Damage': newProto.knockBackRadiusDamage,
+
+            'Knock Down': newProto.knockDown,
+            'Splash Damage': newProto.splashDamage,
+            'Splash Range': newProto.splashRange,
+        };
+
+        var primaryStats = {
+            'Item Type': 'Ranged Weapon',
+            'Ammo Type' : newProto.ammoType,
+        };
+
+        var secondaryStats = {
+            Damage: newProto.damage,
+            Range: newProto.range,
+            'Knock Back': newProto.knockBack,
+            'knock Back Radius': newProto.knockBackRadius,
+            'knock Back Radius Damage': newProto.knockBackRadiusDamage,
             'Knock Down': newProto.knockDown,
             'Splash Damage': newProto.splashDamage,
             'Splash Range': newProto.splashRange,
@@ -185,6 +225,9 @@
         newProto.stats = statsArr;
         newProto.statDesc = statsDesc;
 
+        newProto.primaryStats = makeStatsArr(primaryStats);
+        newProto.secondaryStats = makeStatsArr(secondaryStats);
+
         return newProto;
     };
 
@@ -192,20 +235,42 @@
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.ammo, newProto);
 
         var stats = {
+            'Ammo Type' : newProto.ammoType,
             Damage: newProto.damageMod,
             Range: newProto.rangeMod,
             'Knock Back': newProto.knockBackMod,
             'knock Back Radius': newProto.knockBackRadiusMod,
+            'knock Back Radius Damage': newProto.knockBackRadiusDamageMod,
             'Knock Down': newProto.knockDownMod,
             'Splash Damage': newProto.splashDamageMod,
             'Splash Range': newProto.splashRangeMod,
         };
 
-        var statsArr = makeStatsArr(stats, true);
+        var primaryStats = {
+            'Item Type': 'Ammo',
+            'Ammo Type' : newProto.ammoType,
+        };
+
+        var secondaryStats = {
+            Damage: newProto.damageMod,
+            Range: newProto.rangeMod,
+            'Knock Back': newProto.knockBackMod,
+            'knock Back Radius': newProto.knockBackRadiusMod,
+            'knock Back Radius Damage': newProto.knockBackRadiusDamageMod,
+
+            'Knock Down': newProto.knockDownMod,
+            'Splash Damage': newProto.splashDamageMod,
+            'Splash Range': newProto.splashRangeMod,
+        };
+
+        var statsArr = makeStatsArr(stats);
         var statsDesc = makeStatsDesc(statsArr);
 
         newProto.stats = statsArr;
         newProto.statDesc = statsDesc;
+
+        newProto.primaryStats = makeStatsArr(primaryStats);
+        newProto.secondaryStats = makeStatsArr(secondaryStats);
 
         return newProto;
     };
@@ -215,13 +280,24 @@
         var dodge = (newProto.dodgeChance * 100) + '%';
         var stats = {
             Dodge: dodge,
+        };
+        var primaryStats = {
+            'Item Type': 'Armor',
 
         };
+
+        var secondaryStats = {
+            Dodge: dodge,
+        };
+
         var statsArr = makeStatsArr(stats, true);
         var statsDesc = makeStatsDesc(statsArr);
 
         newProto.stats = statsArr;
         newProto.statDesc = statsDesc;
+
+        newProto.primaryStats = makeStatsArr(primaryStats);
+        newProto.secondaryStats = makeStatsArr(secondaryStats);
 
         return newProto;
     };
@@ -313,19 +389,40 @@
             name: 'Throw',
             ammoType: 'thrown',
             damage: 0,
-            range: 5,
+            range: 8,
         }),
 
-        pistol: makeRangedWeapon({
+        pistol_9mm: makeRangedWeapon({
             name: 'Pistol 9mm',
             ammoType: '9mm',
             color: '#808080',
             char: 'r',
             damage: 2,
-            range: 5,
+            range: 10,
             knockBack: 2,
             knockDown: 4,
+        }),
 
+        pistol_45cal: makeRangedWeapon({
+            name: 'Pistol 45cal',
+            ammoType: '45cal',
+            color: '#808080',
+            char: 'r',
+            damage: 2,
+            range: 12,
+            knockBack: 2,
+        }),
+
+        shock_cannon: makeRangedWeapon({
+            name: 'Shock Cannon',
+            ammoType: 'shock_cartridge',
+            char: 's',
+            damage: 1,
+            range: 14,
+            knockBack: 3,
+            knockBackRadius: 3,
+            knockBackRadiusDamage: 1,
+            knockDown: 3,
         }),
 
         // ammo
@@ -339,24 +436,41 @@
             splashDamageMod: 1,
         }),
 
+        shock_grenade: makeAmmo({
+            name: 'Shock Grenade',
+            ammoType: 'thrown',
+            color: '#808080',
+            char: 'g',
+            damageMod: 1,
+            knockBackMod: 3,
+            knockBackRadiusMod: 3,
+            knockDownMod: 3,
+        }),
+
         ammo_9mm: makeAmmo({
             name: '9mm',
             ammoType: '9mm',
-            color: 'yellow',
-            char: '"',
-            damageMod: 0,
-            rangeMod: 0,
         }),
 
         ammo_45cal: makeAmmo({
             name: '45cal',
             ammoType: '45cal',
-            color: 'yellow',
-            char: '"',
-            damageMod: 2,
-            rangeMod: 1,
         }),
 
+        ammo_shock_cannon: makeAmmo({
+            name: 'Shock Cartridge',
+            ammoType: 'shock_cartridge',
+        }),
+
+        ammo_shock_cannon_thumper: makeAmmo({
+            name: 'Shock Cartridge [Thumper]',
+            ammoType: 'shock_cartridge',
+            knockBackMod: 2,
+            knockBackRadiusMod: 2,
+            knockDownMod: 2,
+        }),
+
+        // armor
         heavy_coat: makeArmor({
             name: 'Heavy Coat',
             dodgeChance: 0.5,
