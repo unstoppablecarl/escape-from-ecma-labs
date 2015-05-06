@@ -1,8 +1,8 @@
 
 console.log('RL.MapGen.Template.Floor', RL.MapGen.Template.Floor);
 var settings = {
-    playerStartX: 4,
-    playerStartY: 30,
+    playerStartX: 24,
+    playerStartY: 24,
     template: RL.MapGen.Template.Floor.test.firing_range,
     // requiredRoomTemplates: null,
     // randomRoomTemplates: null,

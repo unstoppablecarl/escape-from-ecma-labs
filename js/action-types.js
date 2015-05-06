@@ -225,89 +225,6 @@
     });
 
 
-    var doSplashDamage = function(source, target, settings){
-        var x = target.x;
-        var y = target.y;
-
-        var result = settings.result;
-
-        var splashDamage = result.splashDamage;
-        var splashRange = result.splashRange;
-        var newSettings = {
-            result: {
-                weapon: {
-                    name: 'Explosion',
-                    damage: splashDamage
-                },
-                damage: splashDamage
-            }
-        };
-        var validTargetsFinder = new RL.ValidTargetsFinder(source.game, {
-            x: x,
-            y: y,
-            limitToFov: false,
-            range: splashRange,
-            prepareValidTargets: false,
-            includeTiles: true,
-            filter: function(obj){
-                if(obj instanceof RL.Tile) {
-                    return obj.type === 'wall';
-                }
-                return obj.canResolveAction && obj.canResolveAction('ranged_attack', source, newSettings);
-            }
-        });
-
-        var adjacentTargets = validTargetsFinder.getValidTargets();
-        if(adjacentTargets && adjacentTargets.length){
-            for(var i = adjacentTargets.length - 1; i >= 0; i--){
-                var newTarget = adjacentTargets[i];
-                if(newTarget instanceof RL.Tile){
-                    if(newTarget.type === 'wall'){
-                        source.game.map.remove(newTarget.x, newTarget.y);
-                        source.game.map.set(newTarget.x, newTarget.y, 'floor');
-                    }
-                } else {
-                    newTarget.resolveAction('ranged_attack', source, newSettings);
-                }
-            }
-        }
-    };
-
-    var doKnockBack = function(source, target, settings){
-        var result = settings.result;
-
-        if(!target.knockBack){
-            return;
-        }
-
-        var knockBack = result.knockBack;
-        var knockBackRadius = result.knockBackRadius;
-
-        if(knockBackRadius){
-            knockBack = knockBack || 1;
-            target.game.knockBackRadius(target.x, target.y, knockBack, knockBackRadius);
-        }
-        else if(knockBack && target.knockBack){
-            target.knockBack(source.x, source.y, knockBack);
-        }
-    };
-
-    var doSmash = function(source, target, settings, type){
-        var result = settings.result;
-
-        var smash = {
-            source: source,
-            target: target,
-            type: type,
-            targetX: target.x,
-            targetY: target.y,
-            sourceX: source.x,
-            sourceY: source.y
-        };
-
-        target.game.smashLayer.set(source.x, source.y, smash);
-        target.game.damageLayer.set(target.x, target.y, 1);
-    };
 
     makeActionTypePair({
         action: 'melee_attack',
@@ -322,38 +239,25 @@
             },
             performAction: function(target, settings){
                 var weaponMelee = this.equipment.weaponMelee;
+
                 return {
-                    damage: weaponMelee.damage,
                     weapon: weaponMelee,
+                    damage: weaponMelee.damage,
+
                     knockBack: weaponMelee.knockBack,
-                    knockBackRadius: weaponMelee.knockBackRadius,
-                    splashDamage: weaponMelee.splashDamage,
-                    splashDamageRadius: weaponMelee.splashDamageRadius,
                     knockDown: weaponMelee.knockDown,
+
+                    aoe_Radius: weaponMelee.aoe_Radius,
+                    aoe_Damage: weaponMelee.aoe_Damage,
+                    aoe_KnockBack: weaponMelee.aoe_KnockBack,
+                    aoe_KnockDown: weaponMelee.aoe_KnockDown,
+                    aoe_KnockBackOrigin: weaponMelee.aoe_KnockBackOrigin,
                 };
             },
             getTargetsForAction: makeAdjacentTargetsFinder('melee_attack'),
             afterPerformActionSuccess: function(target, settings){
                 var source = this;
-                var result = settings.result;
-
-                var splashDamage = result.splashDamage;
-
-                if(splashDamage){
-                    doSplashDamage(source, target, settings);
-                }
-
-                var knockBack = result.knockBack;
-                var knockBackRadius = result.knockBackRadius;
-
-                if(knockBack || knockBackRadius){
-                    doKnockBack(source, target, settings);
-                }
-
-                var knockDown = result.knockDown;
-                if(knockDown){
-                    target.knockDown(knockDown);
-                }
+                RL.ActionHelpers.resolveEffects(source, target, settings);
             },
         },
 
@@ -367,15 +271,21 @@
 
                 var weapon = {
                     name: result.weapon.name,
+
                     damage: result.damage,
                     knockBack: result.knockBack,
-                    knockBackRadius: result.knockBackRadius,
-                    splashDamage: result.splashDamage,
-                    splashDamageRadius: result.splashDamageRadius,
-                    knockDown: result.knockDown
+                    knockDown: result.knockDown,
+
+                    aoe_Radius: result.aoe_Radius,
+                    aoe_Damage: result.aoe_Damage,
+                    aoe_KnockBack: result.aoe_KnockBack,
+                    aoe_KnockDown: result.aoe_KnockDown,
+                    aoe_KnockBackOrigin: result.aoe_KnockBackOrigin,
+
                 };
+
                 this.game.console.logAttack(source, weapon, this);
-                doSmash(source, target, settings, 'melee_attack');
+                RL.ActionHelpers.doSmash(source, target, settings, 'melee_attack');
                 return true;
             },
         },
@@ -463,24 +373,37 @@
                 return true;
             },
             performAction: function(target, settings){
+
                 var weaponRanged = this.equipment.weaponRanged;
                 var ammo = this.equipment.ammo;
                 var damage = weaponRanged.damage;
                 var range = weaponRanged.range;
-                var splashRange = weaponRanged.splashRange;
-                var splashDamage = weaponRanged.splashDamage;
+
                 var knockBack = weaponRanged.knockBack;
-                var knockBackRadius = weaponRanged.knockBackRadius;
                 var knockDown = weaponRanged.knockDown;
+
+
+                var aoe_Radius = weaponRanged.aoe_Radius;
+                var aoe_Damage = weaponRanged.aoe_Damage;
+                var aoe_KnockBack = weaponRanged.aoe_KnockBack;
+                var aoe_KnockDown = weaponRanged.aoe_KnockDown;
+                var aoe_KnockBackOrigin = weaponRanged.aoe_KnockBackOrigin;
 
                 if(ammo){
                     damage += ammo.damageMod;
                     range += ammo.rangeMod;
-                    splashRange += ammo.splashRangeMod;
-                    splashDamage += ammo.splashDamageMod;
+
                     knockBack += ammo.knockBackMod;
-                    knockBackRadius += ammo.knockBackRadiusMod;
                     knockDown += ammo.knockDownMod;
+
+                    aoe_Radius += ammo.aoe_RadiusMod;
+                    aoe_Damage += ammo.aoe_DamageMod;
+                    aoe_KnockBack += ammo.aoe_KnockBackMod;
+                    aoe_KnockDown += ammo.aoe_KnockDownMod;
+
+                    if(ammo.aoe_KnockBackOriginMod){
+                        aoe_KnockBackOrigin = ammo.aoe_KnockBackOriginMod;
+                    }
                 }
 
                 return {
@@ -489,35 +412,22 @@
 
                     damage: damage,
                     range: range,
-                    splashRange: splashRange,
-                    splashDamage: splashDamage,
+
                     knockBack: knockBack,
-                    knockBackRadius: knockBackRadius,
                     knockDown: knockDown,
+
+                    aoe_Radius: aoe_Radius,
+                    aoe_Damage: aoe_Damage,
+                    aoe_KnockBack: aoe_KnockBack,
+                    aoe_KnockDown: aoe_KnockDown,
+                    aoe_KnockBackOrigin: aoe_KnockBackOrigin,
+
                 };
             },
 
             afterPerformActionSuccess: function(target, settings){
                 var source = this;
-                var result = settings.result;
-                console.log('afterPerformActionSuccess', result);
-                var splashDamage = result.splashDamage;
-
-                if(splashDamage){
-                    doSplashDamage(source, target, settings);
-                }
-
-                var knockBack = result.knockBack;
-                var knockBackRadius = result.knockBackRadius;
-
-                if(knockBack || knockBackRadius){
-                    doKnockBack(source, target, settings);
-                }
-
-                var knockDown = result.knockDown;
-                if(knockDown && target.knockDown){
-                    target.knockDown(knockDown);
-                }
+                RL.ActionHelpers.resolveEffects(source, target, settings);
             },
             afterPerformAction: function(target, settings){
                 var result = settings.result;
@@ -540,17 +450,22 @@
 
                 var weapon = {
                     name: result.weapon.name,
+
                     damage: result.damage,
                     knockBack: result.knockBack,
-                    knockBackRadius: result.knockBackRadius,
-                    splashDamage: result.splashDamage,
-                    splashDamageRadius: result.splashDamageRadius,
                     knockDown: result.knockDown,
+
+                    aoe_Radius: result.aoe_Radius,
+                    aoe_Damage: result.aoe_Damage,
+                    aoe_KnockBack: result.aoe_KnockBack,
+                    aoe_KnockDown: result.aoe_KnockDown,
+                    aoe_KnockBackOrigin: result.aoe_KnockBackOrigin,
+
                 };
 
                 this.game.console.logAttack(source, weapon, this);
+                RL.ActionHelpers.doSmash(source, target, settings, 'ranged_attack');
 
-                doSmash(source, target, settings, 'ranged_attack');
                 return true;
             },
         }

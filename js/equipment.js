@@ -56,6 +56,8 @@
         }
     };
 
+
+
     var Defaults = {
         meleeWeapon: {
             itemType: 'weaponMelee',
@@ -63,9 +65,12 @@
             equipableToSlots: ['weaponMelee'],
             damage: 0,
             knockBack: 0,
-            knockBackRadius: 0,
-            knockBackRadiusDamage: 0,
             knockDown: 0,
+            aoe_Radius: 0,
+            aoe_Damage: 0,
+            aoe_KnockBack: 0,
+            aoe_KnockDown: 0,
+            aoe_KnockBackOrigin: 'target',
         },
         rangedWeapon: {
             itemType: 'weaponRanged',
@@ -73,14 +78,15 @@
             ammoUsedPerAttack: 1,
             defaultSlot: 'weaponRanged',
             equipableToSlots: ['weaponRanged'],
-            damage: 0,
             range: 0,
-            splashRange: 0,
-            splashDamage: 0,
+            damage: 0,
             knockBack: 0,
-            knockBackRadius: 0,
-            knockBackRadiusDamage: 0,
             knockDown: 0,
+            aoe_Radius: 0,
+            aoe_Damage: 0,
+            aoe_KnockBack: 0,
+            aoe_KnockDown: 0,
+            aoe_KnockBackOrigin: 'target',
 
             canUseAmmo: function(ammo){
                 return (!this.ammoType) || ammo.ammoType === this.ammoType;
@@ -101,88 +107,60 @@
             consoleColor: 'yellow',
 
             ammoType: null,
-            damageMod: 0,
             rangeMod: 0,
-            splashDamageMod: 0,
-            splashRangeMod: 0,
+            damageMod: 0,
             knockBackMod: 0,
-            knockBackRadiusMod: 0,
-            knockBackRadiusDamageMod: 0,
             knockDownMod: 0,
+            aoe_RadiusMod: 0,
+            aoe_DamageMod: 0,
+            aoe_KnockBackMod: 0,
+            aoe_KnockDownMod: 0,
+            aoe_KnockBackOriginMod: null,
         },
     };
 
-    var makeStatsArr = function(stats, modifiers){
-        modifiers = modifiers || false;
+
+    var makeStatsArray = function(stats, newProto){
         var out = [];
 
-        for(var key in stats){
-            var val = stats[key];
+        for (var i = 0; i < stats.length; i++) {
+            var key = stats[i];
+            var val = newProto[key];
 
             if(val){
-                if(modifiers && val > 0){
-                    val = '+' + val;
-                }
+                var meta = RL.Stats.stats[key];
+                var displayName = meta.displayName;
+                val = meta.formatter(val);
                 out.push({
-                    key: key,
+                    key: displayName,
                     val: val
                 });
-            }
+           }
         }
-
         return out;
-    };
-
-    var makeStatsDesc = function(statsArr){
-        var statDesc = [];
-
-        for (var i = 0; i < statsArr.length; i++) {
-            var stat = statsArr[i];
-            var key = stat.key;
-            var val = stat.val;
-            statDesc.push(key + ': ' + val);
-        }
-
-        if(statDesc.length){
-            return statDesc.join('<br>');
-        }
     };
 
     var makeMeleeWeapon = function(newProto){
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.meleeWeapon, newProto);
 
-        var stats = {
-            Damage: newProto.damage,
-            'Knock Back': newProto.knockBack,
-            'knock Back Radius': newProto.knockBackRadius,
-            'knock Back Radius Damage': newProto.knockBackRadiusDamage,
-            'Knock Down': newProto.knockDown,
-            'Splash Damage': newProto.splashDamage,
-            'Splash Range': newProto.splashRange,
-        };
+        var primaryStats = [
+            'itemType',
+        ];
 
-        var primaryStats = {
-            'Item Type': 'Melee Weapon',
-        };
+        var secondaryStats = [
+            'damage',
+            'range',
+            'knockBack',
+            'knockDown',
+            'aoe_Radius',
+            'aoe_Damage',
+            'aoe_KnockBack',
+            'aoe_KnockDown',
+            'aoe_KnockBackOrigin',
+        ];
 
-        var secondaryStats = {
-            Damage: newProto.damage,
-            'Knock Back': newProto.knockBack,
-            'knock Back Radius': newProto.knockBackRadius,
-            'knock Back Radius Damage': newProto.knockBackRadiusDamage,
-            'Knock Down': newProto.knockDown,
-            'Splash Damage': newProto.splashDamage,
-            'Splash Range': newProto.splashRange,
-        };
-
-        var statsArr = makeStatsArr(stats);
-        var statsDesc = makeStatsDesc(statsArr);
-
-        newProto.stats = statsArr;
-        newProto.statDesc = statsDesc;
-
-        newProto.primaryStats = makeStatsArr(primaryStats);
-        newProto.secondaryStats = makeStatsArr(secondaryStats);
+        newProto.primaryStats = makeStatsArray(primaryStats, newProto);
+        newProto.secondaryStats = makeStatsArray(secondaryStats, newProto);
 
         return newProto;
     };
@@ -190,43 +168,24 @@
     var makeRangedWeapon = function(newProto){
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.rangedWeapon, newProto);
 
-        var stats = {
-            'Ammo Type' : newProto.ammoType,
-            Damage: newProto.damage,
-            Range: newProto.range,
-            'Knock Back': newProto.knockBack,
-            'knock Back Radius': newProto.knockBackRadius,
-            'knock Back Radius Damage': newProto.knockBackRadiusDamage,
+        var primaryStats = [
+            'itemType',
+            'ammoType'
+        ];
+        var secondaryStats = [
+            'damage',
+            'range',
+            'knockBack',
+            'knockDown',
+            'aoe_Radius',
+            'aoe_Damage',
+            'aoe_KnockBack',
+            'aoe_KnockDown',
+            'aoe_KnockBackOrigin',
+        ];
 
-            'Knock Down': newProto.knockDown,
-            'Splash Damage': newProto.splashDamage,
-            'Splash Range': newProto.splashRange,
-        };
-
-        var primaryStats = {
-            'Item Type': 'Ranged Weapon',
-            'Ammo Type' : newProto.ammoType,
-        };
-
-        var secondaryStats = {
-            Damage: newProto.damage,
-            Range: newProto.range,
-            'Knock Back': newProto.knockBack,
-            'knock Back Radius': newProto.knockBackRadius,
-            'knock Back Radius Damage': newProto.knockBackRadiusDamage,
-            'Knock Down': newProto.knockDown,
-            'Splash Damage': newProto.splashDamage,
-            'Splash Range': newProto.splashRange,
-        };
-
-        var statsArr = makeStatsArr(stats);
-        var statsDesc = makeStatsDesc(statsArr);
-
-        newProto.stats = statsArr;
-        newProto.statDesc = statsDesc;
-
-        newProto.primaryStats = makeStatsArr(primaryStats);
-        newProto.secondaryStats = makeStatsArr(secondaryStats);
+        newProto.primaryStats = makeStatsArray(primaryStats, newProto);
+        newProto.secondaryStats = makeStatsArray(secondaryStats, newProto);
 
         return newProto;
     };
@@ -234,70 +193,41 @@
     var makeAmmo = function(newProto){
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.ammo, newProto);
 
-        var stats = {
-            'Ammo Type' : newProto.ammoType,
-            Damage: newProto.damageMod,
-            Range: newProto.rangeMod,
-            'Knock Back': newProto.knockBackMod,
-            'knock Back Radius': newProto.knockBackRadiusMod,
-            'knock Back Radius Damage': newProto.knockBackRadiusDamageMod,
-            'Knock Down': newProto.knockDownMod,
-            'Splash Damage': newProto.splashDamageMod,
-            'Splash Range': newProto.splashRangeMod,
-        };
+        var primaryStats = [
+            'itemType',
+            'ammoType'
+        ];
 
-        var primaryStats = {
-            'Item Type': 'Ammo',
-            'Ammo Type' : newProto.ammoType,
-        };
+        var secondaryStats = [
+            'damage',
+            'range',
+            'knockBack',
+            'knockDown',
+            'aoe_Radius',
+            'aoe_Damage',
+            'aoe_KnockBack',
+            'aoe_KnockDown',
+            'aoe_KnockBackOrigin',
+        ];
 
-        var secondaryStats = {
-            Damage: newProto.damageMod,
-            Range: newProto.rangeMod,
-            'Knock Back': newProto.knockBackMod,
-            'knock Back Radius': newProto.knockBackRadiusMod,
-            'knock Back Radius Damage': newProto.knockBackRadiusDamageMod,
-
-            'Knock Down': newProto.knockDownMod,
-            'Splash Damage': newProto.splashDamageMod,
-            'Splash Range': newProto.splashRangeMod,
-        };
-
-        var statsArr = makeStatsArr(stats);
-        var statsDesc = makeStatsDesc(statsArr);
-
-        newProto.stats = statsArr;
-        newProto.statDesc = statsDesc;
-
-        newProto.primaryStats = makeStatsArr(primaryStats);
-        newProto.secondaryStats = makeStatsArr(secondaryStats);
+        newProto.primaryStats = makeStatsArray(primaryStats, newProto);
+        newProto.secondaryStats = makeStatsArray(secondaryStats, newProto);
 
         return newProto;
     };
 
     var makeArmor = function(newProto){
         newProto = RL.Util.merge({}, equipmentPrototype, Defaults.armor, newProto);
-        var dodge = (newProto.dodgeChance * 100) + '%';
-        var stats = {
-            Dodge: dodge,
-        };
-        var primaryStats = {
-            'Item Type': 'Armor',
+        var primaryStats = [
+            'itemType',
+        ];
 
-        };
+        var secondaryStats = [
+            'dodgeChance',
+        ];
 
-        var secondaryStats = {
-            Dodge: dodge,
-        };
-
-        var statsArr = makeStatsArr(stats, true);
-        var statsDesc = makeStatsDesc(statsArr);
-
-        newProto.stats = statsArr;
-        newProto.statDesc = statsDesc;
-
-        newProto.primaryStats = makeStatsArr(primaryStats);
-        newProto.secondaryStats = makeStatsArr(secondaryStats);
+        newProto.primaryStats = makeStatsArray(primaryStats, newProto);
+        newProto.secondaryStats = makeStatsArray(secondaryStats, newProto);
 
         return newProto;
     };
@@ -419,10 +349,14 @@
             char: 's',
             damage: 1,
             range: 14,
-            knockBack: 3,
-            knockBackRadius: 3,
-            knockBackRadiusDamage: 1,
             knockDown: 3,
+            knockBack: 3,
+            aoe_Radius: 3,
+            aoe_Damage: 1,
+
+            aoe_KnockBack: 3,
+            aoe_KnockDown: 2,
+
         }),
 
         // ammo
@@ -432,7 +366,7 @@
             color: '#808080',
             char: 'g',
             damageMod: 2,
-            splashRangeMod: 1,
+            splashDamageRadiusMod: 1,
             splashDamageMod: 1,
         }),
 
@@ -465,9 +399,17 @@
         ammo_shock_cannon_thumper: makeAmmo({
             name: 'Shock Cartridge [Thumper]',
             ammoType: 'shock_cartridge',
-            knockBackMod: 2,
-            knockBackRadiusMod: 2,
+
+
             knockDownMod: 2,
+            knockBackMod: 2,
+
+            aoe_RadiusMod: 2,
+            aoe_Damage: 1,
+
+            aoe_KnockBackMod: 2,
+            aoe_KnockDownMod: 2,
+            aoe_KnockBackOrigin: 'source',
         }),
 
         // armor
