@@ -114,14 +114,14 @@
          */
         mergeTileData: function(tileData1, tileData2){
             var result = {},
-                key, val;
+                key;
             for(key in tileData1){
                 result[key] = tileData1[key];
             }
 
             Object.keys(tileData2).forEach(function(key2){
                 var val2 = tileData2[key2];
-                if(val !== false && val2 !== void 0){
+                if(val2 !== false && val2 !== void 0){
                     result[key2] = val2;
                 }
             });

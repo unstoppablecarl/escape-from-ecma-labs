@@ -3,6 +3,7 @@
 
     root.RL.RendererLayer.Types = {
         map: {
+            name: 'map',
             merge: true,
             cancelTileDrawWhenNotFound: true,
             // draw: true,
@@ -107,6 +108,7 @@
             }
         },
         item: {
+            name: 'item',
             mergeWithPrevLayer: true,
             getTileData: function(x, y, prevTileData){
                 if(!this.game){
@@ -124,6 +126,7 @@
             }
         },
         entity: {
+            name: 'entity',
             mergeWithPrevLayer: true,
             getTileData: function(x, y, prevTileData){
                 if(!this.game){
@@ -249,6 +252,8 @@
             }
         },
         damage: {
+            name: 'damage',
+
             mergeWithPrevLayer: true,
             draw: false,
             getTileData: function(x, y, prevTileData){
@@ -274,6 +279,8 @@
             }
         },
         sound: {
+            name: 'sound',
+
             mergeWithPrevLayer: false,
             draw: true,
             getTileData: function(x, y, prevTileData){
@@ -299,6 +306,8 @@
             }
         },
         hover: {
+            name: 'hover',
+
             mergeWithPrevLayer: true,
             draw: true,
             getTileData: function(x, y, prevTileData){

@@ -10,12 +10,15 @@
         }
 
         if(this.miniMap){
+            var newTileData = {
+                bgColor: tileData.bgColor,
+            };
             if(tileData.color && tileData.char){
-                tileData.bgColor = tileData.color;
-                tileData.char = false;
+                newTileData.bgColor = tileData.color;
+                newTileData.char = false;
             }
             this.miniMap.bufferCtx.globalAlpha = this.bufferCtx.globalAlpha;
-            this.miniMap.drawTileToCanvas(x, y, tileData);
+            this.miniMap.drawTileToCanvas(x, y, newTileData);
         }
     };
 
@@ -84,7 +87,7 @@
             ctx.restore();
         }
 
-        // game.knockBackLayer = [];
+        game.knockBackLayer = [];
     };
 
     var draw = RL.Renderer.prototype.draw;
