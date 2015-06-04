@@ -17,7 +17,6 @@ var initGame = function(settings) {
     var requiredRoomTemplates = settings.requiredRoomTemplates;
     var randomRoomTemplates = settings.randomRoomTemplates;
     var testMode = settings.testMode;
-    console.log('template', template);
     var keyBindings = {
         up: ['UP_ARROW', 'K', 'W'],
         down: ['DOWN_ARROW', 'J', 'S'],

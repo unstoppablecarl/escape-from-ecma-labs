@@ -25,53 +25,105 @@
             </div>
 
             <h3>Equipment</h3>
+
+
             <div id="equipment-container">
-                <div class="tr">
-                    <span class="td">Armor:</span>
-                    <span class="td">
-                        {slots.armor.name}
-                        <br>
-                        <small>{slots.armor.statDesc}</small>
-                    </span>
-                    <span class="td">
 
-                    </span>
-                </div>
-                <div class="tr">
-                    <span class="td">Melee:</span>
-                    <span class="td" id="stat-melee-weapon-name">
-                        {slots.weaponMelee.name}
-                        <br>
-                        <small>{slots.weaponMelee.statDesc}</small>
-                    </span>
-                    <span class="td" id="stat-melee-weapon-stats">
+                <table class="table">
+                    <tbody>
+                        <tr class="tr-section">
+                            <td colspan="2">
+                                Armor:&nbsp; <span rv-render_name="slots.armor"></span>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                        <tr class="tr-sub-section" rv-each-stat="slots.armor.secondaryStats">
+                            <td>
+                                {stat.key}:
+                            </td>
+                            <td>
+                                <strong>{stat.val}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
 
-                    </span>
-                </div>
 
-                <div class="tr">
-                    <span class="td">Ranged:</span>
-                    <span class="td">
-                        {slots.weaponRanged.name}
-                        <br>
-                        <small>{slots.weaponRanged.statDesc}</small>
-                    </span>
-                    <span class="td">
+                        <tr class="tr-section">
+                            <td colspan="2">
+                                Melee:&nbsp; <span rv-render_name="slots.weaponMelee"></span>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                        <tr class="tr-sub-section" rv-if="slots.weaponMelee.ammoType">
+                            <td>
+                                Ammo Type:
+                            </td>
+                            <td>
+                                <strong>{slots.weaponMelee.ammoType}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section" rv-each-stat="slots.weaponMelee.secondaryStats">
+                            <td>
+                                {stat.key}:
+                            </td>
+                            <td>
+                                <strong>{stat.val}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
 
-                    </span>
-                </div>
-                <div class="tr">
-                    <span class="td">Ammo:</span>
-                    <span class="td">
-                        {slots.ammo.name} <span rv-if="slots.ammo">&times; {slots.ammo.ammoQuantity}</span>
-                        <br>
-                        <small>{slots.ammo.statDesc}</small>
-                    </span>
-                    <span class="td">
 
-                    </span>
+                        <tr class="tr-section">
+                            <td colspan="2">
+                                Ranged: <span rv-render_name="slots.weaponRanged"></span>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                        <tr class="tr-sub-section" rv-if="slots.weaponRanged.ammoType">
+                            <td>
+                                Ammo Type:
+                            </td>
+                            <td>
+                                <strong>{slots.weaponRanged.ammoType}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section" rv-each-stat="slots.weaponRanged.secondaryStats">
+                            <td>
+                                {stat.key}:
+                            </td>
+                            <td>
+                                <strong>{stat.val}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
 
-                </div>
+
+                        <tr class="tr-section">
+                            <td colspan="2">
+                                Ammo:&nbsp; <span rv-render_name="slots.ammo"></span>
+                                <span rv-if="slots.ammo">&times; {slots.ammo.ammoQuantity}</span>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                        <!-- <tr class="tr-sub-section" rv-if="slots.ammo.ammoType">
+                            <td>
+                                Ammo Type:
+                            </td>
+                            <td>
+                                <strong>{slots.ammo.ammoType}</strong>
+                            </td>
+                        </tr> -->
+                        <tr class="tr-sub-section" rv-each-stat="slots.ammo.secondaryStats">
+                            <td>
+                                {stat.key}:
+                            </td>
+                            <td>
+                                <strong>{stat.val}</strong>
+                            </td>
+                        </tr>
+                        <tr class="tr-sub-section-divider"><td colspan="2"></td></tr>
+                    </tbody>
+                </table>
 
             </div>
 
@@ -96,23 +148,42 @@
 
             <div rv-each-item="inventoryViewData" class="inventory-item tr">
                 <div class="td">
-                    <strong rv-color="item.consoleColor">{item.name}</strong>
+                    <div class="top-row">
+                        <span class="pull-right">
+                            &times; <strong>{item.quantity}</strong>
+                        </span>
+                        <strong rv-color="item.consoleColor">{item.name}</strong>
+                    </div>
+                    <small>
+                        <div rv-each-primary="item.primaryStats" class="tr">
+                            <div class="td">
+                                {primary.key}:
+                            </div>
+                            <div class="td">
+                                <strong>{primary.val}</strong>
+                            </div>
+                        </div>
+                    </small>
                 </div>
 
                 <div class="td">
-                    {item.statDesc}
+                    <br>
+                    <div rv-each-stat="item.secondaryStats">
+                        <small>{stat.key}</small>
+                    </div>
+                </div>
+                <div class="td">
+                    <br>
+                    <div rv-each-stat="item.secondaryStats">
+                        <small><strong>{stat.val}</strong></small>
+                    </div>
                 </div>
 
                 <div class="td">
-                    x {item.quantity}
-                </div>
-
-                <div class="td">
-
                     <span class="btn btn-sm btn-default" rv-if="item.usable" rv-use_item="item">use</span>
-                    <span rv-each-slot="item.equipableToSlots">
-                        <span class="btn btn-sm btn-default" rv-equip_item="item">Equip to {slot}</span>
-                    </span>
+
+                    <span rv-each-slot="item.equipableToSlots" class="btn btn-sm btn-default" rv-equip_item="item">Equip</span>
+
                 </div>
             </div>
         </div>
@@ -157,6 +228,8 @@
         <script src="js/mixins/equipment.js"></script>
 
         <script src="js/util.js"></script>
+        <script src="js/stats.js"></script>
+        <script src="js/action-helpers.js"></script>
         <script src="js/action-types.js"></script>
 
         <script src="js/console.js"></script>
@@ -188,6 +261,7 @@
         <script src="js/renderer-layer-types.js"></script>
 
         <script src="js/tile.js"></script>
+		<script src="js/entity.js"></script>
         <script src="js/entity-types.js"></script>
 
         <script src="js/ui.js"></script>

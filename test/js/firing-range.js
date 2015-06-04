@@ -1,5 +1,5 @@
 
-console.log('RL.MapGen.Template.Floor', RL.MapGen.Template.Floor);
+
 var settings = {
     playerStartX: 24,
     playerStartY: 24,
@@ -47,3 +47,21 @@ game.player.inventory.addByType('ammo_shock_cannon_thumper', 10);
 
 game.player.equip(RL.Item.make(game, 'shock_cannon'));
 game.player.equip(RL.Item.make(game, 'ammo_shock_cannon_thumper'));
+
+
+// console.profile('foo');
+// var max = 20;
+// var i = 0;
+// var intervalID = window.setInterval(function(){
+//     console.log('tic');
+//     game.onKeyAction('left');
+
+//     i++;
+//     if(i > max){
+//         console.profileEnd();
+//         clearInterval(intervalID);
+//     }
+// }, 20);
+
+
+

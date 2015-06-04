@@ -354,9 +354,17 @@
             aoe_Radius: 3,
             aoe_Damage: 1,
 
-            aoe_KnockBack: 3,
+            aoe_KnockBack: 4,
             aoe_KnockDown: 2,
 
+        }),
+
+        railgun: makeRangedWeapon({
+            name: 'Railgun',
+            ammoType: 'rail_slug',
+            damage: 99,
+            range: 100,
+            overpenetrates: true,
         }),
 
         // ammo
@@ -401,14 +409,14 @@
             ammoType: 'shock_cartridge',
 
 
-            knockDownMod: 2,
-            knockBackMod: 2,
+            // knockDownMod: 2,
+            // knockBackMod: 2,
 
             aoe_RadiusMod: 2,
             aoe_Damage: 1,
 
             aoe_KnockBackMod: 2,
-            aoe_KnockDownMod: 2,
+            // aoe_KnockDownMod: 2,
             aoe_KnockBackOrigin: 'source',
         }),
 

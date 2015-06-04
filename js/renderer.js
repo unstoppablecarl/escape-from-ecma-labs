@@ -59,12 +59,13 @@
 
             var rad = Math.atan2(dy, dx);
 
-            ctx.strokeStyle = 'green';
+            // ctx.strokeStyle = 'green';
 
             // ctx.beginPath();
             // ctx.moveTo(start.x, start.y);
             // ctx.lineTo(end.x, end.y);
             // ctx.stroke();
+            // ctx.closePath();
 
             ctx.save();
             ctx.textAlign = 'left';
@@ -78,7 +79,7 @@
 
             var str = ' ' + dashes + ')}';
 
-            ctx.fillStyle = 'rgba(255, 255, 200, 0.45)';
+            ctx.fillStyle = 'rgba(255, 255, 200, 0.15)';
             ctx.fillText(
                 str,
                 0,
@@ -88,6 +89,45 @@
         }
 
         game.knockBackLayer = [];
+
+
+
+        // var lines = game.knockBackLayer2;
+        // if(!lines.length){
+        //     return;
+        // }
+        // var renderer = game.renderer;
+        // var tileSize = renderer.tileSize;
+        // var halfTileSize = Math.floor(tileSize * 0.5);
+        // var ctx = game.renderer.bufferCtx;
+
+        // for (var i = 0; i < lines.length; i++) {
+        //     var line = lines[i];
+        //     var start = line.start;
+        //     var end = line.end;
+        //     var distance = line.distance;
+
+        //     start.x = (start.x - renderer.originX) * tileSize + halfTileSize;
+        //     start.y = (start.y - renderer.originY) * tileSize + halfTileSize;
+
+        //     end.x = (end.x - renderer.originX) * tileSize + halfTileSize;
+        //     end.y = (end.y - renderer.originY) * tileSize + halfTileSize;
+
+        //     var dx = end.x - start.x;
+        //     var dy = end.y - start.y;
+
+        //     // var rad = Math.atan2(dy, dx);
+
+        //     ctx.strokeStyle = 'yellow';
+        //     ctx.lineWidth = 3;
+        //     ctx.beginPath();
+        //     ctx.moveTo(start.x, start.y);
+        //     ctx.lineTo(end.x, end.y);
+        //     ctx.stroke();
+        //     ctx.closePath();
+        // }
+        // game.knockBackLayer2 = [];
+
     };
 
     var draw = RL.Renderer.prototype.draw;

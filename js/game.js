@@ -25,6 +25,8 @@
         this.soundLayer = new RL.Array2d();
 
         this.knockBackLayer = [];
+        this.knockBackLayer2 = [];
+
     };
 
     var newGamePrototype = {
@@ -244,7 +246,7 @@
             var ent = this.entityManager.get(x, y);
 
             if(ent){
-                ent.immobilized = true;
+                // ent.immobilized = true;
             }
 
             var targets = this.entityManager.map.getWithinSquareRadius(x, y, settings);
@@ -256,8 +258,8 @@
                 for (var i = 0; i < targets.length; i++) {
                     var target = targets[i];
                     // target.knockedDown = true;
-                    target.immobilized = true;
-                    target.color = 'green';
+                    // target.immobilized = true;
+                    // target.color = 'green';
 
                     var distance = RL.Util.getDistance(x, y, target.x, target.y);
 
