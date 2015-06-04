@@ -45,6 +45,10 @@
             for (var i = 0; i < targetDistances.length; i++) {
                 var td = targetDistances[i];
 
+                if(td.target.x === source.x && td.target.y === source.y){
+                    continue;
+                }
+
                 this.doKnockBack(td.target, ox, oy, aoe_KnockBack);
                 // console.log(td.target.x, td.target.y);
                 // td.target.char = i + '';
@@ -56,9 +60,68 @@
                 target.knockDown(knockDownCount);
             }
         },
-        doKnockBack: function(target, x, y, knockBackDistance){
-            if(target.knockBack){
-                target.knockBack(x, y, knockBackDistance);
+        doKnockBack: function(target, originX, originY, knockBackDistance, cascade){
+            var game = target.game;
+            cascade = cascade === void 0 ? true : cascade;
+            // game.knockBackLayer2.push({
+            //     start: {x: originX, y: originY},
+            //     end: {x: target.x, y: target.y},
+            // });
+            var lineDistance = knockBackDistance + 1;
+
+            var canMoveToCheck = function(tile, x, y){
+                // skip target tile
+                if(x === target.x && y === target.y){
+                    return false;
+                }
+                return !game.entityCanMoveTo(target, tile.x, tile.y);
+            };
+
+            var list = game.map.getLineThrough(originX, originY, target.x, target.y, canMoveToCheck, false, true, lineDistance);
+
+            var last = list[list.length - 1];
+            game.knockBackLayer.push({
+                start: {x: target.x, y: target.y},
+                end: {x: last.x, y: last.y},
+                distance: knockBackDistance,
+            });
+
+            // remove first coord, it is the current position
+            list.shift();
+
+            if(list.length){
+
+                var max = 10;
+                var i = 0;
+                while(i < max && list.length){
+                    i++;
+                    var next = list[0];
+                    // if(next.x === target.x && next.y === target.y){
+                    //     console.log("XXXX")
+                    // }
+                    var ent = game.entityManager.get(next.x, next.y);
+                    if(ent && cascade){
+                        // game.knockBackLayer2.push({
+                        //     start: {x: target.x, y: target.y},
+                        //     end: {x: ent.x, y: ent.y},
+                        //     distance: list.length,
+                        // });
+                        var distance = list.length;
+                        this.doKnockBack(ent, target.x, target.y, distance, false);
+                    }
+
+                    if(target.canMoveTo(next.x, next.y)){
+                        var destinationTile = list.shift();
+
+
+
+                        target.moveTo(destinationTile.x, destinationTile.y);
+
+                    } else {
+                        break;
+                    }
+
+                }
             }
         },
         resolveEffects: function(source, target, settings){
@@ -75,33 +138,30 @@
             var x = target.x;
             var y = target.y;
 
-            if(knockBack){
-                this.doKnockBack(target, source.x, source.y, knockBack);
-            }
-
             if(knockDown && target.knockDown){
                 this.doKnockDown(target, knockDown);
             }
 
-            if(!aoe_Radius){
-                return;
+            if(aoe_Radius){
+                var targets = this.getTargetsWithinRadius(game, x, y, aoe_Radius);
+
+                if(aoe_Damage){
+                    this.aoeDamage(source, targets, aoe_Damage);
+                }
+
+                if(aoe_KnockBack){
+                    this.aoeKnockBack(source, target, targets, aoe_Radius, aoe_KnockBack, aoe_KnockBackOrigin);
+                }
+
+                if(aoe_KnockDown){
+                    var doKnockDown = this.doKnockDown;
+                    targets.forEach(function(target){
+                        doKnockDown(target, aoe_KnockDown);
+                    });
+                }
             }
-
-            var targets = this.getTargetsWithinRadius(game, x, y, aoe_Radius);
-
-            if(aoe_Damage){
-                this.aoeDamage(source, targets, aoe_Damage);
-            }
-
-            if(aoe_KnockBack){
-                this.aoeKnockBack(source, target, targets, aoe_Radius, aoe_KnockBack, aoe_KnockBackOrigin);
-            }
-
-            if(aoe_KnockDown){
-                var doKnockDown = this.doKnockDown;
-                targets.forEach(function(target){
-                    doKnockDown(target, aoe_KnockDown);
-                });
+            if(knockBack){
+                this.doKnockBack(target, source.x, source.y, knockBack);
             }
         },
 
