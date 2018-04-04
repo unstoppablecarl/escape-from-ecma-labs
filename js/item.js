@@ -22,6 +22,9 @@
             },
             use: function(entity){
                 entity.heal(this.healAmount);
+            },
+            canMoveTo: function(){
+                return false;
             }
         },
     };
