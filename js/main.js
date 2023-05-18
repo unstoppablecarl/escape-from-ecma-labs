@@ -1,5 +1,5 @@
 
-var testMode = false;
+var testMode = true;
 
 var keyBindings = {
     up: ['UP_ARROW', 'K', 'W'],
@@ -34,7 +34,6 @@ RL.ValidTargets.prototype.typeSortPriority = [RL.Entity, RL.Furniture, RL.Item];
 
 // create the game instance
 var game = new RL.Game();
-
 if(testMode){
     game.disableFov = true;
     game.renderer.tileSize = 10;
@@ -46,11 +45,11 @@ if(testMode){
     game.player.hpMax = 2000;
 }
 
-var template = RL.MapGen.Template.Floor.office.basic;
-var requiredRoomTemplates = [RL.MapGen.Template.Room.exit.elevator];
-var randomRoomTemplates = RL.MapGen.Template.Room.areaToArray('office');
-var floor = new RL.MapGen.Floor(game, template, requiredRoomTemplates, randomRoomTemplates);
-floor.loadToMap();
+RL.MapGen.Room.prototype.setRandomRotation = false;
+RL.MapGen.Floor.prototype.generateRandomRooms = false;
+
+RL.MapGen.Floor.generateOfficeFloor()
+// RL.MapGen.Floor.generateSingleTestRoom()
 
 var zombiePopulator = function(game, min, max){
     var targetCount = Math.floor(RL.Random.range(min, max));
@@ -140,6 +139,7 @@ RL.Views.inventory(game);
 RL.Views.controls(keyBindings);
 RL.Views.equipment(game);
 RL.Views.stats(game);
+// RL.Entity.Types.zombie.prototype.immobilized = true;
 
 game.renderer.draw();
 
@@ -151,21 +151,21 @@ game.renderer.draw();
 
 // game.player.equip(RL.Item.make(game, 'umbrella'));
 
-
-game.player.inventory.addByType('pistol_9mm', 1);
-game.player.inventory.addByType('pistol_45cal', 1);
-
-
-game.player.inventory.addByType('grenade', 10);
-game.player.inventory.addByType('shock_grenade', 10);
-
-game.player.inventory.addByType('ammo_9mm', 10);
-game.player.inventory.addByType('ammo_45cal', 10);
-game.player.inventory.addByType('ammo_shock_cannon', 10);
-
-
-game.player.equip(RL.Item.make(game, 'shock_cannon'));
-game.player.equip(RL.Item.make(game, 'ammo_shock_cannon'));
+//
+// game.player.inventory.addByType('pistol_9mm', 1);
+// game.player.inventory.addByType('pistol_45cal', 1);
+//
+//
+// game.player.inventory.addByType('grenade', 10);
+// game.player.inventory.addByType('shock_grenade', 10);
+//
+// game.player.inventory.addByType('ammo_9mm', 10);
+// game.player.inventory.addByType('ammo_45cal', 10);
+// game.player.inventory.addByType('ammo_shock_cannon', 10);
+//
+//
+// game.player.equip(RL.Item.make(game, 'shock_cannon'));
+// game.player.equip(RL.Item.make(game, 'ammo_shock_cannon'));
 
 
 

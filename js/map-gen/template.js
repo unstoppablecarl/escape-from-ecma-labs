@@ -5,10 +5,8 @@
     var Template = function Template(game, template) {
         this.game = game;
         this.template = template;
-
         this.setSizeFromTemplate();
         this.init();
-
     };
 
     Template.prototype = {
@@ -120,7 +118,7 @@
             }
         },
 
-        tileAssign: function(x, y, value){
+        tileAssign: function(x, y, value, attributes){
             if(RL.Tile.Types[value].passable){
                 var existing = this.game.map.get(x, y);
                 if(existing && !existing.passable){
@@ -132,7 +130,7 @@
                 return;
             }
 
-            return this.game.map.set(x, y, value);
+            return this.game.map.set(x, y, value, attributes);
         },
 
         furnitureAssign: function(x, y, value){

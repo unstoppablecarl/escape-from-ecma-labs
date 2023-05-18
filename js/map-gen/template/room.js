@@ -2,7 +2,7 @@
     'use strict';
 
 /**
- * valid values (assumed that tile, furiture, and items do not share any type names):
+ * valid values (assumed that tile, furniture, and items do not share any type names):
  * values can be recursive
  *
  * single object:
@@ -46,8 +46,8 @@
  *
  */
     var Room = {
-        areaToArray: function(area){
-            var rooms = this[area];
+        getRoomsByType: function(roomType){
+            var rooms = this[roomType];
             var keys = Object.keys(rooms);
             var out = [];
             for (var i = 0; i < keys.length; i++) {
@@ -55,26 +55,16 @@
                 var room = rooms[key];
 
                 room.name = key;
-                room.area = area;
+                room.roomType = roomType;
                 out.push(room);
             }
             return out;
         },
-        getRandom: function(area) {
-            var keys = Object.keys(this[area]);
-            var name = keys[Math.floor(Math.random() * keys.length)];
-            var result = this[area][name];
-            result.name = name;
-            result.area = area;
-            return result;
-        },
 
-        //area
+        //roomType
         exit: {
+            // name
             elevator: {
-                name: 'elevator',
-                author: 'unstoppableCarl',
-                area: 'exit',
                 sides: {
                     up: {
                         randomlyPlaceDoor: false,
@@ -165,14 +155,10 @@
             },
         },
 
-        // area
+        // roomType
         office: {
             // name
             basic: {
-                name: 'basic',
-                author: 'unstoppableCarl',
-                area: 'office',
-
                 sides: {
                     up: {
                         randomlyPlaceDoor: true,
@@ -255,12 +241,8 @@
                     }
                 }]
             },
-
+            // name
             executives: {
-                name: 'executives',
-                author: 'unstoppableCarl',
-                area: 'office',
-
                 sides: {
                     up: {
                         randomlyPlaceDoor: false,
@@ -355,12 +337,8 @@
                     },
                 }]
             },
-
+            // name
             planning_room: {
-                name: 'planning_room',
-                author: 'srd',
-                area: 'office',
-
                 sides: {
                     up: {
                         randomlyPlaceDoor: true,
@@ -458,12 +436,8 @@
                     }
                 }]
             },
-
+            // name
             cubicle_hell: {
-                name: 'cubicle_hell',
-                author: 'unstoppableCarl',
-                area: 'office',
-
                 sides: {
                     up: {
                         randomlyPlaceDoor: false,
@@ -478,8 +452,6 @@
                         randomlyPlaceDoor: false,
                     },
                 },
-
-                // can be extended/overridden by
                 characterToTileType: {
                     '.': 'floor',
                     '#': 'wall',
@@ -493,7 +465,7 @@
                 },
                 layers: [{
                     mapData: [
-                        '                    ',
+                        'h                   ',
                         ' .................. ',
                         ' .=====.====.=====. ',
                         ' .=hz...=hz..=hz... ',
@@ -514,7 +486,6 @@
                         ' .................. ',
                         '                    ',
                     ],
-                    // defaultTileType: 'floor'
                 },
                 {
                     mapData: [
@@ -549,7 +520,7 @@
             lab1: {
                 name: 'lab1',
                 author: 'unstoppableCarl',
-                area: 'lab',
+                roomType: 'lab',
 
                 sides: {
                     up: {

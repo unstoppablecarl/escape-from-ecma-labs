@@ -201,7 +201,9 @@
                 return;
             }
 
-            console.log('click', tile.x, tile.y, this.getObjectsAtPostion(tile.x, tile.y));
+            console.log('click', tile.x, tile.y)
+            console.log('click objects', this.getObjectsAtPostion(tile.x, tile.y))
+            console.log('click tile', tile);
 
             if(!this.player.fov.get(tile.x, tile.y)){
                 return;

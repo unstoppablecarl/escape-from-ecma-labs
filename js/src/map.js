@@ -1,13 +1,13 @@
-(function(root) {
+(function (root) {
     'use strict';
 
     /**
-    * Manages map Tiles. Depends on Array2d (array-2d.js).
-    * @class Map
-    * @extends Array2d
-    * @constructor
-    * @param {Game} game - Game instance this obj is attached to.
-    */
+     * Manages map Tiles. Depends on Array2d (array-2d.js).
+     * @class Map
+     * @extends Array2d
+     * @constructor
+     * @param {Game} game - Game instance this obj is attached to.
+     */
     var Map = function Map(game) {
         this.game = game;
     };
@@ -16,81 +16,81 @@
         constructor: Map,
 
         /**
-        * Game instance this obj is attached to.
-        * @property game
-        * @type Game
-        */
+         * Game instance this obj is attached to.
+         * @property game
+         * @type Game
+         */
         game: null,
 
         /**
-        * Sets a value at given coords.
-        * @method set
-        * @param {Number} x - Position on the x axis of the value being set.
-        * @param {Number} y - Position on the y axis of the value being set.
-        * @param {Tile|String} tile - The Tile being set at given coords. If Tile is a string a new tile will be created using the string as the Tile Type (see Tile.Types[type]).
-        * @return {Tile} the tile added
-        */
-        set: function(x, y, tile) {
+         * Sets a value at given coords.
+         * @method set
+         * @param {Number} x - Position on the x axis of the value being set.
+         * @param {Number} y - Position on the y axis of the value being set.
+         * @param {Tile|String} tile - The Tile being set at given coords. If Tile is a string a new tile will be created using the string as the Tile Type (see Tile.Types[type]).
+         * @param {Object} attributes - attributes to merge into object
+         * */
+        set: function (x, y, tile, attributes) {
             if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
                 return;
             }
-            if(typeof tile === 'string'){
-                tile = RL.Tile.make(this.game, tile, x, y);
+            if (typeof tile === 'string') {
+                tile = RL.Tile.make(this.game, tile, x, y, attributes);
             }
             this.data[x][y] = tile;
             return tile;
         },
 
         /**
-        * Checks if a map tile can be seen through.
-        * @method canSeeThroughTile
-        * @param {Number} x - The x map tile coord to check.
-        * @param {Number} y - The y map tile coord to check.
-        * @return {Bool}
-        */
-        canSeeThroughTile: function(x, y){
+         * Checks if a map tile can be seen through.
+         * @method canSeeThroughTile
+         * @param {Number} x - The x map tile coord to check.
+         * @param {Number} y - The y map tile coord to check.
+         * @return {Bool}
+         */
+        canSeeThroughTile: function (x, y) {
             var tile = this.get(x, y);
             return tile && !tile.blocksLos;
         },
 
         /**
-        * Checks if a map tile can be moved through.
-        * @method canMoveThroughTile
-        * @param {Number} x - The x map tile coord to check.
-        * @param {Number} y - The y map tile coord to check.
-        * @return {Bool}
-        */
-        canMoveThroughTile: function(x, y){
+         * Checks if a map tile can be moved through.
+         * @method canMoveThroughTile
+         * @param {Number} x - The x map tile coord to check.
+         * @param {Number} y - The y map tile coord to check.
+         * @return {Bool}
+         */
+        canMoveThroughTile: function (x, y) {
             var tile = this.get(x, y);
             return tile && tile.passable;
         },
 
         /**
-        * Loads Tile data from an array of strings
-        * @method loadTilesFromArrayString
-        * @param {Array} mapData - The array of strings to load.
-        * @param {Object} charToType - An object mapping string characters to Tile types (see Tile.Types[type]).
-        * @param {String} [defaultTileType] - The tile type to use if a character is not in charToType. This is used to allow characters representing entites or non-tile objects to be included in the mapData.
-        * @example
+         * Loads Tile data from an array of strings
+         * @method loadTilesFromArrayString
+         * @param {Array} mapData - The array of strings to load.
+         * @param {Object} charToType - An object mapping string characters to Tile types (see Tile.Types[type]).
+         * @param {String} [defaultTileType] - The tile type to use if a character is not in charToType. This is used to allow characters representing entites or non-tile objects to be included in the mapData.
+         * @example
 
-            // 'P' will be ignored and a floor tile will be placed at that position
-            var mapData = [
-                '####',
-                '#..#',
-                '#.P#',
-                '####',
-            ],
+         // 'P' will be ignored and a floor tile will be placed at that position
+         var mapData = [
+         '####',
+         '#..#',
+         '#.P#',
+         '####',
+         ],
 
-            charToType = {
+         charToType = {
                 '#': 'wall',
                 '.': 'floor'
             },
-            defaultTileType = 'floor';
+         defaultTileType = 'floor';
 
-            map.loadTilesFromArrayString(mapData, charToType, defaultTileType);
-        *
-        */
-        loadTilesFromArrayString: function(mapData, charToType, defaultTileType){
+         map.loadTilesFromArrayString(mapData, charToType, defaultTileType);
+         *
+         */
+        loadTilesFromArrayString: function (mapData, charToType, defaultTileType) {
             var _this = this,
                 width = mapData[0].length,
                 height = mapData.length;
@@ -100,20 +100,21 @@
             this.reset();
 
             // loop over each coord in the Array2d (val will be undefined)
-            this.each(function(val, x, y){
+            this.each(function (val, x, y) {
                 var char = mapData[y][x],
                     type = charToType[char];
-                if(type === void 0 && defaultTileType){
+                if (type === void 0 && defaultTileType) {
                     type = defaultTileType;
                 }
                 var tile = RL.Tile.make(_this.game, type, x, y);
                 _this.set(x, y, tile);
             });
-        }
+        },
     };
 
     Map.prototype = RL.Util.merge({}, RL.Array2d.prototype, Map.prototype);
 
     root.RL.Map = Map;
+
 
 }(this));
