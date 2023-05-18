@@ -113,9 +113,9 @@
 
         /**
          * Optional callback called when removed from an `ObjectManager` or `MultiObjectManager`.
-         * @metod onRemve
+         * @metod onRemove
          */
-        onRemve: false,
+        onRemove: false,
 
         /**
         * Called after a player action has been resolved. Resolves this entities turn.

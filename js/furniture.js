@@ -108,9 +108,9 @@
 
         /**
          * Optional callback called when removed from an `ObjectManager` or `MultiObjectManager`.
-         * @metod onRemve
+         * @metod onRemove
          */
-        onRemve: false,
+        onRemove: false,
 
         takeDamage: function(amount){
             this.hp -= amount;

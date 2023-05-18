@@ -133,9 +133,9 @@
 
         /**
          * Optional callback called when removed from an `ObjectManager` or `MultiObjectManager`.
-         * @metod onRemve
+         * @metod onRemove
          */
-        onRemve: false,
+        onRemove: false,
 
         /**
         * Handles the behavior of a player or other entity attempting to move into this tile. Only used if this.passable = false.
